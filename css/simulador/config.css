@@ -1,0 +1,29 @@
+/* .card{
+    width: 500px;
+    border: none;
+} */
+
+.card{
+    border: none;
+}
+
+#chartdiv {
+    width: 100%;
+    height: 450px;
+  }
+
+.inputParts{
+    text-align: center;
+}
+  
+#btn-parts, .btn-add-parts{
+    width: 148px
+}
+
+/* #inputGroup-sizing-default{
+    height:40px
+} */
+
+.textoAlertMemory {
+   max-width: 511px;
+}

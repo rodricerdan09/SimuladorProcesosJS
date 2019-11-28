@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="./css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="./css/simulador/ayuda.css" rel="stylesheet">
+
+    <!-- Resources Amcharts-->
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+    <title>Simulador C1G6 | Ayuda</title>
+</head>
+<body>
+  <!--Cabecera-->
+  <nav class="navbar navbar-dark white">
+      <a class="navbar-brand" href="#">
+          <img src="./img/utnlogo.png" height="80" alt="utn-logo">
+      </a>
+      <h2 class="lead blue-grey-text pl-5 col-md-8"><strong>Simulador de Planificación de procesos - Grupo C1G6</strong></h2>   
+  </nav>
+  <!--Cabecera-->
+  <div class="view">
+    <!-- Titulo -->
+    <div class="jumbotron-fluid">
+      <div class="container"> 
+        <h2 class="display-4 d-flex justify-content-center lead blue-grey-text mt-3 mb-3">Primeros Pasos</h2>   
+        <h4 class="lead blue-grey-text d-flex justify-content-center text-justify">En esta sección encontrara toda la ayuda que necesite y recomendaciones para iniciar con el uso de nuestra aplicación</h4>
+      </div> 
+    </div>  
+    <div class="container"> 
+      <div class="row blue-grey-text">
+        <!-- Introduccion -->
+        <div class="col-md-12">
+          <h5 class="display-4 lead blue-grey-text mt-5 mb-3 d-flex justify-content-center">Introducción</h5>
+          <p class="lead ">El simulador de planificación de procesos consta de una sección de <strong><i>Configuración</i></strong> donde el usuario podra gestionar tanto la asignación de memoria deseada como la politica de planificación para los procesos que desee simular.
+            Una vez finalizada la configuración, el usuario podra avanzar a la sección de <strong><i>Presentación</i></strong> donde podrá ver los esquemas correspondientes.</p>
+
+          <p class="lead">El simulador consta de un barra de ayuda que permitira al usuario:
+            <img src=".img/help0.png" alt="barra_config">
+            <ul class="lead">
+              <li>Reiniciar la configuración en caso de haberse equivocado en algún punto de la configuración.</li>
+              <li>Visualizar la carga de trabajo elegida.</li>
+              <li>Ver los esquemas generados a través del simulador.</li>
+            </ul>
+            <h3 class="lead blue-grey-text"><b>Recomendaciones</b></h3>
+            <ul class="lead">
+              <li>No avanzar a la sección de <b><i>Presentación</i></b> antes de haber hecho las configuraciones correspondientes debido a que puede llegar a causar errores a la hora de cargar los datos para generación de los esquemas.
+              </li>
+              <li>
+                En caso de haberse equivocado al momento de seleccionar una opción durante la gestión de su configuración, ir a <i>reiniciar la configuración</i> y empezar de nuevo. Dado que para esta primer versión de la aplicación la carga de datos debe realizarce siguiendo estrictamente su orden.
+              </li>
+            </ul>
+           
+          </p>
+        </div>
+        <!-- Memoria -->
+          <div class="col-md-12">
+              <h5 class="display-4 lead blue-grey-text mt-5 mb-3 d-flex justify-content-center">Asignación de Memoria</h5>
+              <p class="lead text-justify">En la card de <i>Asignación de Memoria</i> se realíza la gestión de configuración de la memoria donde debe especificar el tamaño, el tipo y el ajuste de memoria deseado. Cada sección posee sus valores por defecto y las opciones que obtendra dependeran de la selección que realice. Por ello es importante el orden de su selección.</p>
+          </div>
+          <!-- Memoria Seccion 1-->
+          <div class="col-md-6">
+            <img src="./img/help1.png" alt="memoria">
+          </div>
+          <div class="col-md-6 my-auto">
+            <p class="lead ">El Tamaño de memoria consta de las siguientes opciones:
+              <ul>
+                <li>256 KB</li>
+                <li>512 KB</li>
+                <li>1024 KB</li>
+              </ul>
+            </p>
+            <p class="lead ">El Tipo de Memoria consta de las siguientes opciones:
+              <ul>
+                <li>Variable</li>
+                <li>Fija</li>
+              </ul>
+            </p>
+            <p class="lead ">El Ajuste de memoria consta de las siguientes opciones:
+              <p class="ml-3">
+                  En caso de haber seleccionado Memoria Variable:
+                  <ul class="ml-3">
+                    <li>First Fit</li>
+                    <li>Worst Fit</li>
+                  </ul>
+              </p> 
+              <p class="ml-3">
+                En caso de haber seleccionado Memoria Fija:
+                <ul class="ml-3 mt-1">
+                  <li>First Fit</li>
+                  <li>Best Fit</li>
+                </ul> 
+              </p>  
+            </p> 
+          </div>
+          <!-- Memoria Seccion 2-->
+          <div class="col-md-6 mt-3">
+            <img src="./img/help3.png" alt="particiones">
+          </div>
+          <div class="col-md-6 mt-4">
+            <p class="text-justify">En caso de haber seleccionado el tipo de memoria fija, le aparecerá en pantalla un botón que le permitira realizar la generación de particiones correspondientes. <br>
+            Recordar que en caso de haberse equivocado, reiniciar la configuración del simulador para evitar errores al momento de la carga de los datos.</p>
+          </div>
+          <!-- Memoria Seccion 3-->
+          <div class="col-md-6 mt-3">
+            <img src="./img/help4.png" alt="particiones2">
+          </div>
+          <div class="col-md-6 mt-3 my-auto">
+            <p class="text-justify">En esta sección podrá ingresar la cantidad de particiones que desee, siempre respetando un limite máximo de particiones que dependera del tamaño de memoria que haya ingresado con anterioridad. 
+              <br><br>
+            De acuerdo al tamaño de memoria elegida la cantidad máxima de particiones que podra generar son:
+              <ul>
+                <li>Para un tamaño de <b>256 KB</b> podrá generar hasta <b>5 particiones.</b></li>
+                <li>Para un tamaño de <b>512 KB</b> podrá generar hasta <b>8 particiones.</b></li>
+                <li>Para un tamaño de <b>1024 KB</b> podrá generar hasta <b>12 particiones.</b></li>
+              </ul>
+            </p>
+          </div>
+        <!-- Memoria -->
+        <!-- Procesos -->
+        <div class="col-md-12 mt-5">
+            <h5 class="display-4 lead blue-grey-text mb-3 d-flex justify-content-center">Planificación de Procesos</h5>
+            <p class="lead text-justify">En la card de <i>Politica de Planificación</i> se realíza la gestión de configuración de los procesos donde debe especificar el algoritmo que desea implementar junto con los datos solicitados deseado. El algoritmo de planificación por defecto es FCFS y las demas opciones que obtendra dependeran de la selección del algoritmo que desee aplicar. Por ello es importante el orden de su selección.</p>
+        </div>
+        <!-- Procesos Seccion 1-->
+        <div class="col-md-6">
+            <img src="./img/help2.png" alt="procesos">
+        </div>
+        <div class="col-md-6 my-auto">
+          <p class="lead">Los algoritmos de planificación que puede elegir son:
+            <ul>
+              <li>FCFS</li>
+              <li>Round Robin</li>
+              <li>Por Prioridades</li>
+              <li>Multinivel sin retroalimentación</li>
+            </ul>
+          </p>
+          <div>
+            <p class="text-justify">
+              Es importante respetar el orden de los inputs al momento de ingresar los datos, ya que de esa manera se evita la aparición de errores al momento de su ejecución. Recordamos que para esta versión de la aplicación su estabilidad y performance es sensible al orden de ingreso de los datos.
+            </p>
+            <p class=" text-justify mb-3">En caso de haber seleccionado el algoritmo Round Robin, le aparecera en pantalla un input donde debera ingresar un valor de quantum mayor a cero.
+              <img src="./img/help5.png" alt="quantum" class="mt-2 mx-auto">
+            </p>
+          </div>     
+        </div>
+        <!-- Procesos Seccion 2-->
+        <div class="col-md-6 mt-3">
+          <img src="./img/help6.png" alt="quantum" class=" mt-2">
+        </div>
+        <div class="col-md-6 mt-3">
+          <p class="text-justify mb-3 mt-5">En caso de haber seleccionado el algoritmo por Prioridades, le aparecera en pantalla un input donde debera ingresar el valor que desee darle a la prioridad del proceso. 
+          <br>
+          Recordar que en caso de haberse equivocado, reiniciar la configuración del simulador para evitar errores al momento de la carga de los datos.   
+          </p>
+        </div>
+        <!-- Procesos Seccion 3-->
+        <div class="col-md-6 mt-4">
+          <img src="./img/help7.png" alt="ciclo_vida_proceso">
+        </div>
+        <div class="col-md-6 mt-4 my-auto">
+         <p class="text-justify">
+            En esta sección podrá ingresar la cantidad de rafagas de CPU y de E/S que desee, siempre respetando un limite máximo que por cuestiones de performance se ha establecido que 5 rafagas es la máxima cantidad que puede especificar.<br>
+            Las rafagas de CPU y de E/S deben ser agragadas de a pares y tener un valor mayor a cero cada vez que se deseen agregar. 
+         </p>
+        </div>
+        <!-- Comenzar -->
+        <div class="col-md-12 mt-3 mb-2 pl-5 mx-auto d-flex justify-content-center flex-column btn-c">
+            <a href="./configuracion.html" class="btn btn-blue-grey text-white d-flex justify-content-center fadeInLeft wow rgba-black-light z-depth-0 waves-effect" type="submit" id="btn-continuar">Comenzar</a>  
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer class="page-footer font-small text-black-50 blue-grey lighten-5 pt-4 w-100 border">
+      <!-- Footer Links -->
+      <div class="container-fluid text-center text-md-left">
+          <!-- Grid row -->
+          <div class="row">
+          <!-- Grid column -->
+          <div class="col-md-6 mt-md-0 mt-3"> 
+              <!-- Content -->
+              <h5 class="lead font-weight-bold">Trabajo Práctico Integrador</h5>
+              <p class="pt-3"><strong>Desarrollado para la catedra Sistemas Operativos del 3° año de </strong> </p> 
+              <p><strong> Ingeniería en Sistemas de la UTN-FRRE.</strong></p>  
+          </div>
+          <!-- Grid column --> 
+          <hr class="clearfix w-100 d-md-none pb-3">   
+          <!-- Grid column -->
+          <div class="col-md-3 mb-md-0 mb-3">     
+              <!-- Links -->
+              <h5 class="lead font-weight-bold">Profesores</h5>
+      
+              <ul class="list-unstyled">
+              <li>
+                  <strong>Liliana Cuny Cuenta Pletsch</strong> 
+              </li>
+              <li>
+                  <strong>Sergio Gramajo</strong> 
+              </li>
+              <li>
+                  <strong>Alberto Ristoff</strong> 
+              </li>
+              <li>
+                  <strong>Jorge Roa</strong> 
+              </li>
+              </ul> 
+          </div>
+          <!-- Grid column -->
+      
+          <!-- Grid column -->
+          <div class="col-md-3 mb-md-0 mb-3">  
+              <!-- Links -->
+              <h5 class="lead font-weight-bold">Alumnos</h5>
+      
+              <ul class="list-unstyled">
+              <li>
+                  <a class="text-black-50" href="https://www.linkedin.com/in/rodrigo-daniel-cerdan-/"> <strong>Cerdan Rodrigo</strong></a>
+              </li>
+              <li>
+                  <a class="text-black-50" href="#!"><strong>Duarte Elias</strong></a>
+              </li>
+              <li> 
+                  <a class="text-black-50" href="#!"><strong>Perez Carla</strong></a>
+              </li>
+              <li>
+                  <a class="text-black-50" href="https://ar.linkedin.com/in/sandinosanchez?trk=people-guest_profile-result-card_result-card_full-click"><strong>Sanchez Sandino</strong></a>
+              </li>
+              <li>
+                  <a class="text-black-50" href="#!"><strong>Silva Otto</strong></a>
+              </li>
+              </ul>   
+          </div>
+          <!-- Grid column -->      
+          </div>
+          <!-- Grid row -->       
+      </div>
+      <!-- Footer Links -->
+      
+      <!-- Copyright -->
+      <div class="footer-copyright text-center py-3 blue-grey lighten-3 text-black-50">© 2019 Copyright:
+          <a href="http://www.frre.utn.edu.ar"> UTN-FRRE</a>
+      </div>
+      <!-- Copyright -->     
+  </footer>
+  <!-- Footer -->
+
+  <!-- SCRIPTS -->    
+  <!-- JQuery -->
+  <script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="./js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="./js/mdb.min.js"></script>
+  <!-- Project Scripts --> 
+  <script src="./js/simulador/inicio.js"></script>
+  <script src="./js/simulador/config.js"></script>
+  <!-- SCRIPTS -->
+</body>
+</html>
