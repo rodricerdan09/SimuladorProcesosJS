@@ -14,16 +14,16 @@
   let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
   let porcMemoryDispCpu = 0; //Porcentaje restante de la memoria total utilizado por la CPU
   let arrayProcess = []; //Arreglo con los procesos importados de la BD
-  let arrayProcGraf = [];
-  let procesosTerminados = []; // cola de procesos Terminado
   let particiones = []; // Memoria letiable
+ /*  let arrayProcGraf = [];
+  let procesosTerminados = []; // cola de procesos Terminado
   let colaListo = []; //Cola de procesos Listos
   let cont = 0;//contador de Particiones fijas
   let maxpart = 5; //cantidad maxima de particiones fijas
   let memFija = []; // memoria fija
   let tiempo = 0
   let lenArrayProcess = 0
-
+ */
 
   //Preparamos el entorno de trabajo
   $(function () {
@@ -114,10 +114,6 @@
 
   $("#btn-parts").on("click", function() {
     $('#partfijas').removeClass('d-none');
-    /* if ($("#btnconfirmacion").on("click", function() {
-alert('hola')
-    })) */
-    //$('#btnconfirmacion').addClass('disabled');
   });
 
   $("#quantumid").keyup(function(){
@@ -380,11 +376,7 @@ alert('hola')
       $(".textoAlertPart").text("La cantidad de particiones debe ser un número entero positivo.");
       $('.alertPart').addClass('show');
       $('#btn-asignar').addClass('disabled');
-    }/* else if (partition > 4098) {
-      $(".textoAlertPart").text("La cantidad máxima de particiones que puede crear es de 4096");
-      $('.alertPart').addClass('show');
-      $('#btn-asignar').addClass('disabled');
-    }  */
+    }
   console.log('partition',partition)
   return partition
   });
@@ -440,13 +432,13 @@ alert('hola')
         var totalinput = sizepartinput*partition; console.log('el total es ',totalinput);
 
           if (sizepartinput == 0){
-            $(".textoAlertPlan").text("Debe ingresar un número mayor a cero.");
-            $('.alertPlan').addClass('show');
+            $(".textoAlertPart").text("Debe ingresar un número mayor a cero.");
+            $('.alertPart').addClass('show');
             $('#btn-asignar').addClass('disabled');
           } 
           if (totalinput > sizeMemory){
-            $(".textoAlertPlan").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
-            $('.alertPlan').addClass('show');
+            $(".textoAlertPart").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
+            $('.alertPart').addClass('show');
             $('#btn-asignar').addClass('disabled');
           }
         }
@@ -695,83 +687,9 @@ alert('hola')
   });
  //--------------------------------------------------------------------------
 
-  //Formulario
+  /* //Formulario
   var raf=0;
   var maxraf=5;
   var cpuList = []
-  var esList = []
-  //agregar rafagas dinamicas
-  $('#rafdynamicId').off().on('click', '.btn-add-raf', function(e){
+  var esList = [] */
 
-      e.preventDefault();
-      console.log('raf: ',raf, ' maxraf: ', maxraf);
-
-        if(raf < maxraf){
-
-          var controlForm = $('#rafdynamicId:first'),
-              currentEntry = $(this).parents('.entryRaf:first');
-              console.log('controlForm1: ',controlForm);
-          //rafaga de cpu ingresada
-          var cpu = currentEntry.find('.inputcpu').val();
-          var es = currentEntry.find('.inputes').val();
-
-          cpu = parseInt(cpu);
-          es = parseInt(es);
-          
-          if (cpu > 0 && es!=0 ) {
-            $('.alertRaf').removeClass('alert-success');
-            $('.alertRaf').addClass('alert-danger');
-            $(".alertRaf").text("Debes ingresar un valor en E/S mayor a cero.");
-          }else { 
-            if (cpu != 0 && es > 0 ) {
-              $('.alertRaf').removeClass('alert-success');
-              $('.alertRaf').addClass('alert-danger');
-              $(".alertRaf").text("Debes ingresar un valor en CPU mayor a cero.");
-            }
-          };
-          
-          if (cpu > 0 && es > 0 ) {
-            $('.alertRaf').removeClass('alert-danger');
-            $('.alertRaf').addClass('alert-success');
-            $(".alertRaf").text("5 es la cantidad máxima de ráfagas que puede agregar.");
-            raf = raf + 1;
-            //se puede agregar particion
-            console.log('raf: ',cpu);
-            console.log('cpu: ',cpu);
-            console.log('es: ',es);
-            cpuList.push(cpu);
-            esList.push(es);
-            console.log('La rafaga ingresada es: ',cpuList, esList)//_------------------------------
-            var controlForm = $('#rafdynamicId:first'),
-                currentEntry = $(this).parents('.entryRaf:first')
-                newEntry = $(currentEntry.clone()).appendTo(controlForm);
-
-              newEntry.find('.inputcpu').val('');
-              newEntry.find('.inputes').val('');
-
-              newEntry.find('.textCpu').text("CPU " + raf);
-              newEntry.find('.textEs').text("E/S " + raf);
-              $(this).parents('.entryRaf:first').addClass('divDelete'+raf);
-
-              controlForm.find('.entryRaf:not(:last) .inputcpu')
-                .addClass('classDisabled')
-                .removeClass('inputcpu')
-                .prop("disabled", true);
-
-              controlForm.find('.entryRaf:not(:last) .inputes')
-                  .addClass('classDisabled')
-                  .removeClass('inputes')
-                  .prop("disabled", true);
-
-              controlForm.find('.entryRaf:not(:last) .btn-add-raf')
-                  .removeClass('btn-add-raf').addClass('btn-remove-raf')
-                  .removeClass('btn-outline-info').addClass('btn-outline-danger')
-                  .attr('onClick', 'removeElement('+raf+');')
-                  .html('<span class="glyphicon glyphicon-minus deleteInput">Quitar</span>');
-          }
-          if(raf == 5){
-            $('.alertRaf').removeClass('alert-success');
-            $('.alertRaf').addClass('alert-danger');
-          }
-        }
-  });
