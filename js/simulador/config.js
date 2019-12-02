@@ -1,21 +1,29 @@
 
   console.log('activo config.js')
   //Ambiente de variables
-  //var sizeMemory = 8192; // Tamaño de memoria
-  var typeMemory = "Variable"; // tipo de Memoria
-  var fitMemory = "First Fit"; //Ajuste de memoria
-  var algorithm = "FCFS"; //Algoritmo de Planificacion
-  var generalQuantum = 0; // Quantum para roundRobin
-  var arrayProcess = []; //Arreglo con los procesos importados de la BD
-  var arrayProcGraf = [];
-  var procesosTerminados = []; // cola de procesos Terminado
-  var particiones = []; // Memoria variable
-  var colaListo = []; //Cola de procesos Listos
-  var cont = 0;//contador de Particiones fijas
-  var maxpart = 5; //cantidad maxima de particiones fijas
-  var memFija = []; // memoria fija
-  var tiempo = 0
-  var lenArrayProcess = 0
+  let typeMemory = "Variable"; // tipo de Memoria
+  let fitMemory = "First Fit"; //Ajuste de memoria
+  let algorithm = "FCFS"; //Algoritmo de Planificacion
+  let generalQuantum = 0; // Quantum para roundRobin
+  let sizeMemoryCpu = 4096; // Tamaño de memoria cpu
+  let sizeMemory = 8192; // Tamaño de memoria planificador
+  let sizeMemoryDisp = 0; //Tamaño de memoria disponible para el planificador
+  let partition = 0; //Numero de particiones fijas de la memoria
+  let totalpart = 0; //Valor de cada particion
+  let totaldisp = 0; //Tamaño restante de la memoria
+  let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
+  let porcMemoryDispCpu = 0; //Porcentaje restante de la memoria total utilizado por la CPU
+  let arrayProcess = []; //Arreglo con los procesos importados de la BD
+  let arrayProcGraf = [];
+  let procesosTerminados = []; // cola de procesos Terminado
+  let particiones = []; // Memoria letiable
+  let colaListo = []; //Cola de procesos Listos
+  let cont = 0;//contador de Particiones fijas
+  let maxpart = 5; //cantidad maxima de particiones fijas
+  let memFija = []; // memoria fija
+  let tiempo = 0
+  let lenArrayProcess = 0
+
 
   //Preparamos el entorno de trabajo
   $(function () {
@@ -30,7 +38,7 @@
 
   $(document).ready(function(){
 
-    $("#Memoryinput, #controlidpart, #tam-memory, #tbodyID, inputParts, .alertRR, .priodInput, .sizeInput, .arrivalInput, .lastCpu, .inputcpu, .inputes").keydown(function(event) {
+    $("#Memoryinput, #controlidpart, #tam-memory, #tam-memory-so, #tbodyID, inputParts, .alertRR, .priodInput, .sizeInput, .arrivalInput, .lastCpu, .inputcpu, .inputes").keydown(function(event) {
 
     //No permite mas de 11 caracteres Numéricos
     if (event.keyCode != 46 && event.keyCode != 8 && event.keyCode != 37 && event.keyCode != 39) 
@@ -51,80 +59,230 @@
             if(event.keyCode != 46 && event.keyCode != 8 && event.keyCode != 37 && event.keyCode != 39)
                 event.preventDefault();
     });
+    $("#cargaprocesos").hide()
+    $("#presentacion").hide()
+ 
   });     
   //Preparamos el entorno de trabajo
   //------------------------------------------------------------------------
-
+  
   //---------------------SECCION CONFIGURACION------------------------------------------
+  /* $('ul#navmenu div li a').off().on('click', function(){
+    $('ul#navmenu div li a').removeClass('text-primary')
+    $(this).addClass('text-primary')
+    var activetab=$(this).attr('href'); console.log(activetab)
+  }); */
 
-  $("#process-btna").on("click", function() {
-    $('.alertMemory').addClass('show')
-    $(".textoAlertMemory").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
-
-    setTimeout(function(){ 
-      $('.alertMemory').removeClass('show');
-      $('.alertMemory').addClass('hide');
-    },3500);
+  $('#config-btna').off().on('click', function(){
+    var isPrimary1 = $('#config-btna').hasClass('text-primary'); console.log(isPrimary1)
+    if (isPrimary1 == false){
+      $('.alertSimu').addClass('show')
+      $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
+      
+      setTimeout(function(){ 
+        $('.alertSimu').removeClass('show');
+        $('.alertSimu').addClass('hide');
+      },3000);
+    }
   });
 
-  $("#presentation-btna").on("click", function() {
-    $('.alertMemory').addClass('show')
-    $(".textoAlertMemory").text('Por favor presione el botón Confirmar para avanzar a la siguinte sección.') 
-
-    setTimeout(function(){ 
-      $('.alertMemory').removeClass('show');
-      $('.alertMemory').addClass('hide');
-    },3500);
+  $('#process-btna').off().on('click', function(){
+    var isPrimary2 = $('#process-btna').hasClass('text-primary'); console.log(isPrimary2)
+    if (isPrimary2 == false){
+      $('.alertSimu').addClass('show')
+      $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
+  
+      setTimeout(function(){ 
+        $('.alertSimu').removeClass('show');
+        $('.alertSimu').addClass('hide');
+      },3000);
+    }
   });
 
-  $("#btn-parts").on( "click", function() {
+  $('#presentation-btna').off().on('click', function(){
+    var isPrimary3 = $('#presentation-btna').hasClass('text-primary'); console.log(isPrimary3)
+    if (isPrimary3 == false){
+      $('.alertSimu').addClass('show')
+      $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
+  
+      setTimeout(function(){ 
+        $('.alertSimu').removeClass('show');
+        $('.alertSimu').addClass('hide');
+      },3000);
+    } 
+  });
+
+  $("#btn-parts").on("click", function() {
     $('#partfijas').removeClass('d-none');
+    /* if ($("#btnconfirmacion").on("click", function() {
+alert('hola')
+    })) */
+    //$('#btnconfirmacion').addClass('disabled');
   });
 
-  $(".quantumIn").keyup(function(){
+  $("#quantumid").keyup(function(){
     var quanto = parseInt($('.quantumIn').val())
+    console.log(quanto)
 
     if (quanto > 0) {
       generalQuantum = quanto;
       $(".algoInfo").text("RR - Q:"+quanto);
     }else {
-      $(".textoAlertProc").text("Debe ingresar un Quantum mayor a cero.");
-      $('.alertProcess').addClass('show');
+      $('.alertPlan').addClass('show');
+      $(".textoAlertPlan").text("Debe ingresar un Quantum mayor a cero.");
+      setTimeout(function(){ 
+        $('.alertPlan').removeClass('show');
+        $('.alertPlan').addClass('hide');
+      },3000);
     }
-
+    return generalQuantum;
   });
+  //control de la seleccion de algoritmo
+  $(".algoInfo").text("FCFS");
+  $("#optionAlgo").change(function(){
+    $("#quantumid").removeClass('disabled');
+    var typeAlgorithm = $("#optionAlgo").find(':selected').text();
+  
+    if (typeAlgorithm == 'FCFS'){
+      algorithm = typeAlgorithm; console.log(algorithm);
+      $(".quantumIn").val("");
+      $(".quantumIn").hide();
+      $(".algoInfo").text("FCFS");
 
-  //--------------------------------
+    } else if (typeAlgorithm == 'Round Robin'){
+        algorithm = typeAlgorithm; console.log(algorithm);
+        $(".quantumIn").show();
+        $(".algoInfo").text("RR");
+
+    } else if (typeAlgorithm == 'Prioridades'){ 
+        algorithm = typeAlgorithm; console.log(algorithm);  
+        $(".quantumIn").val("");
+        $(".quantumIn").hide();
+        $(".algoInfo").text("Prioridades");
+
+      } else if (typeAlgorithm == 'Prioridades SJF'){ 
+        algorithm = typeAlgorithm; console.log(algorithm);
+        $(".quantumIn").val("");
+        $(".quantumIn").hide();
+        $(".algoInfo").text("Prioridades SJF");
+
+      } else if (typeAlgorithm == 'Prioridades SRTF'){ 
+        algorithm = typeAlgorithm; console.log(algorithm);
+        $(".quantumIn").val("");
+        $(".quantumIn").hide();
+        $(".algoInfo").text("Prioridades SRTF");
+    } else {
+        algorithm = typeAlgorithm; console.log(algorithm);
+        $(".quantumIn").hide();
+        $(".algoInfo").text("Multinivel sin Retro");
+    }
+    
+      if (typeAlgorithm == 'Round Robin'){
+      $('.alertRR').removeClass('hide');
+      $('.alertRR').addClass('show');
+      } else{
+      $('.alertRR').removeClass('show');
+      $('.alertRR').addClass('hide');
+      $(".alertRR").addClass("disabled");
+      }
+
+      if (typeAlgorithm == 'Prioridades'){
+        $('.alertPriod').removeClass('hide');
+        $('.alertPriod').addClass('show');
+      } else{
+        $('.alertPriod').removeClass('show');
+        $('.alertPriod').addClass('hide');
+        $(".alertPriod").addClass("disabled");
+      }
+    
+    return algorithm;
+  });
+  //control de la seleccion de algoritmo
+
+  //control de la memoria de la cpu 
+  $("#tam-memory-so").keyup(function(){
+    $('.alertPlan').removeClass('show');
+    $('.alertPlan').addClass('hide');
+    var valorCurrent = parseInt($("#tam-memory-so").val()); 
+    sizeMemoryCpu = valorCurrent;  console.log('sizememoryCPU',sizeMemoryCpu);
+    sizeMemoryDisp = sizeMemory - sizeMemoryCpu;
+    value = Math.round((sizeMemoryCpu*100)/8192);
+    porcMemoryDispCpu = value;
+
+    setTimeout(function(){ 
+      $('#p-memory').text('El tamaño disponible de la memoria es de '+sizeMemoryDisp+' MB.')
+    },1000); 
+
+    if (sizeMemoryCpu < 512){
+      $(".textoAlertPlan").text("El tamaño mínimo de memoria para la CPU es de 512 MB.");
+      $('.alertPlan').addClass('show');
+    }else if (sizeMemoryCpu > 4096) {
+      $(".textoAlertPlan").text("El tamaño máximo de memoria para la CPU es de 4096 MB.");
+      $('.alertPlan').addClass('show');
+    }
+    return sizeMemoryDisp, porcMemoryDispCpu
+  });
+  //control de la memoria de la cpu
+
+  //control de la memoria del planificador  
+  $("#btn-memory").on('click',function(){  
+
+    if(sizeMemoryDisp == 0){
+      $("#tam-memory").addClass("disabled");
+      $('.alertPlan').addClass('show');
+      $(".textoAlertPlan").text("Debe definir el tamaño de la memoria de la CPU.");
+    } else{
+      $('.alertPlan').addClass('d-none');
+      $("#tam-memory").removeClass("disabled"); 
+      $('.alertPlan').removeClass('show');
+      $("#btnconfirmar").removeClass('d-none');
+    }
+  });
+  
+  $("#tam-memory").keyup(function(){
+    $('.alertPlan').removeClass('show');
+    $('.alertPlan').addClass('hide');
+    let valorCurrent = parseInt($("#tam-memory").val());
+    sizeMemory = valorCurrent;  console.log('sizememory',sizeMemory);
+    this.max = sizeMemoryDisp; 
+
+    if (sizeMemory == 0){
+      $(".textoAlertPlan").text("Debe definir un tamaño de memoria mayor a cero.");
+      $('.alertPlan').addClass('show');
+    }else if (sizeMemory > sizeMemoryDisp) {
+      $(".textoAlertPlan").text("El tamaño máximo que puede definir es de "+sizeMemoryDisp+" MB.");
+      $('.alertPlan').addClass('show');
+    }
+    setTimeout(function(){ 
+      $("#btn-type").removeClass('disabled');
+      $("#btn-fit").removeClass('disabled');     
+    },1000); 
+    return sizeMemory
+  });
+  //control de la memoria del planificador
+
   //control del tipo de memoria
   $("#optionType").change(function(){
 
-    var typeMemory = $("#optionType").find(':selected').text();
+    var valueCurrent = $("#optionType").find(':selected').text();
       $(".muted-type").hide();
   
-    if (typeMemory == 'Fija'){
+    if (valueCurrent == 'Fija'){
         $("#btn-parts").removeClass("disabled");
+        $(".optionFitOne").removeClass("d-none");
+        $(".optionFitTwo").addClass("d-none");
         $(".fixedPart").show();
         $(".memInfo").text("Fija");
-        var valueCurrent = typeMemory;
-        console.log(valueCurrent);
+        typeMemory = valueCurrent; console.log(valueCurrent);
         $(".alertMem").addClass("show");
         $("#collapseExample").addClass("show");;
         $(".optionFitTwo").hide();
         $(".optionFitOne").show();
-        var config_part = `
-        <button type="button" class="btn btn-primary" disabled>N° Partición</button>
-        <button type="button" class="btn btn-outline-light-blue ml-4 memInfo" disabled></button>`
-        var config_part_size = `
-        <button type="button" class="btn btn-primary" disabled>Tamaño Partición</button>
-        <button type="button" class="btn btn-outline-light-blue ml-4 memInfo" disabled></button>`
-        $("#config_part").append(config_part);
-        $("#config_part_size").append(config_part_size);
 
     } else {
         $(".fixedPart").hide();
         $(".memInfo").text("Variable");
-        var valueCurrent = typeMemory;
-        console.log(valueCurrent);
+        typeMemory = valueCurrent; console.log(valueCurrent);
         $(".alertMem").removeClass("show");
         $(".alertMem").addClass("hide");
         $(".alertMem").addClass("disabled")
@@ -134,69 +292,89 @@
     }
     return typeMemory;
   });
+
+  $("#btn-type").on('click',function(){  
+
+    if(sizeMemory==8192){
+      $(".alertMem").removeClass("show");
+      $(".alertMem").addClass("disabled")
+      $('.alertPlan').addClass('show');
+      $(".textoAlertPlan").text("Debe definir el tamaño de la memoria del planificador.");
+      $('.alertPlan').addClass('show');
+      $(".textoAlertPlan").text("Debe definir el tamaño de la memoria del planificador.");
+    } else{
+          if(typeMemory == 'Fija'){
+            $(".alertMem").addClass("show");
+            $('.alertMem').removeClass('disabled');
+          } else{
+            $(".optionFitTwo").removeClass("d-none");
+          }
+      $('.alertPlan').removeClass('show');
+      $("#btnconfirmar").removeClass('d-none');
+    }
+  });
   //control del tipo de memoria
   //--------------------------------
   //control de ajuste de memoria
   $("#optionSet").change(function(){
     var setMemory = $("#optionSet").find(':selected').text();
-      $(".muted-set").hide();
 
     if (setMemory == 'Best Fit'){
-        var fitMemory = setMemory;
+        fitMemory = setMemory;
         console.log(fitMemory);
         $(".ajuInfo").text(fitMemory);
 
     } else if (setMemory == 'Worst Fit'){
-        var fitMemory = setMemory;
+        fitMemory = setMemory;
         console.log(fitMemory);
         $(".ajuInfo").text(fitMemory);
 
     } else {
-        var fitMemory = setMemory;
+        fitMemory = setMemory;
         console.log(fitMemory);
         $(".ajuInfo").text(fitMemory);
     }
   return fitMemory;
   });
 
-  function valorParticiones(){
-    var partition = parseInt($("#cantpart").val());
-    var sizeMemory = parseInt($("#tam-memory").val());
+  $('#btnconfirmar').off().on('click', function(){
+    $('#configuracion').hide();
+    $('#config-btna').removeClass('text-primary');
+    $('#config-btna').removeClass('border-primary');
+    $('#process-btna').addClass('disabled')
+    $('#process-btna').addClass('text-primary');
+    $('#process-btna').addClass('border-primary');
+    $('#process-btna').addClass('border-bottom-0');
 
-    var totaldisp = sizeMemory%partition;
-    var totalpart = Math.round(sizeMemory/partition);
-    var porcMemoryDisp = Math.round((sizeMemory*100)/8192);
-    return totalpart, totaldisp, porcMemoryDisp
-  }
+    $(".tamInfo").text(sizeMemory+' MB');
+    $(".memInfo").text(typeMemory);
+    $(".ajuInfo").text(fitMemory);
 
-  $("#tam-memory").keyup(function(){
-    $('.alertMemory').removeClass('show');
-    $('.alertMemory').addClass('hide');
-    var sizeMemory = parseInt($("#tam-memory").val());
-    console.log(sizeMemory);
+    setTimeout(function(){ 
+      $('#cargaprocesos').show();
+    },100); 
+  });
 
-    if (sizeMemory == 0){
-      $(".textoAlertMemory").text("Debe definir un tamaño de memoria mayor a cero.");
-      $('.alertMemory').addClass('show');
-    }else if (sizeMemory > 8192) {
-      $(".textoAlertMemory").text("El tamaño máximo que puede definir es de 8192 MB.");
-      $('.alertMemory').addClass('show');
-    }
-
-    });
+  $('#btnconfirmar2').off().on('click', function(){
+    $('#cargaprocesos').hide();
+    $('#process-btna').removeClass('text-primary');
+    $('#process-btna').removeClass('border-primary');
+    $('#process-btna').addClass('disabled')
+    $('#presentation-btna').addClass('text-primary');
+    $('#presentation-btna').addClass('border-primary');
+    $('#presentation-btna').addClass('border-bottom-0');
+    setTimeout(function(){ 
+      $('#presentacion').show();
+    },100); 
+  });
 
   $("#cantpart").keyup(function(){
     $('.alertPart').removeClass('show');
     $('.alertPart').addClass('hide');
     $('#btn-asignar').removeClass('disabled');
-    var partition = $("#cantpart").val()
-    var sizeMemory = $("#tam-memory").val();
-    var totaldisp = sizeMemory%partition;
-    var porcMemoryDisp = Math.round((sizeMemory*100)/8192);
-   
-    $("#memoria").text('Tamaño Definido: '+sizeMemory+' MB.');
-    $("#disponible").text('Tamaño Disponible: '+totaldisp+' MB.');
-    $("#porcentajeTotal").text('Porcentaje de la memoria total utilizado: '+porcMemoryDisp+'%');
+
+    var valorCurrent2 =  parseInt($("#cantpart").val());
+    partition = valorCurrent2;
   
     if (partition == 0){
       $(".textoAlertPart").text("La cantidad de particiones debe ser un número entero positivo.");
@@ -207,25 +385,39 @@
       $('.alertPart').addClass('show');
       $('#btn-asignar').addClass('disabled');
     }  */
-
+  console.log('partition',partition)
+  return partition
   });
 
   $('.btn-add-part').off().on('click',function(e){
     $('.btn-add-part').addClass('disabled');
     $('.alertMem').removeClass('d-none');
     $('.inputParts').removeClass('disabled');
-    $('#controlidpart').removeClass('d-none');
-    
-    var partition = $("#cantpart").val()
-    var sizeMemory = $("#tam-memory").val();
-    var totalpart = Math.round(sizeMemory/partition);
-    
+    $('#controlidpart').removeClass('d-none');  
     e.preventDefault();
+
+    value1 = Math.round(sizeMemory/partition);
+    value2 = sizeMemory%partition;
+    value3 = Math.round((sizeMemory*100)/8192);
+    totalpart = value1;
+    totaldisp = value2;
+    porcMemoryDisp = value3; 
+    
+    $("#memoria").text('Tamaño Definido: '+sizeMemory+' MB.');
+    $("#disponible").text('Tamaño Disponible: '+totaldisp+' MB.');
+    $("#porcentajeCpu").text('Porcentaje de la memoria total utilizada por la CPU: '+porcMemoryDispCpu+'%');
+    $("#porcentajeTotal").text('Porcentaje de la memoria total utilizada por el Planificador: '+porcMemoryDisp+'%');
+  
+    if (partition == 0){
+      $(".textoAlertPart").text("La cantidad de particiones debe ser un número entero positivo.");
+      $('.alertPart').addClass('show');
+      $('#btn-asignar').addClass('disabled');
+    }
 
     for(var i=0; i<partition; i++){
       var sizepartinput = parseInt($('.inputParts'+i).val()); console.log(sizepartinput);
       if (isNaN(sizepartinput)){
-          sizepartinput = totalpart;console.log("valor convertido: ",sizepartinput)
+          sizepartinput = totalpart; console.log("valor convertido: ",sizepartinput)
         }
       var num_part = i+1;         
       var porcPartUtil = Math.round((sizepartinput*100)/sizeMemory);
@@ -235,7 +427,7 @@
           <input class="inputParts${num_part} text-center w-25" name="fields[]" value="${totalpart}" placeholder="Ingrese el tamaño en MB" id="Memoryinput"/>
           </div>`
       $('#add-field').append(new_partition);
-      $("#porcentajeDef").text('Porcentaje utilizado por partición: '+ porcPartUtil+'%');
+      //$("#porcentajeDef").text('Porcentaje utilizado por partición: '+ porcPartUtil+'%');
     }
 
     $("#add-field").off().keyup('.inputParts',function(){
@@ -248,17 +440,18 @@
         var totalinput = sizepartinput*partition; console.log('el total es ',totalinput);
 
           if (sizepartinput == 0){
-            $(".textoAlertPart").text("Debe ingresar un número mayor a cero.");
-            $('.alertPart').addClass('show');
+            $(".textoAlertPlan").text("Debe ingresar un número mayor a cero.");
+            $('.alertPlan').addClass('show');
             $('#btn-asignar').addClass('disabled');
           } 
           if (totalinput > sizeMemory){
-            $(".textoAlertPart").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
-            $('.alertPart').addClass('show');
+            $(".textoAlertPlan").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
+            $('.alertPlan').addClass('show');
             $('#btn-asignar').addClass('disabled');
           }
         }
     });
+    return totalpart, totaldisp, porcMemoryDisp
   });
 
   $("#btn-asignar").on( "click", function() {
@@ -267,77 +460,28 @@
     $('.alertPart').addClass('show');
     $(".textoAlertPart").text("Las particiones han sido asignadas correctamente.");
 
+    if(typeMemory == 'Fija'){
+     /*  var config_part = `
+      <button type="button" class="btn btn-primary" disabled>Pariticiones</button>
+      <button type="button" class="btn btn-outline-light-blue partInfo" disabled>${partition}</button>`
+      $("#config_part").append(config_part); */
+      for(var i=0; i<partition; i++){
+        num_part = i+1;
+        var config_part_size = `
+        <button type="button" class="btn btn-outline-secondary" disabled>Part. ${num_part}: ${totalpart} MB</button>
+        `
+        $("#config_part_size").append(config_part_size);
+      }
+      
+    }
+
     setTimeout(function() {
       alert('Por favor presione el botón Confirmar para avanzar a la siguinte sección.');            
     },1000);
   });
 
   //---------------------SECCION PROCESOS------------------------------------------
-//control de la seleccion de algoritmo
-$("#optionAlgo").change(function(){
-  var typeAlgorithm = $("#optionAlgo").find(':selected').text();
-  $(".muted-algo").hide();
 
-  if (typeAlgorithm == 'FCFS'){
-    algorithm = typeAlgorithm;
-    console.log(algorithm);
-    $(".quantumIn").val("");
-    $(".quantumIn").hide();
-    $(".algoInfo").text("FCFS");
-
-  } else if (typeAlgorithm == 'Round Robin'){
-      algorithm = typeAlgorithm;
-      console.log(algorithm);
-      $(".quantumIn").show();
-      $(".algoInfo").text("RR");
-
-  } else if (typeAlgorithm == 'Prioridades'){ 
-      algorithm = typeAlgorithm;
-      console.log(algorithm);
-      $(".quantumIn").val("");
-      $(".quantumIn").hide();
-      $(".algoInfo").text("Prioridades");
-
-    } else if (typeAlgorithm == 'Prioridades SJF'){ 
-      algorithm = typeAlgorithm;
-      console.log(algorithm);
-      $(".quantumIn").val("");
-      $(".quantumIn").hide();
-      $(".algoInfo").text("Prioridades SJF");
-
-    } else if (typeAlgorithm == 'Prioridades SRTF'){ 
-      algorithm = typeAlgorithm;
-      console.log(algorithm);
-      $(".quantumIn").val("");
-      $(".quantumIn").hide();
-      $(".algoInfo").text("Prioridades SRTF");
-  } else {
-      algorithm = typeAlgorithm;
-      console.log(algorithm);
-      $(".quantumIn").hide();
-      $(".algoInfo").text("Multinivel sin Retro");
-  }
-  
-    if (typeAlgorithm == 'Round Robin'){
-    $('.alertRR').removeClass('hide');
-    $('.alertRR').addClass('show');
-    } else{
-    $('.alertRR').removeClass('show');
-    $('.alertRR').addClass('hide');
-    $(".alertRR").addClass("disabled");
-    }
-
-    if (typeAlgorithm == 'Prioridades'){
-      $('.alertPriod').removeClass('hide');
-      $('.alertPriod').addClass('show');
-    } else{
-      $('.alertPriod').removeClass('show');
-      $('.alertPriod').addClass('hide');
-      $(".alertPriod").addClass("disabled");
-    }
-    return algorithm;
-  });
-  //control de la seleccion de algoritmo
   // Funcion para añadir una nueva fila en la tabla
   var idProcess=0;
   $("#btn-añadir").on("click", function() {
@@ -369,23 +513,23 @@ $("#optionAlgo").change(function(){
     $(this).parents("tr").remove();
   });
 
-  $("#config-btnb").on("click", function() {
-    $('.alertProcs').addClass('show')
-    $(".textoAlertProcs").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
+  /* $("#config-btna").on("click", function() {
+    $('.alertSimu').addClass('show')
+    $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
 
     setTimeout(function(){ 
-      $('.alertProcs').removeClass('show');
-      $('.alertProcs').addClass('hide');
+      $('.alertSimu').removeClass('show');
+      $('.alertSimu').addClass('hide');
     },3500);
-  });
+  }); */
 
-  $("#presentation-btnb").on("click", function() {
-    $('.alertProcs').addClass('show')
-    $(".textoAlertProcs").text('Por favor presione el botón Confirmar para avanzar a la siguinte sección.') 
+  $("#presentation-btna").on("click", function() {
+    $('.alertSimu').addClass('show')
+    $(".textoAlertSimu").text('Por favor presione el botón Confirmar para avanzar a la siguinte sección.') 
 
     setTimeout(function(){ 
-      $('.alertProcs').removeClass('show');
-      $('.alertProcs').addClass('hide');
+      $('.alertSimu').removeClass('show');
+      $('.alertSimu').addClass('hide');
     },3500);
   });
   ////--------------------------MAPA DE MEMORIA-------------------------------------------
@@ -439,25 +583,25 @@ $("#optionAlgo").change(function(){
     }); // end am4core.ready()
 
     //---------------------SECCION PRESENTACION------------------------------------------
-    $("#config-btnc").on("click", function() {
-      $('.alertPresent').addClass('show')
-      $(".textoAlertPresent").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
+    /* $("#config-btna").on("click", function() {
+      $('.alertSimu').addClass('show')
+      $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
   
       setTimeout(function(){ 
-        $('.alertPresent').removeClass('show');
-        $('.alertPresent').addClass('hide');
+        $('.alertSimu').removeClass('show');
+        $('.alertSimu').addClass('hide');
       },3500);
-    });
+    }); */
   
-    $("#process-btnc").on("click", function() {
-      $('.alertPresent').addClass('show')
-      $(".textoAlertPresent").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
+    /* $("#process-btna").on("click", function() {
+      $('.alertSimu').addClass('show')
+      $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
   
       setTimeout(function(){ 
-        $('.alertPresent').removeClass('show');
-        $('.alertPresent').addClass('hide');
+        $('.alertSimu').removeClass('show');
+        $('.alertSimu').addClass('hide');
       },3500);
-    });
+    }); */
 
 //--------------------------GANTT DE PROCESOS-------------------------------------------
     am4core.ready(function() {

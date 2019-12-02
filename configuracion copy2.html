@@ -30,7 +30,8 @@
         <h2 class="lead blue-grey-text pl-5 col-md-8"><strong>Simulador de Planificación de procesos - Grupo C1G6</strong></h2>   
     </nav>
     <!--Cabecera-->
-
+    
+    <!--MENU-->
     <div class="container-fluid mt-4">
         <ul class="nav nav-tabs nav-justified row py-2">   
             <div class="col-sm-12 col-md-3">
@@ -81,8 +82,31 @@
                                 <strong>Configuración del Planificador</strong>
                             </h5>     
                             <div class="card-body px-lg-5 pt-0 memorySelect">
+                                <div class="row mt-2 ml-1">
+                                    <span class="col-md-12 px-0 lead">Política de Planificación</span>
+                                    <select class="col-md-6 browser-default custom-select mr-3 mt-3 mb-3" id="optionAlgo">
+                                        <option value="" disabled selected>Selecciona</option>
+                                        <option class="optionPlaningOne" value="FCFS">FCFS</option>
+                                        <option class="optionPlaningTwo" value="RR">Round Robin</option>
+                                        <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
+                                        <option class="optionPlaningFour" value="SJF">Prioridades SJF</option>
+                                        <option class="optionPlaningFive" value="SRTF">Prioridades SRTF</option>
+                                        <option class="optionPlaningSix" value="Multinivel">Multinivel sin Retro</option>         
+                                    </select> 
+                                    <div class="col-md-4 text-center fade hide alertRR ml-3 mt-3 px-0 quantumIn" id="quantumid">
+                                        <input type="text" class="form-control" placeholder="Quantum">
+                                    </div>
+                                </div>
+
                                 <span class="lead">Tamaño de la Memoria</span>
-                                <div class="md-form">
+                                <div class="md-form my-3">
+                                    <input type="number" min=1 max=8192 id="tam-memory" class="form-control w-75">
+                                    <label for="numberExample">Definir tamaño en MB</label>
+                                </div>
+                                <p class="text-muted">El tamaño máximo de la memoria es de 8192 MB.</p>
+
+                                <span class="lead">Tamaño de la Memoria</span>
+                                <div class="md-form my-3">
                                     <input type="number" min=1 max=8192 id="tam-memory" class="form-control w-75">
                                     <label for="numberExample">Definir tamaño en MB</label>
                                 </div>
@@ -109,25 +133,10 @@
                                     <option class="optionFitOne" value="Best Fit">Best Fit</option>
                                 </select>
                                 </div>
-                                <div class="row mt-4 ml-1">
-                                    <span class="col-md-12 px-0 lead">Política de Planificación</span>
-                                    <select class="col-md-6 browser-default custom-select mr-3 mt-3 id="optionAlgo">
-                                        <option value="" disabled selected>Selecciona</option>
-                                        <option class="optionPlaningOne" value="FCFS">FCFS</option>
-                                        <option class="optionPlaningTwo" value="RR">Round Robin</option>
-                                        <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
-                                        <option class="optionPlaningFour" value="SJF">Prioridades SJF</option>
-                                        <option class="optionPlaningFive" value="SRTF">Prioridades SRTF</option>
-                                        <option class="optionPlaningSix" value="Multinivel">Multinivel sin Retro</option>         
-                                    </select> 
-                                    <div class="col-md-4 text-center fade hide alertRR ml-3 mt-3 px-0 quantumIn" id="btn-parts">
-                                        <input type="text" id="quantumid" class="form-control" placeholder="Quantum">
-                                    </div>
-                                </div>
                             </div>
                             <!--Confirmar formulario--> 
-                            <div class="mb-3 d-flex justify-content-center" id="btnconfirmacion">
-                                <a href ="./procesos.html" class="btn btn-outline-light-blue z-depth-0 waves-effect w-75" type="submit">Confirmar</a>  
+                            <div class="mb-3 d-flex justify-content-center" >
+                                <a id="btnconfirmar" class="btn btn-outline-light-blue z-depth-0 waves-effect w-75" type="submit">Confirmar</a>  
                             </div>
                             <!--Confirmar formulario--> 
                         </div>
