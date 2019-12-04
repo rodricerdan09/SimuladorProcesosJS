@@ -14,7 +14,8 @@
   let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
   let porcMemoryDispCpu = 0; //Porcentaje restante de la memoria total utilizado por la CPU
   let arrayProcess = []; //Arreglo con los procesos importados de la BD
-  let particiones = []; // Memoria letiable
+  let arrayPartitions = []; // Memoria letiable
+  let count = 0;
  /*  let arrayProcGraf = [];
   let procesosTerminados = []; // cola de procesos Terminado
   let colaListo = []; //Cola de procesos Listos
@@ -87,7 +88,8 @@
   });
 
   $('#process-btna').off().on('click', function(){
-    var isPrimary2 = $('#process-btna').hasClass('text-primary'); console.log(isPrimary2)
+    const isPrimary2 = $('#process-btna').hasClass('text-primary')
+    const isBorder = $('#process-btna').hasClass('border-primary')
     if (isPrimary2 == false){
       $('.alertSimu').addClass('show')
       $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
@@ -97,6 +99,10 @@
         $('.alertSimu').addClass('hide');
       },3000);
     }
+    /* if (isBorder==false){ 
+      $('.alertSimu').addClass('show')
+      $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.")  
+    } */
   });
 
   $('#presentation-btna').off().on('click', function(){
@@ -109,11 +115,16 @@
         $('.alertSimu').removeClass('show');
         $('.alertSimu').addClass('hide');
       },3000);
-    } 
+    } else{
+      $('#presentation-btna').addClass('disabled');
+    }
   });
 
   $("#btn-parts").on("click", function() {
     $('#partfijas').removeClass('d-none');
+    setTimeout(function(){ 
+      $('#form-fijas').show();
+    },100); 
   });
 
   $("#quantumid").keyup(function(){
@@ -238,6 +249,7 @@
   $("#tam-memory").keyup(function(){
     $('.alertPlan').removeClass('show');
     $('.alertPlan').addClass('hide');
+    $('#btnconfirmar').removeClass('disabled');
     let valorCurrent = parseInt($("#tam-memory").val());
     sizeMemory = valorCurrent;  console.log('sizememory',sizeMemory);
     this.max = sizeMemoryDisp; 
@@ -245,9 +257,11 @@
     if (sizeMemory == 0){
       $(".textoAlertPlan").text("Debe definir un tamaño de memoria mayor a cero.");
       $('.alertPlan').addClass('show');
+      $('#btnconfirmar').addClass('disabled');
     }else if (sizeMemory > sizeMemoryDisp) {
       $(".textoAlertPlan").text("El tamaño máximo que puede definir es de "+sizeMemoryDisp+" MB.");
       $('.alertPlan').addClass('show');
+      $('#btnconfirmar').addClass('disabled');
     }
     setTimeout(function(){ 
       $("#btn-type").removeClass('disabled');
@@ -290,7 +304,7 @@
   });
 
   $("#btn-type").on('click',function(){  
-
+    $('#btnconfirmar').removeClass('disabled');
     if(sizeMemory==8192){
       $(".alertMem").removeClass("show");
       $(".alertMem").addClass("disabled")
@@ -298,6 +312,7 @@
       $(".textoAlertPlan").text("Debe definir el tamaño de la memoria del planificador.");
       $('.alertPlan').addClass('show');
       $(".textoAlertPlan").text("Debe definir el tamaño de la memoria del planificador.");
+      $('#btnconfirmar').addClass('disabled');
     } else{
           if(typeMemory == 'Fija'){
             $(".alertMem").addClass("show");
@@ -414,13 +429,26 @@
       var num_part = i+1;         
       var porcPartUtil = Math.round((sizepartinput*100)/sizeMemory);
       var new_partition = `
-        <div class="col-sm-12 d-flex justify-content-center mb-3">
+        <div id ="inputPartsId" class="col-sm-12 d-flex justify-content-center mb-3">
           <span class="input-group-text textPart md-addon py-0">Partición ${num_part}</span>
           <input class="inputParts${num_part} text-center w-25" name="fields[]" value="${totalpart}" placeholder="Ingrese el tamaño en MB" id="Memoryinput"/>
           </div>`
       $('#add-field').append(new_partition);
       //$("#porcentajeDef").text('Porcentaje utilizado por partición: '+ porcPartUtil+'%');
+      arrayPartitions[i]=totalpart;
     }
+    console.log("array particiones: ",arrayPartitions)
+
+    $("#inputPartsId").off().keyup('.inputParts'+num_part,function(){
+      for(var i=0; i<partition; i++){
+        var valueCurrent = parseInt($('.inputParts'+i).val()); console.log("valuecurrent ",valueCurrent);
+        if (isNaN(valueCurrent)){
+          valueCurrent = totalpart;
+        }
+        arrayPartitions[i-1]=valueCurrent;console.log(arrayPartitions);
+      }
+    })
+    //console.log("array particiones2: ",arrayPartitions)
 
     $("#add-field").off().keyup('.inputParts',function(){
       $('.alertPart').removeClass('show');
@@ -463,10 +491,8 @@
         <button type="button" class="btn btn-outline-secondary" disabled>Part. ${num_part}: ${totalpart} MB</button>
         `
         $("#config_part_size").append(config_part_size);
-      }
-      
+      }     
     }
-
     setTimeout(function() {
       alert('Por favor presione el botón Confirmar para avanzar a la siguinte sección.');            
     },1000);
@@ -475,45 +501,99 @@
   //---------------------SECCION PROCESOS------------------------------------------
 
   // Funcion para añadir una nueva fila en la tabla
-  var idProcess=0;
+  let idProcess=0;
   $("#btn-añadir").on("click", function() {
-    
+    if(count>=1){
+      $(".add-raf").addClass('disabled')
+      $(".del-raf").addClass('disabled')
+    }
+    count=0;
     if (idProcess < 20) {
-      idProcess++;
-    } else if (idProcess = idProcess++) {
-        idProcess = 0;
+      idProcess+=1;
+    } else if (idProcess = (idProcess-1)) {
+      idProcess+=1;
     }
     var nuevaFila=`
-                  <tr class="hide">
+                  <tr id="row${idProcess}" class="hide">
                     <td class="pt-3-half" contenteditable="false">${idProcess}</td>
                     <td class="pt-3-half" contenteditable="false">Proc_${idProcess}</td>
                     <td class="pt-3-half" type="number" contenteditable="true"></td>
                     <td class="pt-3-half" type="number" contenteditable="true"></td>
-                    <td class="pt-3-half" type="number" contenteditable="true"></td>
-                    <td class="pt-3-half" type="number" contenteditable="true"></td>
-                    <td class="pt-3-half" type="number" contenteditable="true"></td>
+                    <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
+                    <td>
+                        <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
+                    </td>
+                    <td>
+                        <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
+                    </td>
                     <td>
                       <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
                     </td>
                   </tr>` 
     $("#tbodyID").append(nuevaFila);
+    return idProcess, count;
   });
 
-  // evento para eliminar la fila
+  // evento para agregar rafagas  
+  $("#tableID").off().on("click", ".add-raf", function(){
+    $('.alertTable').removeClass('show');
+    $('.alertTable').addClass('hide');
+    let rafagas = $('#raf').children('td').length
+    count+=1;console.log('count:',count)
+   
+      $(`#tbodyID #row${idProcess} #raf`).each(function(){
+        $(this).append(`<td class="pt-3-half" type="number" contenteditable="true">CPU</td>
+                        <td class="pt-3-half" type="number" contenteditable="true">E/S</td>
+                        <td class="pt-3-half" type="number" contenteditable="true">CPU</td>`);
+        $(this).attr('contenteditable',false);
+
+          if(rafagas==9){
+            count-=1
+            $(".add-raf").addClass('disabled')
+            $(".textoAlertTable").text("El máximo número de rafagas que puede agregar es de 4.");
+            $('.alertTable').addClass('show');
+            $('.alertTable').removeClass('hide');
+            console.log($('#raf').children('td').length);
+          } 
+        })
+        /* $('#tableID').find('tr').each(function(){ 
+          $(this).find('th').eq(4).after('<th>HEADER</th><th>HEADER</th>');      
+          $(this).find('td').eq(4).after(`<td class="pt-3-half" type="number" contenteditable="true"></td>
+          */
+         return count
+   });
+
+  // evento para eliminar las rafagas
+  
+  $("#tableID").on("click", ".del-raf", function(){ 
+    $('.alertTable').removeClass('show');
+    $('.alertTable').addClass('hide'); 
+    let rafagas = $('#raf').children('td').length
+    console.log('rafagas',rafagas)
+    console.log('count:', count)
+    count-=1
+    if (rafagas <= 12){
+      $('#tableID').find('tr').each(function(){       
+            var col=$(this).find('td:eq(17)').children().removeClass('disabled')
+            console.log('col:', col)
+      })
+    } else if (count == 0){
+      count+=1;
+    }
+      for(let i=3; i>0; --i){
+        $(`#tbodyID #row${idProcess} #raf`).each(function(){
+        $(this).find('td').eq(3).remove();
+      })   
+    }
+    return count
+  });
+
+ // Funcion para eliminar una nueva fila de la tabla
   $("#tableID").on("click", ".del", function(){
-    if (idProcess > 0) {--idProcess;} 
+    if (idProcess > 0) {idProcess-=1;} 
     $(this).parents("tr").remove();
+    return idProcess;
   });
-
-  /* $("#config-btna").on("click", function() {
-    $('.alertSimu').addClass('show')
-    $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
-
-    setTimeout(function(){ 
-      $('.alertSimu').removeClass('show');
-      $('.alertSimu').addClass('hide');
-    },3500);
-  }); */
 
   $("#presentation-btna").on("click", function() {
     $('.alertSimu').addClass('show')
@@ -526,10 +606,6 @@
   });
   ////--------------------------MAPA DE MEMORIA-------------------------------------------
     am4core.ready(function() {
-    var partition = $("#cantpart").val()
-    var sizeMemory = $("#tam-memory").val();
-    var cant_partitions = $("#cantpart").val();
-    var totalpart = Math.round(sizeMemory/partition);
     
     // Themes begin
     am4core.useTheme(am4themes_animated);
@@ -538,7 +614,7 @@
     // Create chart instance
     var chart = am4core.create("chartdiv", am4charts.PieChart);
     
-    for(var i=0; i<cant_partitions; i++){
+    for(var i=0; i<partition; i++){
     }
     // Add data
     chart.data = [ {
@@ -575,33 +651,9 @@
     }); // end am4core.ready()
 
     //---------------------SECCION PRESENTACION------------------------------------------
-    /* $("#config-btna").on("click", function() {
-      $('.alertSimu').addClass('show')
-      $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
-  
-      setTimeout(function(){ 
-        $('.alertSimu').removeClass('show');
-        $('.alertSimu').addClass('hide');
-      },3500);
-    }); */
-  
-    /* $("#process-btna").on("click", function() {
-      $('.alertSimu').addClass('show')
-      $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
-  
-      setTimeout(function(){ 
-        $('.alertSimu').removeClass('show');
-        $('.alertSimu').addClass('hide');
-      },3500);
-    }); */
 
 //--------------------------GANTT DE PROCESOS-------------------------------------------
     am4core.ready(function() {
-
-      // Themes begin
-      am4core.useTheme(am4themes_animated);
-      // Themes end
-      
       var chart = am4core.create("chartdiv-gantt", am4charts.XYChart);
       chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
       
@@ -670,7 +722,7 @@
       
       chart.scrollbarX = new am4core.Scrollbar();
       
-      }); // end am4core.ready()
+      }); 
 
   $(".sizeInput").keyup(function(){
 
