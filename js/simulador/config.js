@@ -223,9 +223,14 @@
     if (sizeMemoryCpu < 512){
       $(".textoAlertPlan").text("El tamaño mínimo de memoria para la CPU es de 512 MB.");
       $('.alertPlan').addClass('show');
+      $('#btn-memory').addClass('disabled');
     }else if (sizeMemoryCpu > 4096) {
       $(".textoAlertPlan").text("El tamaño máximo de memoria para la CPU es de 4096 MB.");
       $('.alertPlan').addClass('show');
+      $('#btn-memory').addClass('disabled');
+    } else{
+
+      $('#btn-memory').removeClass('disabled');
     }
     return sizeMemoryDisp, porcMemoryDispCpu
   });
@@ -258,10 +263,14 @@
       $(".textoAlertPlan").text("Debe definir un tamaño de memoria mayor a cero.");
       $('.alertPlan').addClass('show');
       $('#btnconfirmar').addClass('disabled');
+      $('#optionType').addClass('disabled');
     }else if (sizeMemory > sizeMemoryDisp) {
       $(".textoAlertPlan").text("El tamaño máximo que puede definir es de "+sizeMemoryDisp+" MB.");
       $('.alertPlan').addClass('show');
       $('#btnconfirmar').addClass('disabled');
+      $('#optionType').addClass('disabled');
+    } else{
+      $('#optionType').removeClass('disabled');
     }
     setTimeout(function(){ 
       $("#btn-type").removeClass('disabled');
@@ -503,10 +512,21 @@
   // Funcion para añadir una nueva fila en la tabla
   let idProcess=0;
   $("#btn-añadir").on("click", function() {
+    let rafagas = $('#raf').children('td').length
+    
+    $('.alertTable').removeClass('show');
+    $('.alertTable').addClass('hide');
+
     if(count>=1){
       $(".add-raf").addClass('disabled')
       $(".del-raf").addClass('disabled')
+    } else if (rafagas == 0 && count >=1){
+      $("tr-rafaga").addClass('disabled')
+      $(".textoAlertTable").text("Debe agregar como mínimo una ráfaga al proceso.");
+      $('.alertTable').addClass('show');
+      $('.alertTable').removeClass('hide'); 
     }
+    
     count=0;
     if (idProcess < 20) {
       idProcess+=1;
@@ -564,7 +584,6 @@
    });
 
   // evento para eliminar las rafagas
-  
   $("#tableID").on("click", ".del-raf", function(){ 
     $('.alertTable').removeClass('show');
     $('.alertTable').addClass('hide'); 

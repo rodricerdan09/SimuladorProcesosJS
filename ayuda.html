@@ -196,7 +196,15 @@
                <div class="col-sm-12 col-md-6 my-auto">
                  <p class="text-justify mt-4">En esta sección podrá ingresar la cantidad de particiones que desee, siempre respetando un limite máximo de particiones que dependerá del tamaño de memoria que haya ingresado con anterioridad. 
                    <br><br>
-                 De acuerdo al tamaño de memoria elegida y a la cantidad de particiones haya definido, el planificador por defecto realizara la división del tamaño de la memoria entre cada partición. Aunque tambien le da la opción de poder definirlo por Usted mismo.
+                  De acuerdo al tamaño de memoria elegida y a la cantidad de particiones que haya definido, el simulador por defecto realizará la división del tamaño de la memoria entre cada partición. Aunque tambien le da la opción de poder definirlo por Usted mismo.
+                  <br><br>
+                  Una vez que se hayan agregado las particiones, el simulador mostrará en pantalla información adicional como ser:
+                  <ul>
+                    <li>El tamaño de memoria del planificador definido por el usuario.</li>
+                    <li>El tamaño disponible de la memoria una vez que se hayan asignado las particiones.</li>
+                    <li>El porcentaje de la memoria total utilizado por la CPU.</li>
+                    <li>El porcentaje de la memoria total utilizado por el Planificador.</li>
+                  </ul>
                  </p>
                </div>
                <!-- Generador de Particiones-->
@@ -234,13 +242,13 @@
           <p class="text-justify mt-3">
             Una vez agregado un nuevo proceso podrá colocar los valores dentro de cada columna. Además dentro de la misma fila del proceso podrá tanto eliminar el proceso como asignar las ráfagas de CPU y E/S corresponientes a dicho proceso.
             Podrá ingresar hasta un máximo de 4 ráfagas de CPU y de E/S. <br/>
-            Las rafagas de CPU y de E/S seran agragadas de a 3, teniendo como mínimo una ráfaga dentro del proceso y eliminadas de la misma forma. 
+            Las ráfagas de CPU y de E/S serán agragadas de a 3, teniendo como mínimo una ráfaga dentro del proceso y eliminadas de la misma forma. 
          </p>  
         </div>
          <!-- Presentación-->
          <div class="col-sm-12 col-md-12 mt-5">
           <h5 class="display-4 lead blue-grey-text mb-3 d-flex justify-content-center">Presentación</h5>
-          <p class="lead text-justify">En esta sección podrá visualizar los gráficos y resultados finales del planificador de acuerdo a la configuración definida anteriormente</p>
+          <p class="lead text-justify">En esta sección podrá visualizar los gráficos y resultados finales del planificador de acuerdo a la configuración definida anteriormente.</p>
         </div> 
         <div class="col-md-6 mt-4">
           <img src="./img/gantt.png" alt="gantt" class="img-fluid">
