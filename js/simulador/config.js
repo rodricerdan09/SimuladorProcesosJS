@@ -229,7 +229,6 @@
       $('.alertPlan').addClass('show');
       $('#btn-memory').addClass('disabled');
     } else{
-
       $('#btn-memory').removeClass('disabled');
     }
     return sizeMemoryDisp, porcMemoryDispCpu
@@ -238,7 +237,6 @@
 
   //control de la memoria del planificador  
   $("#btn-memory").on('click',function(){  
-
     if(sizeMemoryDisp == 0){
       $("#tam-memory").addClass("disabled");
       $('.alertPlan').addClass('show');
@@ -369,10 +367,23 @@
     $(".tamInfo").text(sizeMemory+' MB');
     $(".memInfo").text(typeMemory);
     $(".ajuInfo").text(fitMemory);
-
+    $('.alertSimu').removeClass('alert-danger');
+    $('.alertSimu').addClass('alert-success');
+    $('.alertSimu').addClass('show');
+    $(".textoAlertSimu").text("Su configuración se ha guardado correctamente.");
+    
+    setTimeout(function(){ 
+      $('.alertSimu').removeClass('show');
+      $('.alertSimu').addClass('hide');    
+    },2500);
+    setTimeout(function(){ 
+      $('.alertSimu').removeClass('alert-success');
+      $('.alertSimu').addClass('alert-danger');
+    },3000); 
     setTimeout(function(){ 
       $('#cargaprocesos').show();
     },100); 
+
   });
 
   $('#btnconfirmar2').off().on('click', function(){
@@ -383,6 +394,20 @@
     $('#presentation-btna').addClass('text-primary');
     $('#presentation-btna').addClass('border-primary');
     $('#presentation-btna').addClass('border-bottom-0');
+
+    $('.alertSimu').removeClass('alert-danger');
+    $('.alertSimu').addClass('alert-success');
+    $('.alertSimu').addClass('show');
+    $(".textoAlertSimu").text("Los procesos se han guardado correctamente.");
+    
+    setTimeout(function(){ 
+      $('.alertSimu').removeClass('show');
+      $('.alertSimu').addClass('hide');    
+    },2500);
+    setTimeout(function(){ 
+      $('.alertSimu').removeClass('alert-success');
+      $('.alertSimu').addClass('alert-danger');
+    },3000); 
     setTimeout(function(){ 
       $('#presentacion').show();
     },100); 
@@ -511,11 +536,10 @@
 
   // Funcion para añadir una nueva fila en la tabla
   let idProcess=0;
-  $("#btn-añadir").on("click", function() {
-    let rafagas = $('#raf').children('td').length
-    
+  $("#btn-añadir").on("click", function() {  
     $('.alertTable').removeClass('show');
     $('.alertTable').addClass('hide');
+    let rafagas = $('#raf').children('td').length
 
     if(count>=1){
       $(".add-raf").addClass('disabled')
@@ -551,6 +575,21 @@
                     </td>
                   </tr>` 
     $("#tbodyID").append(nuevaFila);
+                 $('#tableID tr').each(function() {
+                  let values = $(this).find("td").map(function() { 
+                    return $(this).html();
+                  })
+                  for(let i=2;i<=4;i++){
+                      if(values[i]=="" && count>1){
+                        console.log('hola mundo')
+                      } else{
+                        console.log('mundo hola')
+                      }
+                  }
+                  /* console.log('col-2',values[2]);
+                  console.log('col-3',values[3]);
+                  console.log('col-4',values[4]); */
+                })
     return idProcess, count;
   });
 
@@ -559,7 +598,7 @@
     $('.alertTable').removeClass('show');
     $('.alertTable').addClass('hide');
     let rafagas = $('#raf').children('td').length
-    count+=1;console.log('count:',count)
+    count+=1;console.log('count:',count);
    
       $(`#tbodyID #row${idProcess} #raf`).each(function(){
         $(this).append(`<td class="pt-3-half" type="number" contenteditable="true">CPU</td>
@@ -567,8 +606,8 @@
                         <td class="pt-3-half" type="number" contenteditable="true">CPU</td>`);
         $(this).attr('contenteditable',false);
 
-          if(rafagas==9){
-            count-=1
+          if(rafagas == 12 || count == 4){
+            
             $(".add-raf").addClass('disabled')
             $(".textoAlertTable").text("El máximo número de rafagas que puede agregar es de 4.");
             $('.alertTable').addClass('show');
@@ -587,13 +626,12 @@
   $("#tableID").on("click", ".del-raf", function(){ 
     $('.alertTable').removeClass('show');
     $('.alertTable').addClass('hide'); 
-    let rafagas = $('#raf').children('td').length
-    console.log('rafagas',rafagas)
-    console.log('count:', count)
-    count-=1
+    let rafagas = $('#raf').children('td').length   
+    count-=1; console.log('count:', count)
+
     if (rafagas <= 12){
       $('#tableID').find('tr').each(function(){       
-            var col=$(this).find('td:eq(17)').children().removeClass('disabled')
+            let col=$(this).find('td:eq(17)').children().removeClass('disabled')
             console.log('col:', col)
       })
     } else if (count == 0){
