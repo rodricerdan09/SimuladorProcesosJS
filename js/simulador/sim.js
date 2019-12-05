@@ -101,9 +101,7 @@ SimuladorFCFS.prototype.ordenarColaListos = function() {
 function main() {
 
 	let part1 = new Particion(500, null);
-
-
-
+	
 	let m = new MemoriaVariable(500, [part1], []);
 
 	let sim = new SimuladorNoApropiativo(0, [], [], [], m);

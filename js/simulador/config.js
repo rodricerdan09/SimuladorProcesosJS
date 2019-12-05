@@ -8,14 +8,20 @@
   let sizeMemoryCpu = 4096; // Tamaño de memoria cpu
   let sizeMemory = 8192; // Tamaño de memoria planificador
   let sizeMemoryDisp = 0; //Tamaño de memoria disponible para el planificador
+  let sizeMemoryMin = 0; // Tamaño minimo de memoria para la cpu
+  let sizeMemoryMax = 8192; // Tamaño maximo de memoria para la cpu
   let partition = 0; //Numero de particiones fijas de la memoria
+  let sizepartinput =1; 
   let totalpart = 0; //Valor de cada particion
   let totaldisp = 0; //Tamaño restante de la memoria
+  let totalinput = 0; //Valor de cada particion
+  let memtotal = 0 // memoria total definida por el usuario
   let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
-  let porcMemoryDispCpu = 0; //Porcentaje restante de la memoria total utilizado por la CPU
   let arrayProcess = []; //Arreglo con los procesos importados de la BD
   let arrayPartitions = []; // Memoria letiable
   let count = 0;
+  let sim = null;
+  let mem = null;
  /*  let arrayProcGraf = [];
   let procesosTerminados = []; // cola de procesos Terminado
   let colaListo = []; //Cola de procesos Listos
@@ -192,7 +198,6 @@
       $('.alertRR').addClass('hide');
       $(".alertRR").addClass("disabled");
       }
-
       if (typeAlgorithm == 'Prioridades'){
         $('.alertPriod').removeClass('hide');
         $('.alertPriod').addClass('show');
@@ -201,80 +206,95 @@
         $('.alertPriod').addClass('hide');
         $(".alertPriod").addClass("disabled");
       }
-    
     return algorithm;
   });
   //control de la seleccion de algoritmo
 
-  //control de la memoria de la cpu 
-  $("#tam-memory-so").keyup(function(){
+   //control de la memoria de la cpu 
+   $("#tam-memory").keyup(function(){
     $('.alertPlan').removeClass('show');
     $('.alertPlan').addClass('hide');
-    var valorCurrent = parseInt($("#tam-memory-so").val()); 
-    sizeMemoryCpu = valorCurrent;  console.log('sizememoryCPU',sizeMemoryCpu);
-    sizeMemoryDisp = sizeMemory - sizeMemoryCpu;
-    value = Math.round((sizeMemoryCpu*100)/8192);
-    porcMemoryDispCpu = value;
-
-    setTimeout(function(){ 
-      $('#p-memory').text('El tamaño disponible de la memoria es de '+sizeMemoryDisp+' MB.')
-    },1000); 
-
-    if (sizeMemoryCpu < 512){
-      $(".textoAlertPlan").text("El tamaño mínimo de memoria para la CPU es de 512 MB.");
-      $('.alertPlan').addClass('show');
-      $('#btn-memory').addClass('disabled');
-    }else if (sizeMemoryCpu > 4096) {
-      $(".textoAlertPlan").text("El tamaño máximo de memoria para la CPU es de 4096 MB.");
-      $('.alertPlan').addClass('show');
-      $('#btn-memory').addClass('disabled');
-    } else{
-      $('#btn-memory').removeClass('disabled');
-    }
-    return sizeMemoryDisp, porcMemoryDispCpu
-  });
-  //control de la memoria de la cpu
-
-  //control de la memoria del planificador  
-  $("#btn-memory").on('click',function(){  
-    if(sizeMemoryDisp == 0){
-      $("#tam-memory").addClass("disabled");
-      $('.alertPlan').addClass('show');
-      $(".textoAlertPlan").text("Debe definir el tamaño de la memoria de la CPU.");
-    } else{
-      $('.alertPlan').addClass('d-none');
-      $("#tam-memory").removeClass("disabled"); 
-      $('.alertPlan').removeClass('show');
-      $("#btnconfirmar").removeClass('d-none');
-    }
-  });
-  
-  $("#tam-memory").keyup(function(){
-    $('.alertPlan').removeClass('show');
-    $('.alertPlan').addClass('hide');
-    $('#btnconfirmar').removeClass('disabled');
+    $('#btnconfirmar').addClass('disabled');
+    $("#btn-memory").removeClass("disabled");
+    $('#tam-memory-so').val('');
     let valorCurrent = parseInt($("#tam-memory").val());
     sizeMemory = valorCurrent;  console.log('sizememory',sizeMemory);
-    this.max = sizeMemoryDisp; 
+    sizeMemoryMin= Math.round(sizeMemory*0.05)
+    sizeMemoryMax= Math.round(sizeMemory*0.15)
+    
+    setTimeout(function(){ 
+      $('#p-memory').text('El tamaño mínimo es: '+sizeMemoryMin+' MB. El tamaño máximo es: '+sizeMemoryMax+' MB.')
+    },1000); 
 
     if (sizeMemory == 0){
       $(".textoAlertPlan").text("Debe definir un tamaño de memoria mayor a cero.");
       $('.alertPlan').addClass('show');
       $('#btnconfirmar').addClass('disabled');
-      $('#optionType').addClass('disabled');
-    }else if (sizeMemory > sizeMemoryDisp) {
-      $(".textoAlertPlan").text("El tamaño máximo que puede definir es de "+sizeMemoryDisp+" MB.");
+      $("#tam-memory-so").addClass('disabled');
+      $("#btn-type").addClass('disabled');
+      $("#btn-fit").addClass('disabled'); 
+    }else if (sizeMemory > 8192) {
+      $(".textoAlertPlan").text("Debe definir un tamaño de memoria menor a 8192 MB.");
       $('.alertPlan').addClass('show');
       $('#btnconfirmar').addClass('disabled');
-      $('#optionType').addClass('disabled');
+      $("#tam-memory-so").addClass('disabled');
+      $("#btn-type").addClass('disabled');
+      $("#btn-fit").addClass('disabled'); 
     } else{
       $('#optionType').removeClass('disabled');
-    }
-    setTimeout(function(){ 
+      $("#tam-memory-so").removeClass('disabled');
       $("#btn-type").removeClass('disabled');
-      $("#btn-fit").removeClass('disabled');     
-    },1000); 
-    return sizeMemory
+      $("#btn-fit").removeClass('disabled'); 
+    }
+    return sizeMemory, sizeMemoryMin, sizeMemoryMax
+  });
+
+  //control de la memoria de la cpu 
+  $("#tam-memory-so").keyup(function(){
+    $('.alertPlan').removeClass('show');
+    $('.alertPlan').addClass('hide');
+    $("#btn-memory").removeClass("disabled");
+    $("#btn-type").removeClass('disabled');
+    $("#btn-fit").removeClass('disabled');
+    $('#btnconfirmar').removeClass('disabled'); 
+    $("#btnconfirmar").removeClass('d-none');
+    var valorCurrent = parseInt($("#tam-memory-so").val()); 
+    sizeMemoryCpu = valorCurrent;  console.log('sizememoryCPU',sizeMemoryCpu);
+    sizeMemoryDisp = sizeMemory - sizeMemoryCpu;
+    value = Math.round((sizeMemoryCpu*100)/8192);
+    porcMemoryDispCpu = value;
+    this.min = sizeMemoryMin; 
+    this.max = sizeMemoryMax; 
+
+    if(sizeMemory == 8192 || isNaN(sizeMemory)){
+      $("#btn-memory").addClass("disabled");
+      $("#btnconfirmar").addClass('d-none');
+      $("#btnconfirmar").addClass('disabled');
+      $("#btn-type").addClass('disabled');
+      $("#btn-fit").addClass('disabled'); 
+      $('.alertPlan').addClass('show');
+      $(".textoAlertPlan").text("Debe definir el tamaño de la memoria del Planificador.");
+    }  else{
+      $('.alertPlan').addClass('d-none');
+      $('.alertPlan').removeClass('show');
+      $("#btn-memory").removeClass("disabled"); 
+      $("#btnconfirmar").removeClass('d-none');
+    } 
+
+    if (sizeMemoryCpu < sizeMemoryMin){
+      $(".textoAlertPlan").text("El tamaño mínimo de memoria para la CPU es de "+sizeMemoryMin+" MB.");
+      $('.alertPlan').addClass('show');
+      $("#btnconfirmar").addClass('disabled');
+      $("#btn-type").addClass('disabled');
+      $("#btn-fit").addClass('disabled'); 
+    }else if (sizeMemoryCpu > sizeMemoryMax) {
+      $(".textoAlertPlan").text("El tamaño máximo de memoria para la CPU es de "+sizeMemoryMax+" MB.");
+      $('.alertPlan').addClass('show');
+      $("#btnconfirmar").addClass('disabled');
+      $("#btn-type").addClass('disabled');
+      $("#btn-fit").addClass('disabled');     
+    }
+    return sizeMemoryDisp, porcMemoryDispCpu, sizeMemoryCpu
   });
   //control de la memoria del planificador
 
@@ -436,17 +456,18 @@
     $('.inputParts').removeClass('disabled');
     $('#controlidpart').removeClass('d-none');  
     e.preventDefault();
-
-    value1 = Math.round(sizeMemory/partition);
+    
+    memtotal = sizeMemory-sizeMemoryCpu 
+    value1 = Math.round(memtotal/partition);
     value2 = sizeMemory%partition;
-    value3 = Math.round((sizeMemory*100)/8192);
+    value3 = Math.round((sizeMemoryCpu*100)/sizeMemory);
     totalpart = value1;
     totaldisp = value2;
-    porcMemoryDisp = value3; 
+    porcMemoryDisp = value3;
     
-    $("#memoria").text('Tamaño Definido: '+sizeMemory+' MB.');
+    $("#memoria").text('Tamaño Definido: '+memtotal+' MB.');
     $("#disponible").text('Tamaño Disponible: '+totaldisp+' MB.');
-    $("#porcentajeCpu").text('Porcentaje de la memoria total utilizada por la CPU: '+porcMemoryDispCpu+'%');
+    $("#memoriacpu").text('Tamaño Definido para CPU: '+sizeMemoryCpu+' MB.');
     $("#porcentajeTotal").text('Porcentaje de la memoria total utilizada por el Planificador: '+porcMemoryDisp+'%');
   
     if (partition == 0){
@@ -455,25 +476,49 @@
       $('#btn-asignar').addClass('disabled');
     }
 
-    for(var i=0; i<partition; i++){
-      var sizepartinput = parseInt($('.inputParts'+i).val()); console.log(sizepartinput);
-      if (isNaN(sizepartinput)){
-          sizepartinput = totalpart; console.log("valor convertido: ",sizepartinput)
-        }
-      var num_part = i+1;         
-      var porcPartUtil = Math.round((sizepartinput*100)/sizeMemory);
-      var new_partition = `
+    for(var i=0; i<partition; i++){   
+      let num_part = i+1;         
+      let new_partition = `
         <div id ="inputPartsId" class="col-sm-12 d-flex justify-content-center mb-3">
           <span class="input-group-text textPart md-addon py-0">Partición ${num_part}</span>
-          <input class="inputParts${num_part} text-center w-25" name="fields[]" value="${totalpart}" placeholder="Ingrese el tamaño en MB" id="Memoryinput"/>
+          <input class="inputParts${num_part} text-center w-25" name="fields[]" value="" placeholder="Ingrese el tamaño en MB" id="Memoryinput"/>
           </div>`
-      $('#add-field').append(new_partition);
-      //$("#porcentajeDef").text('Porcentaje utilizado por partición: '+ porcPartUtil+'%');
-      arrayPartitions[i]=totalpart;
-    }
-    console.log("array particiones: ",arrayPartitions)
-
-    $("#inputPartsId").off().keyup('.inputParts'+num_part,function(){
+      $('#add-field').append(new_partition);  
+      
+      $("#add-field").off().keyup('.inputParts'+i,function(){
+        $('.alertPart').removeClass('show');
+        $('.alertPart').addClass('hide');
+        $('#btn-asignar').removeClass('disabled');
+        for(var i=0; i<partition; i++){
+          sizepartinput = parseInt($('.inputParts'+i).val()); console.log('part: '+i,sizepartinput);
+          arrayPartitions[i] = [sizepartinput]; console.log(arrayPartitions);
+          if (isNaN(sizepartinput)) {
+            sizepartinput = arrayPartitions[i+1];console.log('partnan: '+i,sizepartinput); 
+          }
+          
+          if (sizepartinput == 0){
+           $(".textoAlertPart").text("Debe ingresar un número mayor a cero.");
+           $('.alertPart').addClass('show');
+           $('#btn-asignar').addClass('disabled');
+         } else if (totalinput > memtotal){
+           $(".textoAlertPart").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
+           $('.alertPart').addClass('show');
+           $('#btn-asignar').addClass('disabled');
+         } 
+        
+         
+        }   
+       /*  for(let i=0; i<partition; i++){
+          let sizepartinput = parseInt($('.inputParts'+i).val()); console.log(sizepartinput);
+          let totalinput = sizepartinput*partition; console.log('el total es ',totalinput);
+          
+          } */
+      });
+    }    
+    //console.log("array particiones: ",arrayPartitions)
+    
+   /*  
+    /* $("#inputPartsId").off().keyup('.inputParts'+num_part,function(){
       for(var i=0; i<partition; i++){
         var valueCurrent = parseInt($('.inputParts'+i).val()); console.log("valuecurrent ",valueCurrent);
         if (isNaN(valueCurrent)){
@@ -481,36 +526,14 @@
         }
         arrayPartitions[i-1]=valueCurrent;console.log(arrayPartitions);
       }
-    })
-    //console.log("array particiones2: ",arrayPartitions)
-
-    $("#add-field").off().keyup('.inputParts',function(){
-      $('.alertPart').removeClass('show');
-      $('.alertPart').addClass('hide');
-      $('#btn-asignar').removeClass('disabled');
-      
-      for(var i=0; i<partition; i++){
-        var sizepartinput = parseInt($('.inputParts'+i).val()); console.log(sizepartinput);
-        var totalinput = sizepartinput*partition; console.log('el total es ',totalinput);
-
-          if (sizepartinput == 0){
-            $(".textoAlertPart").text("Debe ingresar un número mayor a cero.");
-            $('.alertPart').addClass('show');
-            $('#btn-asignar').addClass('disabled');
-          } 
-          if (totalinput > sizeMemory){
-            $(".textoAlertPart").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
-            $('.alertPart').addClass('show');
-            $('#btn-asignar').addClass('disabled');
-          }
-        }
-    });
-    return totalpart, totaldisp, porcMemoryDisp
+      //console.log("array particiones2: ",arrayPartitions)
+    }) */
+    return totalpart, totaldisp, porcMemoryDisp, partition
   });
 
   $("#btn-asignar").on( "click", function() {
     $('.alertPart').removeClass('alert-danger');
-    $('.alertPart').addClass('alert-info');
+    $('.alertPart').addClass('alert-success');
     $('.alertPart').addClass('show');
     $(".textoAlertPart").text("Las particiones han sido asignadas correctamente.");
 
@@ -795,10 +818,21 @@
     }
   });
  //--------------------------------------------------------------------------
+ if (typeMemory == "Variable"){
+  let p = new Particion(memtotal, null);
+   mem = new MemoriaVariable(memtotal, [p], []);
+ }
+ if (algorithm == "FCFS"){
+   sim = new SimuladorNoApropiativo(0, [],[],[], mem);
+ }
 
-  /* //Formulario
-  var raf=0;
-  var maxraf=5;
-  var cpuList = []
-  var esList = [] */
+ let p1= new Proceso(1, 12, 0, 0, [1,2,1])
+ let p2= new Proceso(2, 12, 1, 0, [1,2,1])
 
+ sim.colaNuevos.push(p1,p2)
+ sim.colaControl.push(p1,p2)
+
+ while(sim.colaControl.length>0){
+  sim.cicloMemoria();
+  sim.cicloCpu();
+ }

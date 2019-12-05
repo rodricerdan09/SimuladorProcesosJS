@@ -108,23 +108,24 @@
                                         <p class="text-muted p-0">El algoritmo por defecto es FCFS.</p>
                                     </div>
 
-                                    <div class="mt-3 mb-2">
-                                        <span class="lead">Definir tamaño de memoria reservado para el SO (MB)</span>
-                                        <div class="md-form mt-3 mb-2">
-                                            <input type="number" min=512 max=4096 id="tam-memory-so" class="form-control w-75">
-                                            <label for="numberExample" class="text-left">Mín: 512. Máx: 4096.</label>
-                                        </div>
-                                        <p class="text-muted">El tamaño total de la memoria es de 8192 MB.</p>
-                                    </div>
-
-                                    <div id="btn-memory" class="mt-4 mb-2">
+                                    <div class="mt-4 mb-2">
                                         <span class="lead">Definir tamaño de memoria para el Planificador</span>
                                         <div class="md-form mt-3 mb-2">
                                             <input type="number" min=1 max=8192 id="tam-memory" class="form-control w-75">
                                             <label for="numberExample">Definir tamaño en MB</label>
                                         </div>
+                                        <p class="text-muted">El tamaño total de la memoria es de 8192 MB.</p>
+                                        
+                                    </div>
+
+                                    <div id="btn-memory" class="mt-3 mb-2">
+                                        <span class="lead">Definir tamaño de memoria reservado para el SO (MB)</span>
+                                        <div class="md-form mt-3 mb-2">
+                                            <input type="number" id="tam-memory-so" class="form-control w-75">
+                                            <label for="numberExample" class="text-left">Defina el tamaño de memoria en MB.</label>
+                                        </div>
                                         <p id="p-memory" class="text-muted m-0"></p>
-                                    </div>    
+                                    </div>
 
                                     <div id="btn-type" class="row mt-4">
                                         <span class="col-md-12 lead">Seleccione el tipo de Memoria</span>
@@ -149,7 +150,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-center">
-                                    <div class="alert alert-danger alert-dismissible fade hide alertPlan     w-75" role="alert">
+                                    <div class="alert alert-danger alert-dismissible fade hide alertPlan w-75" role="alert">
                                         <strong class="textoAlertPlan    d-flex justify-content-center">Error Genérico</strong>
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -185,10 +186,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <span class="lead" id="memoria"></span> 
-                                            <span class="lead" id="disponible"></span> 
-                                            <!-- <span class="lead" id="porcentajeDef"></span><br>  -->
-                                            <span class="lead" id="porcentajeCpu"></span><br> 
+                                            <span class="lead" id="memoria"></span><br> 
+                                            <span class="lead" id="memoriacpu"></span><br> 
                                             <span class="lead" id="porcentajeTotal"></span>
                                         </div>
                                         <div class="col-sm-12 col-md-8 mt-3">
@@ -204,6 +203,7 @@
                                     <div class="controls mt-3 d-none" id="controlidpart">
                                         <div class="entry input-group-prepend row inputMemory d-flex justify-content-center" id="add-field">
                                         </div>
+                                        <span class="lead d-flex justify-content-center mt-2" id="disponible"></span>
                                     </div>
                                 
                                     <div class="alert alert-danger alert-dismissible fade hide alertPart" role="alert">
@@ -493,6 +493,9 @@
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="./js/mdb.min.js"></script>
     <!-- Project Scripts --> 
+    <script src="./js/simulador/sim.js"></script>
+    <script src="./js/simulador/proceso.js"></script>
+    <script src="./js/simulador/memoria.js"></script>
     <script src="./js/simulador/inicio.js"></script>
     <script src="./js/simulador/config.js"></script>
     <!-- SCRIPTS -->
