@@ -832,7 +832,17 @@
  sim.colaNuevos.push(p1,p2)
  sim.colaControl.push(p1,p2)
 
- while(sim.colaControl.length>0){
-  sim.cicloMemoria();
-  sim.cicloCpu();
+ function main(){
+   
+
+   while(sim.colaControl.length>0){
+    sim.cicloMemoria();
+    sim.cicloCpu();
+    console.log(sim)
+   }
+   let time = sim.imprimirResultado();
+   console.log('Tiempo de Retorno Prom: ', time[1]);
+   console.log('Tiempo de Espera Prom: ', time[0]);
+   console.log('Porcentaje utilizado de CPU: ', sim.porcActivo());
  }
+

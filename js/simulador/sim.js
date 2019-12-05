@@ -13,6 +13,7 @@ function SimuladorBase(clock, colaListos, colaNuevos, colaBloqueados, memoria) {
 }
 
 SimuladorBase.prototype.cicloMemoria = function() {
+	debugger;
 	let c = 0;
 	this.colaNuevos.sort((a, b) => a.tarrivo - b.tarrivo);
 	for (let p of this.colaNuevos) {
@@ -63,7 +64,7 @@ function SimuladorNoApropiativo(...args) {
 SimuladorNoApropiativo.prototype = Object.create(SimuladorBase.prototype);
 
 SimuladorNoApropiativo.prototype.cicloCpu = function() {
-
+	debugger;
 	if (this.colaListos.length > 0 && !this.procesoCpu) {
 		this.procesoCpu = this.colaListos[0];
 		this.colaListos.splice(0, 1);
@@ -127,15 +128,11 @@ SimuladorFCFS.prototype.ordenarColaListos = function() {
 
 }
 
-function main() {
+/* function main() {
 
 	let part1 = new Particion(500, null);
-<<<<<<< HEAD
-	
-=======
 
 
->>>>>>> 9a084d07e7f3002a1daf1f08b3fd109c45ec54b7
 	let m = new MemoriaVariable(500, [part1], []);
 
 	let sim = new SimuladorNoApropiativo(0, [], [], [], m);
@@ -165,3 +162,4 @@ function main() {
 	console.log('Tiempo Espera Promedio: ', a[0]);
 	console.log('Porcentaje utilización CPU: ', sim.porcActivo());
 }
+ */
