@@ -6,7 +6,7 @@ function MemoriaBase(tam, particiones, colaMemoria) {
 
 MemoriaBase.prototype.particionLibre = function(proceso) {
 	for (var p of this.particiones) {
-		if (p.tam >= proceso.tam && p.isEmpty) {
+		if (p.tam >= proceso.tam && p.isEmpty()) {
 			return p;
 		}
 	}	
@@ -35,9 +35,9 @@ MemoriaFija.prototype.insertarProceso = function(proceso) {
 	let particionLibre = this.particionLibre(proceso);
 	if (particionLibre) {
 		particionLibre.proceso = proceso;
-		return true;
+		return proceso;
 	}
-	return false;
+	return null;
 }
 
 MemoriaFija.prototype.removerProceso = function(proceso) {
@@ -49,8 +49,8 @@ MemoriaFija.prototype.particionLibre = function(proceso) {
 	let fragInternaGlobal = 0;
 	let particionWorstFit = null;
 	for (var p of this.particiones) {
-		if (p.isEmpty && p.tam >= proceso.tam) {
-			if (p.tam - proceso.tam > fragInternaGlobal) {
+		if (p.isEmpty() && p.tam >= proceso.tam) {
+			if (p.tam - proceso.tam >= fragInternaGlobal) {
 				fragInternaGlobal = p.tam - proceso.tam;
 				particionWorstFit = p;
 			}
@@ -69,7 +69,7 @@ MemoriaVariable.prototype.particionLibre = function(proceso) {
 	let fragInternaGlobal = 999999999999999;
 	let particionBestFit = null;
 	for (var p of this.particiones) {
-		if (p.isEmpty && p.tam >= proceso.tam) {
+		if (p.isEmpty() && p.tam >= proceso.tam) {
 			if (p.tam - proceso.tam < fragInternaGlobal) {
 				fragInternaGlobal = p.tam - proceso.tam;
 				particionBestFit = p;
@@ -86,7 +86,6 @@ MemoriaVariable.prototype.insertarProceso = function(proceso) {
 		particionLibre.tam -= particionLibre.fragInterna(proceso);
 		particionLibre.proceso = proceso;
 		this.particiones.push(particionNueva);
-		this.colaMemoria.splice(0, 1);
 		return proceso;
 	}
 	return null;
@@ -98,7 +97,7 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 	let flagFinal = (alFinal > this.particiones.length) ? false : true;
 	let flagInicio = (alInicio >= 0) ? true : false;
 	while (flagInicio || flagFinal) {
-		if (flagFinal && this.particiones[alFinal].isEmpty) {
+		if (flagFinal && this.particiones[alFinal].isEmpty()) {
 			this.getParticion(proceso).tam += this.particiones[alFinal].tam;
 			this.particiones.splice(alFinal, 1);
 			if (this.particiones[alFinal+1]) {
@@ -107,9 +106,11 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 				flagFinal = false;
 			}
 		} else {
+			this.particiones[alFinal-1].proceso = null;
 			flagFinal = false;
 		}
-		if (flagInicio && this.particiones[alInicio].isEmpty) {
+		debugger;
+		if (flagInicio && this.particiones[alInicio].isEmpty()) {
 			this.getParticion(proceso).tam += this.particiones[alInicio].tam;
 			this.particiones.splice(alInicio, 1);
 			if (this.particiones[alInicio-1]) {
@@ -118,6 +119,7 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 				flagInicio = false;
 			}
 		} else {
+			this.particiones[alInicio+1].proceso = null;
 			flagInicio = false;
 		}
 	}
