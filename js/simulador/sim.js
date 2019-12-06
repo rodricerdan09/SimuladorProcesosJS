@@ -38,14 +38,26 @@ SimuladorBase.prototype.porcActivo = function() {
 	return ((this.clock - this.tiempoOcioso) / this.clock) * 100;
 }
 
-SimuladorBase.prototype.imprimirResultado = function() {
-	let tiempoRetornoProm = 0;
-	let tiempoEsperaProm = 0;
+SimuladorBase.prototype.calcularPromedios = function() {
+	let tEsperaProm = 0;
+	let tRetornoProm = 0;
 	for (let r of this.resultados) {
-		tiempoEsperaProm += r.tiempoEspera;
-		tiempoRetornoProm += r.tiempoRetorno;
+		tEsperaProm += r.tEspera;
+		tRetornoProm += r.tRetorno;
 	}
-	return [(tiempoEsperaProm / this.resultados.length), (tiempoRetornoProm / this.resultados.length)];
+	return [(tEsperaProm / this.resultados.length), (tRetornoProm / this.resultados.length)];
+}
+
+SimuladorBase.prototype.ordenarColaListos = function() {
+	
+}
+
+function Resultado(pid, tSalida, tArrivo, tRetorno, tEspera) {
+	this.pid = pid;
+	this.tSalida = tSalida;
+	this.tArrivo = tArrivo;
+	this.tRetorno = tRetorno;
+	this.tEspera = tEspera;
 }
 
 function SimuladorApropiativo(...args) {
@@ -78,11 +90,7 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 		if (rafCpuFinalizada) {
 			if (this.procesoCpu.isFinished()) {
 				this.memoria.removerProceso(this.procesoCpu);
-				let p = {
-					pid: this.procesoCpu.pid,
-					tiempoRetorno: this.procesoCpu.calcTiempoRetorno(this.clock),
-					tiempoEspera: this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock))
-				}
+				let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
 				this.resultados.push(p);
 				this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
 				this.procesoCpu = null;
@@ -125,39 +133,3 @@ function SimuladorFCFS(...args) {
 SimuladorFCFS.prototype.ordenarColaListos = function() {
 
 }
-
-/* function main() {
-
-	let part1 = new Particion(500, null);
-
-
-	let m = new MemoriaVariable(500, [part1], []);
-
-	let sim = new SimuladorNoApropiativo(0, [], [], [], m);
-
-	let p1 = new Proceso(1, 12, 0, 0, [1,2,1]);
-	let p2 = new Proceso(2, 13, 1, 0, [2,1,2]);
-	let p3 = new Proceso(3, 12, 4, 0, [1,2,1]);
-	let p4 = new Proceso(4, 13, 3, 0, [2,1,2]);
-	let p5 = new Proceso(5, 12, 2, 0, [1,2,1]);
-	let p6 = new Proceso(6, 13, 0, 0, [2,1,2]);
-
-	sim.colaNuevos.push(p1, p2, p3, p4, p5, p6);
-	console.log(sim.colaNuevos);
-	console.log(sim.colaControl);
-	sim.colaControl.push(p1, p2, p3, p4, p5, p6);
-
-	while (sim.colaControl.length > 0) {
-		console.log('...............');
-		sim.cicloMemoria();
-		console.log(sim.memoria);
-		sim.cicloCpu();
-		console.log(sim);
-	}
-
-	let a = sim.imprimirResultado();
-	console.log('Tiempo Retorno Promedio: ', a[1]);
-	console.log('Tiempo Espera Promedio: ', a[0]);
-	console.log('Porcentaje utilización CPU: ', sim.porcActivo());
-}
- */

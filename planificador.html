@@ -367,15 +367,16 @@
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 mt-5">
+                    <div class="col-lg-12 mt-5">
                         <h5 class="ml-3 d-flex justify-content-center">Tiempos de Retorno</h5>
-                        <table class="table table-bordered table-hover table-responsive-md text-center tableResponse">
+                        <table id="t-result" class="table table-bordered table-hover table-responsive-md text-center tableResponse">
                         <thead class="text-white blue-grey lighten-1">
                             <tr>
                             <th scope="col">Proceso</th>
                             <th scope="col">Momento que deja la CPU</th>
                             <th scope="col">Tiempo de Arribo</th>
-                            <th scope="col">Retorno</th>
+                            <th scope="col">Tiempo Espera</th>
+                            <th scope="col">Tiempo Retorno</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -383,24 +384,6 @@
                         </table>
             
                         <h5 class="timeReturn"></h5>
-                    </div>
-            
-                    <div class="col-lg-6 mt-5">
-                        <h5 class="d-flex justify-content-center">Tiempos de Espera</h5>
-                        <table class="table table-bordered table-hover table-responsive-md text-center tableWait">
-                        <thead class="text-white blue-grey lighten-1">
-                            <tr>
-                            <th scope="col">Proceso</th>
-                            <th scope="col">Tiempo de Retorno</th>
-                            <th scope="col">Tiempo de Total de Irrupcion</th>
-                            <th scope="col">Espera</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                        </table>
-                    
-                        <h5 class="timeWait"></h5>
                     </div>
                 </div>     
             </div>     

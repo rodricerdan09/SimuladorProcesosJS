@@ -1,36 +1,34 @@
-
-  console.log('activo config.js')
-  //Ambiente de variables
-  let typeMemory = "Variable"; // tipo de Memoria
-  let fitMemory = "First Fit"; //Ajuste de memoria
-  let algorithm = "FCFS"; //Algoritmo de Planificacion
-  let generalQuantum = 0; // Quantum para roundRobin
-  let sizeMemoryCpu = 4096; // Tamaño de memoria cpu
-  let sizeMemory = 8192; // Tamaño de memoria planificador
-  let sizeMemoryDisp = 0; //Tamaño de memoria disponible para el planificador
-  let sizeMemoryMin = 0; // Tamaño minimo de memoria para la cpu
-  let sizeMemoryMax = 8192; // Tamaño maximo de memoria para la cpu
-  let partition = 0; //Numero de particiones fijas de la memoria
-  let sizepartinput =1; 
-  let totalpart = 0; //Valor de cada particion
-  let totaldisp = 0; //Tamaño restante de la memoria
-  let totalinput = 0; //Valor de cada particion
-  let memtotal = 0 // memoria total definida por el usuario
-  let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
-  let arrayProcess = []; //Arreglo con los procesos importados de la BD
-  let arrayPartitions = []; // Memoria letiable
-  let count = 0;
-  let sim = null;
-  let mem = null;
- /*  let arrayProcGraf = [];
-  let procesosTerminados = []; // cola de procesos Terminado
-  let colaListo = []; //Cola de procesos Listos
-  let cont = 0;//contador de Particiones fijas
-  let maxpart = 5; //cantidad maxima de particiones fijas
-  let memFija = []; // memoria fija
-  let tiempo = 0
-  let lenArrayProcess = 0
- */
+//Ambiente de variables
+let typeMemory = "Variable"; // tipo de Memoria
+let fitMemory = "First Fit"; //Ajuste de memoria
+let algorithm = "FCFS"; //Algoritmo de Planificacion
+let generalQuantum = 0; // Quantum para roundRobin
+let sizeMemoryCpu = 4096; // Tamaño de memoria cpu
+let sizeMemory = 8192; // Tamaño de memoria planificador
+let sizeMemoryDisp = 0; //Tamaño de memoria disponible para el planificador
+let sizeMemoryMin = 0; // Tamaño minimo de memoria para la cpu
+let sizeMemoryMax = 8192; // Tamaño maximo de memoria para la cpu
+let partition = 0; //Numero de particiones fijas de la memoria
+let sizepartinput =1; 
+let totalpart = 0; //Valor de cada particion
+let totaldisp = 0; //Tamaño restante de la memoria
+let totalinput = 0; //Valor de cada particion
+let memtotal = 0 // memoria total definida por el usuario
+let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
+let arrayProcess = []; //Arreglo con los procesos importados de la BD
+let arrayPartitions = []; // Memoria letiable
+let count = 0;
+let sim = null;
+let mem = null;
+/*  let arrayProcGraf = [];
+let procesosTerminados = []; // cola de procesos Terminado
+let colaListo = []; //Cola de procesos Listos
+let cont = 0;//contador de Particiones fijas
+let maxpart = 5; //cantidad maxima de particiones fijas
+let memFija = []; // memoria fija
+let tiempo = 0
+let lenArrayProcess = 0
+*/
 
   //Preparamos el entorno de trabajo
   $(function () {
@@ -68,11 +66,11 @@
     });
     $("#cargaprocesos").hide()
     $("#presentacion").hide()
- 
+
   });     
   //Preparamos el entorno de trabajo
   //------------------------------------------------------------------------
-  
+
   //---------------------SECCION CONFIGURACION------------------------------------------
   /* $('ul#navmenu div li a').off().on('click', function(){
     $('ul#navmenu div li a').removeClass('text-primary')
@@ -99,7 +97,7 @@
     if (isPrimary2 == false){
       $('.alertSimu').addClass('show')
       $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
-  
+
       setTimeout(function(){ 
         $('.alertSimu').removeClass('show');
         $('.alertSimu').addClass('hide');
@@ -116,7 +114,7 @@
     if (isPrimary3 == false){
       $('.alertSimu').addClass('show')
       $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
-  
+
       setTimeout(function(){ 
         $('.alertSimu').removeClass('show');
         $('.alertSimu').addClass('hide');
@@ -155,7 +153,7 @@
   $("#optionAlgo").change(function(){
     $("#quantumid").removeClass('disabled');
     var typeAlgorithm = $("#optionAlgo").find(':selected').text();
-  
+
     if (typeAlgorithm == 'FCFS'){
       algorithm = typeAlgorithm; console.log(algorithm);
       $(".quantumIn").val("");
@@ -305,7 +303,7 @@
 
     var valueCurrent = $("#optionType").find(':selected').text();
       $(".muted-type").hide();
-  
+
     if (valueCurrent == 'Fija'){
         $("#btn-parts").removeClass("disabled");
         $(".optionFitOne").removeClass("d-none");
@@ -442,7 +440,7 @@
 
     var valorCurrent2 =  parseInt($("#cantpart").val());
     partition = valorCurrent2;
-  
+
     if (partition == 0){
       $(".textoAlertPart").text("La cantidad de particiones debe ser un número entero positivo.");
       $('.alertPart').addClass('show');
@@ -471,7 +469,7 @@
     $("#disponible").text('Tamaño Disponible: '+totaldisp+' MB.');
     $("#memoriacpu").text('Tamaño Definido para CPU: '+sizeMemoryCpu+' MB.');
     $("#porcentajeTotal").text('Porcentaje de la memoria total utilizada por el Planificador: '+porcMemoryDisp+'%');
-  
+
     if (partition == 0){
       $(".textoAlertPart").text("La cantidad de particiones debe ser un número entero positivo.");
       $('.alertPart').addClass('show');
@@ -670,7 +668,7 @@
     return count
   });
 
- // Funcion para eliminar una nueva fila de la tabla
+  // Funcion para eliminar una nueva fila de la tabla
   $("#tableID").on("click", ".del", function(){
     if (idProcess > 0) {idProcess-=1;} 
     $(this).parents("tr").remove();
@@ -734,7 +732,7 @@
 
     //---------------------SECCION PRESENTACION------------------------------------------
 
-//--------------------------GANTT DE PROCESOS-------------------------------------------
+  //--------------------------GANTT DE PROCESOS-------------------------------------------
     am4core.ready(function() {
       var chart = am4core.create("chartdiv-gantt", am4charts.XYChart);
       chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
@@ -748,7 +746,7 @@
       chart.data = [
         {
           name: "CPU",
-          fromDate: "2018-01-01 08:00",
+          value: "2018-01-01 08:00",
           toDate: "2018-01-01 10:00",
           color: colorSet.getIndex(2).brighten(0)
         },
@@ -765,7 +763,7 @@
       categoryAxis.renderer.grid.template.location = 0;
       categoryAxis.renderer.inversed = true;
       
-      var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+      var dateAxis = chart.xAxes.push(new am4charts.TimeAxis());
       dateAxis.dateFormatter.dateFormat = "yyyy-MM-dd HH:mm";
       dateAxis.renderer.minGridDistance = 70;
       dateAxis.baseInterval = { count: 30, timeUnit: "minute" };
@@ -801,31 +799,125 @@
       $('.alertProcess').addClass('show');
     }
   });
- //--------------------------------------------------------------------------
- 
-function main(){
-  if (typeMemory == "Variable"){
-    let p = new Particion(memtotal, null);     
-    mem = new MemoriaVariable(memtotal, [p], []);
-  }
+  //--------------------------------------------------------------------------
 
-  if (algorithm == "FCFS"){
-    sim = new SimuladorNoApropiativo(0, [],[],[], mem);
-  }
+  function main(){
+    if (typeMemory == "Variable"){
+      let p = new Particion(memtotal, null);     
+      mem = new MemoriaVariable(memtotal, [p], []);
+      if (fitMemory == "Worst Fit") {
+        MemoriaVariable.prototype.particionLibre = function(proceso) {
+          let fragInternaGlobal = 0;
+          let particionWorstFit = null;
+          for (var p of this.particiones) {
+            if (p.isEmpty() && p.tam >= proceso.tam) {
+              if (p.tam - proceso.tam >= fragInternaGlobal) {
+                fragInternaGlobal = p.tam - proceso.tam;
+                particionWorstFit = p;
+              }
+            }
+          }
+          return particionWorstFit;
+        }
+      }
+    } else {
+      // captura de particiones 
+      mem = new MemoriaFija(memtotal, [], []);
+      if (fitMemory == "Best Fit") {
+        MemoriaFija.prototype.particionLibre = function(proceso) {
+          let fragInternaGlobal = 999999999999999;
+          let particionBestFit = null;
+          for (var p of this.particiones) {
+            if (p.isEmpty() && p.tam >= proceso.tam) {
+              if (p.tam - proceso.tam < fragInternaGlobal) {
+                fragInternaGlobal = p.tam - proceso.tam;
+                particionBestFit = p;
+              }
+            }
+          }
+          return particionBestFit;
+        }
+      }
+    }
 
-  let p1= new Proceso(1, 12, 0, 0, [1,2,1])
-  let p2= new Proceso(2, 12, 1, 0, [1,2,1])
+    switch (algorithm) {
+      case 'FCFS':
+        sim = new SimuladorNoApropiativo(0, [],[],[], mem);
+        break;
+      case 'Prioridades SJF':
+        sim = new SimuladorNoApropiativo(0, [],[],[], mem);
+        SimuladorNoApropiativo.prototype.ordenarColaListos = function() {
+        }
+        break;
+      case 'Prioridades SRTF':
+        sim = new SimuladorApropiativo(0, [], [], [], mem);
+        SimuladorApropiativo.prototype.ordenarColaListos = function() {
 
-  sim.colaNuevos.push(p1,p2)
-  sim.colaControl.push(p1,p2)
-  while(sim.colaControl.length>0){
-    sim.cicloMemoria();
-    sim.cicloCpu();
-    console.log(sim)
-  }
-  let time = sim.imprimirResultado();
-  console.log('Tiempo de Retorno Prom: ', time[1]);
-  console.log('Tiempo de Espera Prom: ', time[0]);
-  console.log('Porcentaje utilizado de CPU: ', sim.porcActivo());
+        }
+        break;
+      case 'Round Robin':
+        sim = new SimuladorApropiativo(0, [], [], [], mem);
+        SimuladorApropiativo.prototype.cicloCpu = function() {
+
+        }
+        break;
+      case 'Multinivel sin Retro':
+        sim = new SimuladorApropiativo(0, [[], [], []], [], [], mem);
+        SimuladorApropiativo.prototype.cicloCpu = function() {
+
+        }
+        break;
+      case 'Prioridades':
+        sim = new SimuladorApropiativo(0, [], [], [], mem);
+        SimuladorApropiativo.prototype.ordenarColaListos = function() {
+          this.colaListos.sort((a, b) => (a.prio > b.prio) ? 1 : -1);
+        }
+    }
+
+    let p1 = new Proceso(1, 12, 0, 0, [1,2,1]);
+    let p2 = new Proceso(2, 120, 1, 0, [2,2,1]);
+    let p3 = new Proceso(3, 44, 2, 0, [1,2,3]);
+    let p4 = new Proceso(4, 55, 1, 0, [2,2,4]);
+    let p5 = new Proceso(5, 12, 5, 0, [6,2,1]);
+    let p6 = new Proceso(6, 156, 0, 0, [4,15,7]);
+    let p7 = new Proceso(7, 12, 0, 0, [1,11,1]);
+    let p8 = new Proceso(8, 120, 1, 0, [2,16,1]);
+    let p9 = new Proceso(9, 44, 2, 0, [1,14,3,5,6]);
+    let p10 = new Proceso(10, 55, 1, 0, [2,2,4]);
+    let p11 = new Proceso(11, 12, 5, 0, [6,2,1]);
+    let p12 = new Proceso(12, 156, 0, 0, [4,5,7]);
+
+    sim.colaNuevos.push(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+    sim.colaControl.push(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+
+    while(sim.colaControl.length > 0){
+      sim.cicloMemoria();
+      sim.ordenarColaListos();
+      sim.cicloCpu();
+      console.log(sim)
+    }
+
+    console.log('Porcentaje utilizado de CPU: ', sim.porcActivo());
+
+    for (let r of sim.resultados) {
+      let result = ` <tr>
+                    <td> ${r.pid} </td>
+                    <td> ${r.tSalida} </td>
+                    <td> ${r.tArrivo} </td>
+                    <td> ${r.tRetorno} </td>
+                    <td> ${r.tEspera} </td>
+                  </tr>
+                  `;
+      $('#t-result').append(result);
+    }
+    let results = sim.calcularPromedios();
+    let result2 = ` <tr>
+                    <td colspan="3"><b>${'PROMEDIOS'}</td>
+                    <td><b> ${results[0].toFixed(1)} </td>
+                    <td><b> ${results[1].toFixed(1)} </td>
+                  </tr>
+                  `;
+
+    $('#t-result').append(result2);
 }
 
