@@ -175,7 +175,7 @@
                             <!--Generación de Particiones-->
                             <div class="card d-none" id="partfijas">
                                 <h5 class="card-header blue-grey lighten-1 white-text text-center py-4 mb-4">
-                                    <strong>Generación de Particiones</strong>
+                                    <strong id="title-card">Generación de Particiones</strong>
                                 </h5>     
                                 <div class="card-body px-lg-5 pt-0 memorySelect">
                                     <div class="mt-2 alert alert-info alert-dismissible fade hide alertMem d-none" role="alert">
@@ -211,8 +211,7 @@
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                    </div>   
-                                
+                                    </div>       
                                 <!--Confirmar formulario--> 
                                 <div class="d-flex justify-content-center" id="btn-asignar">
                                     <button class="btn btn-outline-light-blue z-depth-0 waves-effect w-75" type="button">Asignar</button>  
@@ -276,16 +275,19 @@
                             <div class="card-body px-2">
                                 <div  class="table-editable">
                                     <span class="table-add float-right my-2 mr-2">
-                                    <a href="#!" class="text-success d-flex justify-content-start" id="btn-añadir"> 
+                                    <a href="#!" class="text-success d-flex justify-content-start" id="btn-añadir">
                                         <p class="lead mr-2">Agregar Proceso</p>
                                         <i class="fas fa-plus fa-2x" aria-hidden="true"></i>
                                     </a>
+                                    </span>
+                                    <span id="interval-prio" class="table-add float-left text-success my-2 ml-4">                           
+                                        <p class="lead mr-2">Prioridad: [Min=0 Max=3]</p> 
                                     </span>
                                     <table id="tableID"class="table table-bordered table-hover table-responsive-lg w-100 text-center">
                                         <thead class="text-white mdb-color lighten-2">
                                             <tr id="tr-rafaga" class="md-form">
                                             <th class="text-center">ID</th>
-                                            <th class="text-center">Prioridad</th>
+                                            <th id="th-prio" class="text-center">Prioridad</th>
                                             <th class="text-center">Tamaño (MB)</th>
                                             <th class="text-center">T. de Arribo</th>
                                             <th class="text-center">Ciclo de Vida CPU-E/S-..-/CPU</th>
