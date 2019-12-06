@@ -1083,7 +1083,6 @@ am4core.ready(function() {
 
 
     for (p of parametros) {    
-      debugger; 
       let pro = new Proceso();
       let arr = []
       for (var i = 0; i < p.length-3; i++) {
