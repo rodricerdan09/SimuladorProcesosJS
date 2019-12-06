@@ -162,7 +162,7 @@
       $(".quantumIn").hide();
       $(".algoInfo").text("FCFS");
 
-    } else if (typeAlgorithm == 'Round Robin'){
+    } else if (typeAlgorithm == 'RR'){
         algorithm = typeAlgorithm; console.log(algorithm);
         $(".quantumIn").show();
         $(".algoInfo").text("RR");
@@ -173,24 +173,24 @@
         $(".quantumIn").hide();
         $(".algoInfo").text("Prioridades");
 
-      } else if (typeAlgorithm == 'Prioridades SJF'){ 
+      } else if (typeAlgorithm == 'SJF'){ 
         algorithm = typeAlgorithm; console.log(algorithm);
         $(".quantumIn").val("");
         $(".quantumIn").hide();
-        $(".algoInfo").text("Prioridades SJF");
+        $(".algoInfo").text("SJF");
 
-      } else if (typeAlgorithm == 'Prioridades SRTF'){ 
+      } else if (typeAlgorithm == 'SRTF'){ 
         algorithm = typeAlgorithm; console.log(algorithm);
         $(".quantumIn").val("");
         $(".quantumIn").hide();
-        $(".algoInfo").text("Prioridades SRTF");
+        $(".algoInfo").text("SRTF");
     } else {
         algorithm = typeAlgorithm; console.log(algorithm);
         $(".quantumIn").hide();
-        $(".algoInfo").text("Multinivel sin Retro");
+        $(".algoInfo").text("MLQ");
     }
     
-      if (typeAlgorithm == 'Round Robin'){
+      if (typeAlgorithm == 'RR'){
       $('.alertRR').removeClass('hide');
       $('.alertRR').addClass('show');
       } else{
@@ -263,6 +263,7 @@
     sizeMemoryDisp = sizeMemory - sizeMemoryCpu;
     value = Math.round((sizeMemoryCpu*100)/8192);
     porcMemoryDispCpu = value;
+    memtotal = sizeMemory-sizeMemoryCpu; console.log('memtotal: ',memtotal)
     this.min = sizeMemoryMin; 
     this.max = sizeMemoryMax; 
 
@@ -294,7 +295,7 @@
       $("#btn-type").addClass('disabled');
       $("#btn-fit").addClass('disabled');     
     }
-    return sizeMemoryDisp, porcMemoryDispCpu, sizeMemoryCpu
+    return sizeMemoryDisp, porcMemoryDispCpu, sizeMemoryCpu, memtotal
   });
   //control de la memoria del planificador
 
@@ -456,10 +457,9 @@
     $('.inputParts').removeClass('disabled');
     $('#controlidpart').removeClass('d-none');  
     e.preventDefault();
-    
-    memtotal = sizeMemory-sizeMemoryCpu 
+
     value1 = Math.round(memtotal/partition);
-    value2 = sizeMemory%partition;
+    value2 = memtotal%partition;
     value3 = Math.round((sizeMemoryCpu*100)/sizeMemory);
     totalpart = value1;
     totaldisp = value2;
@@ -476,12 +476,12 @@
       $('#btn-asignar').addClass('disabled');
     }
 
-    for(var i=0; i<partition; i++){   
+    for(var i=0; i<partition; i++){     
       let num_part = i+1;         
       let new_partition = `
         <div id ="inputPartsId" class="col-sm-12 d-flex justify-content-center mb-3">
           <span class="input-group-text textPart md-addon py-0">Partición ${num_part}</span>
-          <input class="inputParts${num_part} text-center w-25" name="fields[]" value="" placeholder="Ingrese el tamaño en MB" id="Memoryinput"/>
+          <input class="inputParts${num_part} text-center w-25" name="fields[]" value="${totalpart}" placeholder="Ingrese el tamaño en MB" id="Memoryinput"/>
           </div>`
       $('#add-field').append(new_partition);  
       
@@ -489,45 +489,48 @@
         $('.alertPart').removeClass('show');
         $('.alertPart').addClass('hide');
         $('#btn-asignar').removeClass('disabled');
+        let sumPart = 0;
+
         for(var i=0; i<partition; i++){
-          sizepartinput = parseInt($('.inputParts'+i).val()); console.log('part: '+i,sizepartinput);
-          arrayPartitions[i] = [sizepartinput]; console.log(arrayPartitions);
-          if (isNaN(sizepartinput)) {
-            sizepartinput = arrayPartitions[i+1];console.log('partnan: '+i,sizepartinput); 
-          }
-          
+        sizepartinput = parseInt($('.inputParts'+(i+1)).val()); console.log('part: '+i,sizepartinput);
+        totalinput = sizepartinput*partition; console.log('totalinput '+i,totalinput);      
+        arrayPartitions[i]=sizepartinput;// arrayPartitions.push(sizepartinput);
+        sumPart+=arrayPartitions[i]  
+
           if (sizepartinput == 0){
            $(".textoAlertPart").text("Debe ingresar un número mayor a cero.");
            $('.alertPart').addClass('show');
            $('#btn-asignar').addClass('disabled');
-         } else if (totalinput > memtotal){
+         } else if (sumPart > memtotal){
            $(".textoAlertPart").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
            $('.alertPart').addClass('show');
            $('#btn-asignar').addClass('disabled');
-         } 
-        
-         
+         } else if (isNaN(sumPart) || ((sumPart < memtotal)&&(sizepartinput > 1))){
+          $(".textoAlertPart").text("Tu pendeja ristoff");
+          $('.alertPart').addClass('show');
+          $('#btn-asignar').addClass('disabled');
+         } else if (sumPart == memtotal){
+          $('.alertPart').removeClass('show');
+          $('.alertPart').addClass('hide');
+          $('#btn-asignar').removeClass('disabled');
+         }
         }   
+        console.log('arrayPartitions: ',arrayPartitions);
+        console.log('suma total: ',sumPart);
+        if (sumPart != memtotal){
+        console.log('error')
+        }
        /*  for(let i=0; i<partition; i++){
           let sizepartinput = parseInt($('.inputParts'+i).val()); console.log(sizepartinput);
           let totalinput = sizepartinput*partition; console.log('el total es ',totalinput);
           
           } */
+          return arrayPartitions
       });
     }    
-    //console.log("array particiones: ",arrayPartitions)
+
     
-   /*  
-    /* $("#inputPartsId").off().keyup('.inputParts'+num_part,function(){
-      for(var i=0; i<partition; i++){
-        var valueCurrent = parseInt($('.inputParts'+i).val()); console.log("valuecurrent ",valueCurrent);
-        if (isNaN(valueCurrent)){
-          valueCurrent = totalpart;
-        }
-        arrayPartitions[i-1]=valueCurrent;console.log(arrayPartitions);
-      }
-      //console.log("array particiones2: ",arrayPartitions)
-    }) */
+
     return totalpart, totaldisp, porcMemoryDisp, partition
   });
 
@@ -545,7 +548,7 @@
       for(var i=0; i<partition; i++){
         num_part = i+1;
         var config_part_size = `
-        <button type="button" class="btn btn-outline-secondary" disabled>Part. ${num_part}: ${totalpart} MB</button>
+        <button type="button" class="btn btn-outline-secondary" disabled>Part. ${num_part}: ${arrayPartitions[i]} MB</button>
         `
         $("#config_part_size").append(config_part_size);
       }     
@@ -597,7 +600,7 @@
                       <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
                     </td>
                   </tr>` 
-    $("#tbodyID").append(nuevaFila);
+                 $("#tbodyID").append(nuevaFila);
                  $('#tableID tr').each(function() {
                   let values = $(this).find("td").map(function() { 
                     return $(this).html();
@@ -685,7 +688,7 @@
     },3500);
   });
   ////--------------------------MAPA DE MEMORIA-------------------------------------------
-    am4core.ready(function() {
+    /* am4core.ready(function() {
     
     // Themes begin
     am4core.useTheme(am4themes_animated);
@@ -728,7 +731,7 @@
     pieSeries.hiddenState.properties.endAngle = -90;
     pieSeries.hiddenState.properties.startAngle = -90;
     
-    }); // end am4core.ready()
+    }); // end am4core.ready() */
 
     //---------------------SECCION PRESENTACION------------------------------------------
 
