@@ -44,40 +44,11 @@ MemoriaFija.prototype.removerProceso = function(proceso) {
 	this.getParticion(proceso).proceso = null;
 }
 
-
-MemoriaFija.prototype.particionLibre = function(proceso) {
-	let fragInternaGlobal = 0;
-	let particionWorstFit = null;
-	for (var p of this.particiones) {
-		if (p.isEmpty() && p.tam >= proceso.tam) {
-			if (p.tam - proceso.tam >= fragInternaGlobal) {
-				fragInternaGlobal = p.tam - proceso.tam;
-				particionWorstFit = p;
-			}
-		}
-	}
-	return particionWorstFit;
-}
-
 function MemoriaVariable(...args) {
 	MemoriaBase.apply(this, args);
 }
 
 MemoriaVariable.prototype = Object.create(MemoriaBase.prototype);
-
-MemoriaVariable.prototype.particionLibre = function(proceso) {
-	let fragInternaGlobal = 999999999999999;
-	let particionBestFit = null;
-	for (var p of this.particiones) {
-		if (p.isEmpty() && p.tam >= proceso.tam) {
-			if (p.tam - proceso.tam < fragInternaGlobal) {
-				fragInternaGlobal = p.tam - proceso.tam;
-				particionBestFit = p;
-			}
-		}
-	}
-	return particionBestFit;
-}
 
 MemoriaVariable.prototype.insertarProceso = function(proceso) {
 	let particionLibre = this.particionLibre(proceso);
@@ -92,11 +63,15 @@ MemoriaVariable.prototype.insertarProceso = function(proceso) {
 }
 
 MemoriaVariable.prototype.removerProceso = function(proceso) {
+	//debugger;
 	let alInicio = this.particiones.indexOf(this.getParticion(proceso)) - 1;
 	let alFinal = this.particiones.indexOf(this.getParticion(proceso)) + 1;
 	let flagFinal = (alFinal > this.particiones.length) ? false : true;
 	let flagInicio = (alInicio >= 0) ? true : false;
+	let eliminarProceso = false;
 	while (flagInicio || flagFinal) {
+		alInicio = this.particiones.indexOf(this.getParticion(proceso)) - 1;
+		alFinal = this.particiones.indexOf(this.getParticion(proceso)) + 1;
 		if (flagFinal && this.particiones[alFinal].isEmpty()) {
 			this.getParticion(proceso).tam += this.particiones[alFinal].tam;
 			this.particiones.splice(alFinal, 1);
@@ -106,7 +81,7 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 				flagFinal = false;
 			}
 		} else {
-			this.particiones[alFinal-1].proceso = null;
+			eliminarProceso = true;
 			flagFinal = false;
 		}
 		if (flagInicio && this.particiones[alInicio].isEmpty()) {
@@ -118,8 +93,12 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 				flagInicio = false;
 			}
 		} else {
-			this.particiones[alInicio+1].proceso = null;
+			eliminarProceso = true;
 			flagInicio = false;
+		}
+		if (eliminarProceso) {
+			this.particiones[this.particiones.indexOf(this.getParticion(proceso))].proceso = null;
+			break;
 		}
 	}
 }

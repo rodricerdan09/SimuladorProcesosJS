@@ -1,4 +1,3 @@
-
   console.log('activo config.js')
   //Ambiente de variables
   let typeMemory = "Variable"; // tipo de Memoria
@@ -69,11 +68,11 @@
     });
     $("#cargaprocesos").hide()
     $("#presentacion").hide()
- 
+
   });     
   //Preparamos el entorno de trabajo
   //------------------------------------------------------------------------
-  
+
   //---------------------SECCION CONFIGURACION------------------------------------------
   /* $('ul#navmenu div li a').off().on('click', function(){
     $('ul#navmenu div li a').removeClass('text-primary')
@@ -100,7 +99,7 @@
     if (isPrimary2 == false){
       $('.alertSimu').addClass('show')
       $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
-  
+
       setTimeout(function(){ 
         $('.alertSimu').removeClass('show');
         $('.alertSimu').addClass('hide');
@@ -117,7 +116,7 @@
     if (isPrimary3 == false){
       $('.alertSimu').addClass('show')
       $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
-  
+
       setTimeout(function(){ 
         $('.alertSimu').removeClass('show');
         $('.alertSimu').addClass('hide');
@@ -156,7 +155,7 @@
   $("#optionAlgo").change(function(){
     $("#quantumid").removeClass('disabled');
     var typeAlgorithm = $("#optionAlgo").find(':selected').text();
-  
+
     if (typeAlgorithm == 'FCFS'){
       algorithm = typeAlgorithm; console.log(algorithm);
       $(".quantumIn").val("");
@@ -305,7 +304,7 @@
 
     var valueCurrent = $("#optionType").find(':selected').text();
       $(".muted-type").hide();
-  
+
     if (valueCurrent == 'Fija'){
         $("#btn-parts").removeClass("disabled");
         $(".optionFitOne").removeClass("d-none");
@@ -442,7 +441,7 @@
 
     var valorCurrent2 =  parseInt($("#cantpart").val());
     partition = valorCurrent2;
-  
+
     if (partition == 0){
       $(".textoAlertPart").text("La cantidad de particiones debe ser un número entero positivo.");
       $('.alertPart').addClass('show');
@@ -467,7 +466,7 @@
     $("#memoria").text('Tamaño Definido: '+memtotal+' MB.');
     $("#memoriacpu").text('Tamaño Definido para CPU: '+sizeMemoryCpu+' MB.');
     $("#porcentajeTotal").text('Porcentaje de la memoria total utilizada por el Planificador: '+porcMemoryDisp+'%');
-  
+
     if (partition == 0){
       $(".textoAlertPart").text("La cantidad de particiones debe ser un número entero positivo.");
       $('.alertPart').addClass('show');
@@ -610,6 +609,7 @@
                  })
 
     return idProcess, count, parametros
+
   });
 
   // evento para agregar rafagas  
@@ -673,7 +673,7 @@
     return count
   });
 
- // Funcion para eliminar una nueva fila de la tabla
+  // Funcion para eliminar una nueva fila de la tabla
   $("#tableID").on("click", ".del", function(){
     if (idProcess > 0) {idProcess-=1;} 
     $(this).parents("tr").remove();
@@ -737,7 +737,7 @@
 
     //---------------------SECCION PRESENTACION------------------------------------------
 
-//--------------------------GANTT DE PROCESOS-------------------------------------------
+  //--------------------------GANTT DE PROCESOS-------------------------------------------
     am4core.ready(function() {
       var chart = am4core.create("chartdiv-gantt", am4charts.XYChart);
       chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
@@ -751,7 +751,7 @@
       chart.data = [
         {
           name: "CPU",
-          fromDate: "2018-01-01 08:00",
+          value: "2018-01-01 08:00",
           toDate: "2018-01-01 10:00",
           color: colorSet.getIndex(2).brighten(0)
         },
@@ -768,7 +768,7 @@
       categoryAxis.renderer.grid.template.location = 0;
       categoryAxis.renderer.inversed = true;
       
-      var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+      var dateAxis = chart.xAxes.push(new am4charts.TimeAxis());
       dateAxis.dateFormatter.dateFormat = "yyyy-MM-dd HH:mm";
       dateAxis.renderer.minGridDistance = 70;
       dateAxis.baseInterval = { count: 30, timeUnit: "minute" };
@@ -804,31 +804,279 @@
       $('.alertProcess').addClass('show');
     }
   });
- //--------------------------------------------------------------------------
- 
-function main(){
-  if (typeMemory == "Variable"){
-    let p = new Particion(memtotal, null);     
-    mem = new MemoriaVariable(memtotal, [p], []);
-  }
+  //--------------------------------------------------------------------------
 
-  if (algorithm == "FCFS"){
-    sim = new SimuladorNoApropiativo(0, [],[],[], mem);
-  }
+  $('#btnconfirmar2').on('click', function(){
+    main();
+  });
 
-  let p1= new Proceso(1, 12, 0, 0, [1,2,1])
-  let p2= new Proceso(2, 12, 1, 0, [1,2,1])
+  function main(){
+    if (typeMemory == "Variable"){
+      let p = new Particion(memtotal, null);     
+      mem = new MemoriaVariable(memtotal, [p], []);
+      if (fitMemory == "Worst Fit") {
+        MemoriaVariable.prototype.particionLibre = function(proceso) {
+          let fragInternaGlobal = 0;
+          let particionWorstFit = null;
+          for (var p of this.particiones) {
+            if (p.isEmpty() && p.tam >= proceso.tam) {
+              if (p.tam - proceso.tam >= fragInternaGlobal) {
+                fragInternaGlobal = p.tam - proceso.tam;
+                particionWorstFit = p;
+              }
+            }
+          }
+          return particionWorstFit;
+        }
+      }
+    } else {
+      // captura de particiones
+      let particiones = [];
+      for (p of arrayPartitions) {
+        let part = new Particion(p, null);
+        particiones.push(part);
+      }
+      console.log(particiones);
+      mem = new MemoriaFija(memtotal, particiones, []);
+      console.log(mem)
+      if (fitMemory == "Best Fit") {
+        MemoriaFija.prototype.particionLibre = function(proceso) {
+          let fragInternaGlobal = 999999999999999;
+          let particionBestFit = null;
+          for (var p of this.particiones) {
+            if (p.isEmpty() && p.tam >= proceso.tam) {
+              if (p.tam - proceso.tam < fragInternaGlobal) {
+                fragInternaGlobal = p.tam - proceso.tam;
+                particionBestFit = p;
+              }
+            }
+          }
+          return particionBestFit;
+        }
+      }
+    }
 
-  sim.colaNuevos.push(p1,p2)
-  sim.colaControl.push(p1,p2)
-  while(sim.colaControl.length>0){
-    sim.cicloMemoria();
-    sim.cicloCpu();
-    console.log(sim)
-  }
-  let time = sim.imprimirResultado();
-  console.log('Tiempo de Retorno Prom: ', time[1]);
-  console.log('Tiempo de Espera Prom: ', time[0]);
-  console.log('Porcentaje utilizado de CPU: ', sim.porcActivo());
+    switch (algorithm) {
+      case 'FCFS':
+        sim = new SimuladorNoApropiativo(0, [],[],[], mem);
+        break;
+      case 'SJF':
+        sim = new SimuladorNoApropiativo(0, [], [], [], mem);
+        SimuladorNoApropiativo.prototype.ordenarColaListos = function() {
+          this.colaListos.sort((a, b) => (a.getRafCpu() > b.getRafCpu() ? 1 : -1));
+        }
+        break;
+      case 'SRTF':
+        sim = new SimuladorApropiativo(0, [], [], [], mem);
+        SimuladorApropiativo.prototype.ordenarColaListos = function() {
+
+        }
+        SimuladorApropiativo.prototype.cicliCpu = function() {
+          if (this.colaListos.length > 0 && !this.procesoCpu) {
+            this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+          } else if (this.procesoCpu && this.colaListos.length > 0) {
+            // logica de SRTF
+          }
+
+          if (this.colaBloqueados.length > 0 && !this.procesoEs) {
+            this.procesoEs = this.colaBloqueados[0];
+            this.colaBloqueados.splice(0, 1);
+          }
+          if (this.procesoCpu) {
+            let rafCpuFinalizada = this.procesoCpu.tratarProceso();
+            this.procesoCpu.irrupcion++;
+            if (rafCpuFinalizada) {
+              if (this.procesoCpu.isFinished()) {
+                this.memoria.removerProceso(this.procesoCpu);
+                let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
+                this.resultados.push(p);
+                this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
+                this.procesoCpu = null;
+              } else {
+                this.colaBloqueados.push(this.procesoCpu);
+                this.procesoCpu = null;
+              }
+            }
+          } else {
+            this.tiempoOcioso++;
+          }
+
+          if (this.procesoEs) {
+            let rafEsFinalizada = this.procesoEs.tratarProceso();
+            if (rafEsFinalizada) {
+              this.colaListos.push(this.procesoEs);
+              this.procesoEs = null;
+            }
+          }
+
+          this.clock++;
+        }
+        break;
+      case 'RR':
+        sim = new SimuladorApropiativo(0, [], [], [], mem);
+        sim.quantum = generalQuantum;
+        let quantumReset = false;
+        SimuladorApropiativo.prototype.cicloCpu = function() {
+          if (this.colaListos.length > 0 && !this.procesoCpu) {
+            this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+          } else if (this.quantum == 0) {
+            this.colaListos.push(this.procesoCpu);
+            this.procesoCpu = null;
+            this.quantum = generalQuantum;
+          }
+          if (this.colaBloqueados.length > 0 && !this.procesoEs) {
+            this.procesoEs = this.colaBloqueados[0];
+            this.colaBloqueados.splice(0, 1);
+          }
+          if (this.procesoCpu) {
+            let rafCpuFinalizada = this.procesoCpu.tratarProceso();
+            this.quantum--;
+            this.procesoCpu.irrupcion++;
+            if (rafCpuFinalizada) {
+              if (this.procesoCpu.isFinished()) {
+                this.memoria.removerProceso(this.procesoCpu);
+                let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
+                this.resultados.push(p);
+                this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
+                this.procesoCpu = null;
+                this.quantum = generalQuantum;
+              } else {
+                quantumReset = false;
+                this.colaBloqueados.push(this.procesoCpu);
+                this.procesoCpu = null;
+              }
+            }
+          } else {
+            this.tiempoOcioso++;
+          }
+
+          if (this.procesoEs) {
+            let rafEsFinalizada = this.procesoEs.tratarProceso();
+            if (rafEsFinalizada) {
+              this.colaListos.push(this.procesoEs);
+              this.procesoEs = null;
+            }
+          }
+          this.clock++;
+        }
+        break;
+      case 'MLQ':
+        sim = new SimuladorApropiativo(0, [[], [], []], [], [], mem);
+        SimuladorApropiativo.prototype.cicloCpu = function() {
+
+        }
+        break;
+      case 'Prioridades':
+        sim = new SimuladorApropiativo(0, [], [], [], mem);
+        SimuladorApropiativo.prototype.ordenarColaListos = function() {
+          this.colaListos.sort((a, b) => (a.prio > b.prio) ? 1 : -1);
+        }
+        SimuladorApropiativo.prototype.cicloCpu = function() {
+          if (this.colaListos.length > 0 && !this.procesoCpu) {
+            this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+          } else if (this.procesoCpu && this.colaListos.length > 0 && this.colaListos[0].prio > this.procesoCpu.prio) {
+            this.colaListos.push(this.procesoCpu);
+            this.procesoCpu = this.colaListos[0];
+          }
+          if (this.colaBloqueados.length > 0 && !this.procesoEs) {
+            this.procesoEs = this.colaBloqueados[0];
+            this.colaBloqueados.splice(0, 1);
+          }
+          if (this.procesoCpu) {
+            let rafCpuFinalizada = this.procesoCpu.tratarProceso();
+            this.procesoCpu.irrupcion++;
+            if (rafCpuFinalizada) {
+              if (this.procesoCpu.isFinished()) {
+                this.memoria.removerProceso(this.procesoCpu);
+                let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
+                this.resultados.push(p);
+                this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
+                this.procesoCpu = null;
+              } else {
+                this.colaBloqueados.push(this.procesoCpu);
+                this.procesoCpu = null;
+              }
+            }
+          } else {
+            this.tiempoOcioso++;
+          }
+
+          if (this.procesoEs) {
+            let rafEsFinalizada = this.procesoEs.tratarProceso();
+            if (rafEsFinalizada) {
+              this.colaListos.push(this.procesoEs);
+              this.procesoEs = null;
+            }
+          }
+
+          this.clock++;
+        }
+    }
+
+
+
+    for (p of parametros) {    
+      debugger; 
+      let pro = new Proceso();
+      let arr = []
+      for (var i = 0; i < p.length-3; i++) {
+        if (i >= 4){
+          arr.push(p[i]);
+        } else {
+          switch (i) {
+            case 0:
+              pro.pid = p[i];
+              break;
+            case 1:
+              pro.prio = p[i];
+              break;
+            case 2:
+              pro.tam = p[i];
+              break;
+            case 3:
+              pro.tarrivo = p[i];
+              break;
+          }
+        }
+      }
+      pro.rafaga = arr;
+      sim.colaNuevos.push(pro);
+      sim.colaControl.push(pro);
+    }
+
+    while(sim.colaControl.length > 0){
+      debugger;
+      sim.cicloMemoria();
+      sim.ordenarColaListos();
+      sim.cicloCpu();
+      console.log(sim)
+    }
+
+    console.log('Porcentaje utilizado de CPU: ', sim.porcActivo());
+
+    for (let r of sim.resultados) {
+      let result = ` <tr>
+                    <td> ${r.pid} </td>
+                    <td> ${r.tSalida} </td>
+                    <td> ${r.tArrivo} </td>
+                    <td> ${r.tRetorno} </td>
+                    <td> ${r.tEspera} </td>
+                  </tr>
+                  `;
+      $('#t-result').append(result);
+    }
+    let results = sim.calcularPromedios();
+    let result2 = ` <tr>
+                    <td colspan="3"><b>${'PROMEDIOS'}</td>
+                    <td><b> ${results[0].toFixed(1)} </td>
+                    <td><b> ${results[1].toFixed(1)} </td>
+                  </tr>
+                  `;
+
+    $('#t-result').append(result2);
+    $('#cpu').append(sim.porcActivo().toFixed(1) + '%');
 }
 

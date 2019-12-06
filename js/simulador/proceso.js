@@ -1,4 +1,4 @@
-function Proceso(pid, tam, tarrivo, prio, rafaga) {
+function Proceso(pid, prio, tam, tarrivo, rafaga) {
 	this.pid = pid;
 	this.tam = tam;
 	this.tarrivo = tarrivo;
