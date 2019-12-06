@@ -821,8 +821,14 @@ let lenArrayProcess = 0
         }
       }
     } else {
-      // captura de particiones 
-      mem = new MemoriaFija(memtotal, [], []);
+      // captura de particiones
+      let particiones = [];
+      for (p of arrayPartitions) {
+        let part = new Particion(p, null);
+        particiones.push(part);
+      }
+      console.log(particiones);
+      mem = new MemoriaFija(memtotal, particiones, []);
       if (fitMemory == "Best Fit") {
         MemoriaFija.prototype.particionLibre = function(proceso) {
           let fragInternaGlobal = 999999999999999;
