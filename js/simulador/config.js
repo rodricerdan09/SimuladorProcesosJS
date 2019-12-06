@@ -584,20 +584,23 @@
                         <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
                     </td>
                     <td>
-                        <button type="button" class="crear-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
+                        <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
                         <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
                     </td>
                   </tr>` 
                  $("#tbodyID").append(nuevaFila);
                  
                  $('#tableID').keyup(function(){
-                 $(".crear-rafaga").on("click", function(){
+                 $(".confirm-rafaga").on("click", function(){
                     $('#tableID tbody tr').each(function(i,e) {
                       let tr = [];
                       $(this).find("td").each(function(index, element){
                         let td =  parseInt($(this).find("input").val());            
-                        tr[index]=td;                   
+                        tr[index]=td;
+                        
+                        //console.log('trlength:',tr.length)                   
                       });
+                      tr.splice(4,1);
                       parametros[i]=tr;  console.log('tr: ',tr);  
                       }); 
                     console.log('parametros: ',parametros);
@@ -605,21 +608,7 @@
                   });
                
                  })
-                 
 
-                  /* let values = $(this).find("td").map(function() { 
-                    return $(this).html();
-                  })
-                  for(let i=2;i<=4;i++){
-                      if(values[i]=="" && count>1){
-                        console.log('hola mundo')
-                      } else{
-                        console.log('mundo hola')
-                      }
-                  } */
-                  /* console.log('col-2',values[2]);
-                  console.log('col-3',values[3]);
-                  console.log('col-4',values[4]); */
     return idProcess, count, parametros
   });
 
@@ -637,10 +626,7 @@
                         <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
                         <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
                           `);
-          /* $(this).append(`<td class="pt-3-half" type="number" contenteditable="true">CPU</td>
-          <td class="pt-3-half" type="number" contenteditable="true">E/S</td>
-          <td class="pt-3-half" type="number" contenteditable="true">CPU</td>`);
-          $(this).attr('contenteditable',false); */
+    
         }else{
           $(this).append(`<td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
           <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>`);
