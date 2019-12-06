@@ -456,14 +456,12 @@ let lenArrayProcess = 0
     $('#controlidpart').removeClass('d-none');  
     e.preventDefault();
     value1 = Math.round(memtotal/partition);
-    value2 = memtotal%partition;
+    //value2 = memtotal%partition;
     value3 = Math.round((sizeMemoryCpu*100)/sizeMemory);
     totalpart = value1;
-    totaldisp = value2;
     porcMemoryDisp = value3;
     
     $("#memoria").text('Tamaño Definido: '+memtotal+' MB.');
-    $("#disponible").text('Tamaño Disponible: '+totaldisp+' MB.');
     $("#memoriacpu").text('Tamaño Definido para CPU: '+sizeMemoryCpu+' MB.');
     $("#porcentajeTotal").text('Porcentaje de la memoria total utilizada por el Planificador: '+porcMemoryDisp+'%');
 
@@ -493,17 +491,14 @@ let lenArrayProcess = 0
         totalinput = sizepartinput*partition; console.log('totalinput '+i,totalinput);      
         arrayPartitions[i]=sizepartinput;// arrayPartitions.push(sizepartinput);
         sumPart+=arrayPartitions[i]  
-
-          /* if (sizepartinput == 0){
-           $(".textoAlertPart").text("Debe ingresar un número mayor a cero.");
-           $('.alertPart').addClass('show');
-           $('#btn-asignar').addClass('disabled');
-         } else  */if (sumPart > memtotal){
+        totaldisp = memtotal-sumPart;
+        
+        if (sumPart > memtotal){
            $(".textoAlertPart").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
            $('.alertPart').addClass('show');
            $('#btn-asignar').addClass('disabled');
-         } else if (isNaN(sumPart) || ((sumPart < memtotal)&&(sizepartinput > 1))){
-          $(".textoAlertPart").text("No puede quedar espacio sin utilizar. Debe ingresar un número mayor a cero.");
+         } else if (isNaN(sumPart) || ((sumPart < memtotal)||(sizepartinput == 0))){
+          $(".textoAlertPart").text("No puede quedar espacio sin utilizar. Debe ingresar un tamaño de partición mayor a cero.");
           $('.alertPart').addClass('show');
           $('#btn-asignar').addClass('disabled');
          } else if (sumPart == memtotal){
@@ -512,16 +507,8 @@ let lenArrayProcess = 0
           $('#btn-asignar').removeClass('disabled');
          }
         }   
-        console.log('arrayPartitions: ',arrayPartitions);
-        console.log('suma total: ',sumPart);
-        if (sumPart != memtotal){
-        console.log('error')
-        }
-       /*  for(let i=0; i<partition; i++){
-          let sizepartinput = parseInt($('.inputParts'+i).val()); console.log(sizepartinput);
-          let totalinput = sizepartinput*partition; console.log('el total es ',totalinput);
-          
-          } */
+        console.log('arrayPartitions: ',arrayPartitions); console.log('suma total: ',sumPart);
+        $("#disponible").text('Tamaño Disponible: '+totaldisp+' MB.');
           return arrayPartitions
       });
     }    
