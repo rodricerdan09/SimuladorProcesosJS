@@ -13,7 +13,6 @@ function SimuladorBase(clock, colaListos, colaNuevos, colaBloqueados, memoria) {
 }
 
 SimuladorBase.prototype.cicloMemoria = function() {
-	debugger;
 	let c = 0;
 	this.colaNuevos.sort((a, b) => a.tarrivo - b.tarrivo);
 	for (let p of this.colaNuevos) {
@@ -64,7 +63,6 @@ function SimuladorNoApropiativo(...args) {
 SimuladorNoApropiativo.prototype = Object.create(SimuladorBase.prototype);
 
 SimuladorNoApropiativo.prototype.cicloCpu = function() {
-	debugger;
 	if (this.colaListos.length > 0 && !this.procesoCpu) {
 		this.procesoCpu = this.colaListos[0];
 		this.colaListos.splice(0, 1);

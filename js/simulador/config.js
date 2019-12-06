@@ -295,7 +295,7 @@
       $("#btn-type").addClass('disabled');
       $("#btn-fit").addClass('disabled');     
     }
-    return sizeMemoryDisp, porcMemoryDispCpu, sizeMemoryCpu, memtotal
+    return sizeMemoryDisp, porcMemoryDispCpu, sizeMemoryCpu, memtotal;
   });
   //control de la memoria del planificador
 
@@ -457,7 +457,6 @@
     $('.inputParts').removeClass('disabled');
     $('#controlidpart').removeClass('d-none');  
     e.preventDefault();
-
     value1 = Math.round(memtotal/partition);
     value2 = memtotal%partition;
     value3 = Math.round((sizeMemoryCpu*100)/sizeMemory);
@@ -497,16 +496,16 @@
         arrayPartitions[i]=sizepartinput;// arrayPartitions.push(sizepartinput);
         sumPart+=arrayPartitions[i]  
 
-          if (sizepartinput == 0){
+          /* if (sizepartinput == 0){
            $(".textoAlertPart").text("Debe ingresar un número mayor a cero.");
            $('.alertPart').addClass('show');
            $('#btn-asignar').addClass('disabled');
-         } else if (sumPart > memtotal){
+         } else  */if (sumPart > memtotal){
            $(".textoAlertPart").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
            $('.alertPart').addClass('show');
            $('#btn-asignar').addClass('disabled');
          } else if (isNaN(sumPart) || ((sumPart < memtotal)&&(sizepartinput > 1))){
-          $(".textoAlertPart").text("Tu pendeja ristoff");
+          $(".textoAlertPart").text("No puede quedar espacio sin utilizar. Debe ingresar un número mayor a cero.");
           $('.alertPart').addClass('show');
           $('#btn-asignar').addClass('disabled');
          } else if (sumPart == memtotal){
@@ -748,24 +747,6 @@
       
       chart.data = [
         {
-          name: "Proceso 1",
-          fromDate: "2018-01-01 08:00",
-          toDate: "2018-01-01 10:00",
-          color: colorSet.getIndex(0).brighten(0)
-        },
-        {
-          name: "Proceso 2",
-          fromDate: "2018-01-01 12:00",
-          toDate: "2018-01-01 15:00",
-          color: colorSet.getIndex(0).brighten(0.4)
-        },
-        {
-          name: "Proceso 3",
-          fromDate: "2018-01-01 15:30",
-          toDate: "2018-01-01 21:30",
-          color: colorSet.getIndex(0).brighten(0.8)
-        },
-        {
           name: "CPU",
           fromDate: "2018-01-01 08:00",
           toDate: "2018-01-01 10:00",
@@ -821,31 +802,30 @@
     }
   });
  //--------------------------------------------------------------------------
- if (typeMemory == "Variable"){
-  let p = new Particion(memtotal, null);
-   mem = new MemoriaVariable(memtotal, [p], []);
- }
- if (algorithm == "FCFS"){
-   sim = new SimuladorNoApropiativo(0, [],[],[], mem);
- }
+ 
+function main(){
+  if (typeMemory == "Variable"){
+    let p = new Particion(memtotal, null);     
+    mem = new MemoriaVariable(memtotal, [p], []);
+  }
 
- let p1= new Proceso(1, 12, 0, 0, [1,2,1])
- let p2= new Proceso(2, 12, 1, 0, [1,2,1])
+  if (algorithm == "FCFS"){
+    sim = new SimuladorNoApropiativo(0, [],[],[], mem);
+  }
 
- sim.colaNuevos.push(p1,p2)
- sim.colaControl.push(p1,p2)
+  let p1= new Proceso(1, 12, 0, 0, [1,2,1])
+  let p2= new Proceso(2, 12, 1, 0, [1,2,1])
 
- function main(){
-   
-
-   while(sim.colaControl.length>0){
+  sim.colaNuevos.push(p1,p2)
+  sim.colaControl.push(p1,p2)
+  while(sim.colaControl.length>0){
     sim.cicloMemoria();
     sim.cicloCpu();
     console.log(sim)
-   }
-   let time = sim.imprimirResultado();
-   console.log('Tiempo de Retorno Prom: ', time[1]);
-   console.log('Tiempo de Espera Prom: ', time[0]);
-   console.log('Porcentaje utilizado de CPU: ', sim.porcActivo());
- }
+  }
+  let time = sim.imprimirResultado();
+  console.log('Tiempo de Retorno Prom: ', time[1]);
+  console.log('Tiempo de Espera Prom: ', time[0]);
+  console.log('Porcentaje utilizado de CPU: ', sim.porcActivo());
+}
 
