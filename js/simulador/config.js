@@ -22,6 +22,7 @@
   let sim = null;
   let mem = null;
   let parametros=[];
+  let flag = false;
  /*  let arrayProcGraf = [];
   let procesosTerminados = []; // cola de procesos Terminado
   let colaListo = []; //Cola de procesos Listos
@@ -558,6 +559,7 @@
       idProcess+=1;
     }
     if (algorithm == 'Prioridades'){
+      flag = true;
       $('#th-prio').show();
       $('#interval-prio').show();
       var nuevaFila=`
@@ -614,7 +616,7 @@
           return parametros;
         }); 
       })
-    return idProcess, count, parametros
+    return idProcess, count, parametros, flag;
   });
 
   // evento para agregar rafagas  
@@ -1075,15 +1077,19 @@ am4core.ready(function() {
         }
     }
 
-
-
-    for (p of parametros) {    
+    let iter = 0;
+    if (flag) {
+      iter = 4;
+    } else {
+      iter = 3;
+    }
+    for (p of parametros) {  
       let pro = new Proceso();
       let arr = []
       for (var i = 0; i < p.length-3; i++) {
-        if (i >= 4){
+        if (i >= iter){
           arr.push(p[i]);
-        } else {
+        } else if (iter == 4){
           switch (i) {
             case 0:
               pro.pid = p[i];
@@ -1098,11 +1104,27 @@ am4core.ready(function() {
               pro.tarrivo = p[i];
               break;
           }
+        } else if (iter == 3){
+          switch (i) {
+            case 0:
+              pro.pid = p[i];
+              break;
+            case 1:
+              pro.tam = p[i];
+              break;
+            case 2:
+              pro.tarrivo = p[i];
+              pro.prio = 0;
+              break;
+          }
         }
       }
       pro.rafaga = arr;
+      console.log(pro);
       sim.colaNuevos.push(pro);
       sim.colaControl.push(pro);
+      console.log(sim.colaNuevos);
+      console.log(sim.colaControl);
     }
 
     while(sim.colaControl.length > 0){
