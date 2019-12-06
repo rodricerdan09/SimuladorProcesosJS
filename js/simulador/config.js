@@ -20,6 +20,7 @@ let arrayPartitions = []; // Memoria letiable
 let count = 0;
 let sim = null;
 let mem = null;
+let parametros=[];
 /*  let arrayProcGraf = [];
 let procesosTerminados = []; // cola de procesos Terminado
 let colaListo = []; //Cola de procesos Listos
@@ -587,21 +588,20 @@ let lenArrayProcess = 0
                  $("#tbodyID").append(nuevaFila);
                  
                  $('#tableID').keyup(function(e) {
-                   let parametros=[];
+                   
                    $('#tableID tbody tr').each(function(i,e) {
                        let tr = [];
                        $(this).find("td").each(function(index, element){
-                         let td = {};
-                         td["dato"+index] = $(this).find("input").val();            
-                         tr.push(td);                   
+                         let td = $(this).find("input").val();            
+                         tr.push(parseInt((td)));                   
                        });
                        parametros.push(tr);  console.log('tr: ',tr);  
                    }); 
-                  console.log('parametros: ',parametros);
+                  console.log(parametros);
+                  return parametros;
 
-                 })
+                 });
                  
-
                   /* let values = $(this).find("td").map(function() { 
                     return $(this).html();
                   })
@@ -615,7 +615,7 @@ let lenArrayProcess = 0
                   /* console.log('col-2',values[2]);
                   console.log('col-3',values[3]);
                   console.log('col-4',values[4]); */
-    return idProcess, count;
+    return idProcess, count, parametros;
   });
   // evento para agregar rafagas  
   $("#tableID").off().on("click", ".add-raf", function(){
@@ -1024,22 +1024,38 @@ let lenArrayProcess = 0
         }
     }
 
-    let p1 = new Proceso(1, 12, 0, 0, [1,2,1]);
-    let p2 = new Proceso(2, 120, 1, 0, [2,2,1]);
-    let p3 = new Proceso(3, 44, 2, 0, [1,2,3]);
-    let p4 = new Proceso(4, 55, 1, 0, [2,2,4]);
-    let p5 = new Proceso(5, 12, 5, 0, [6,2,1]);
-    let p6 = new Proceso(6, 156, 0, 0, [4,15,7]);
-    let p7 = new Proceso(7, 12, 0, 0, [1,11,1]);
-    let p8 = new Proceso(8, 120, 1, 0, [2,16,1]);
-    let p9 = new Proceso(9, 44, 2, 0, [1,14,3,5,6]);
-    let p10 = new Proceso(10, 55, 1, 0, [2,2,4]);
-    let p11 = new Proceso(11, 12, 5, 0, [6,2,1]);
-    let p12 = new Proceso(12, 156, 0, 0, [4,5,7]);
 
-    sim.colaNuevos.push(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-    sim.colaControl.push(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
 
+    for (p of parametros) 
+ {     let pro = new Proceso();
+      let arr = []
+      for (var i = 0; i < p.length-3; i++) {
+        if (i >= 4){
+          arr.push(p[i]);
+        } else {
+          switch (i) {
+            case 0:
+              pro.pid = p[i];
+              break;
+            case 1:
+              pro.prio = p[i];
+              break;
+            case 2:
+              pro.tam = p[i];
+              break;
+            case 3:
+              pro.tarrivo = p[i];
+              break;
+          }
+        }
+      }
+      pro.rafaga = arr;
+      sim.colaNuevos.push(pro);
+      sim.colaControl.push(pro);
+    }
+
+    console.log(sim);
+    debugger;
     while(sim.colaControl.length > 0){
       sim.cicloMemoria();
       sim.ordenarColaListos();
