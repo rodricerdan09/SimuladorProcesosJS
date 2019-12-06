@@ -22,6 +22,7 @@
   let count = 0;
   let sim = null;
   let mem = null;
+  let parametros=[];
  /*  let arrayProcGraf = [];
   let procesosTerminados = []; // cola de procesos Terminado
   let colaListo = []; //Cola de procesos Listos
@@ -583,24 +584,26 @@
                         <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
                     </td>
                     <td>
-                      <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
+                        <button type="button" class="crear-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
+                        <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
                     </td>
                   </tr>` 
                  $("#tbodyID").append(nuevaFila);
                  
-                 $('#tableID').keyup(function(e) {
-                   let parametros=[];
-                   $('#tableID tbody tr').each(function(i,e) {
-                       let tr = [];
-                       $(this).find("td").each(function(index, element){
-                         let td = {};
-                         td["dato"+index] = $(this).find("input").val();            
-                         tr.push(td);                   
-                       });
-                       parametros.push(tr);  console.log('tr: ',tr);  
-                   }); 
-                  console.log('parametros: ',parametros);
-
+                 $('#tableID').keyup(function(){
+                 $(".crear-rafaga").on("click", function(){
+                    $('#tableID tbody tr').each(function(i,e) {
+                      let tr = [];
+                      $(this).find("td").each(function(index, element){
+                        let td =  parseInt($(this).find("input").val());            
+                        tr[index]=td;                   
+                      });
+                      parametros[i]=tr;  console.log('tr: ',tr);  
+                      }); 
+                    console.log('parametros: ',parametros);
+                    return parametros;
+                  });
+               
                  })
                  
 
@@ -617,8 +620,9 @@
                   /* console.log('col-2',values[2]);
                   console.log('col-3',values[3]);
                   console.log('col-4',values[4]); */
-    return idProcess, count;
+    return idProcess, count, parametros
   });
+
   // evento para agregar rafagas  
   $("#tableID").off().on("click", ".add-raf", function(){
     $('.alertTable').removeClass('show');
@@ -629,9 +633,9 @@
       $(`#tbodyID #row${idProcess} #raf`).each(function(){
         if (count==1){
           $(this).append(`
-                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
-                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
-                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
+                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
+                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
+                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
                           `);
           /* $(this).append(`<td class="pt-3-half" type="number" contenteditable="true">CPU</td>
           <td class="pt-3-half" type="number" contenteditable="true">E/S</td>
