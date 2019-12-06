@@ -82,6 +82,7 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 		this.procesoEs = this.colaBloqueados[0];
 		this.colaBloqueados.splice(0, 1);
 	}
+	
 	if (this.procesoCpu) {
 		let rafCpuFinalizada = this.procesoCpu.tratarProceso();
 		this.procesoCpu.irrupcion++;

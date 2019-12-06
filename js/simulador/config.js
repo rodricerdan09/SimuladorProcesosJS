@@ -869,58 +869,120 @@
     //---------------------SECCION PRESENTACION------------------------------------------
 
   //--------------------------GANTT DE PROCESOS-------------------------------------------
-    am4core.ready(function() {
-      var chart = am4core.create("chartdiv-gantt", am4charts.XYChart);
-      chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
-      
-      chart.paddingRight = 30;
-      chart.dateFormatter.inputDateFormat = "yyyy-MM-dd HH:mm";
-      
-      var colorSet = new am4core.ColorSet();
-      colorSet.saturation = 0.4;
-      
-      chart.data = [
-        {
-          name: "CPU",
-          value: "2018-01-01 08:00",
-          toDate: "2018-01-01 10:00",
-          color: colorSet.getIndex(2).brighten(0)
-        },
-        {
-          name: "E/S",
-          fromDate: "2018-01-01 12:00",
-          toDate: "2018-01-01 15:00",
-          color: colorSet.getIndex(2).brighten(0.4)
-        }
-      ];
-      
-      var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
-      categoryAxis.dataFields.category = "name";
-      categoryAxis.renderer.grid.template.location = 0;
-      categoryAxis.renderer.inversed = true;
-      
-      var dateAxis = chart.xAxes.push(new am4charts.TimeAxis());
-      dateAxis.dateFormatter.dateFormat = "yyyy-MM-dd HH:mm";
-      dateAxis.renderer.minGridDistance = 70;
-      dateAxis.baseInterval = { count: 30, timeUnit: "minute" };
-      dateAxis.max = new Date(2018, 0, 1, 24, 0, 0, 0).getTime();
-      dateAxis.strictMinMax = true;
-      dateAxis.renderer.tooltipLocation = 0;
-      
-      var series1 = chart.series.push(new am4charts.ColumnSeries());
-      series1.columns.template.width = am4core.percent(80);
-      series1.columns.template.tooltipText = "{name}: {openDateX} - {dateX}";
-      
-      series1.dataFields.openDateX = "fromDate";
-      series1.dataFields.dateX = "toDate";
-      series1.dataFields.categoryY = "name";
-      series1.columns.template.propertyFields.fill = "color"; // get color from data
-      series1.columns.template.propertyFields.stroke = "color";
-      series1.columns.template.strokeOpacity = 1;
-      
-      chart.scrollbarX = new am4core.Scrollbar();
-      
-      }); 
+
+
+  // And, for a good measure, let's add a legend
+am4core.ready(function() {
+
+// Themes begin
+  am4core.useTheme(am4themes_animated);
+  // Themes end
+
+  var chart = am4core.create("chartdiv-d", am4charts.XYChart);
+  chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+  chart.paddingRight = 30;
+  chart.dateFormatter.inputDateFormat = "yyyy-MM-dd HH:mm";
+
+  var colorSet = new am4core.ColorSet();
+  colorSet.saturation = 0.4;
+
+  chart.data = [
+    {
+      name: "John",
+      fromDate: "2018-01-01 08:00",
+      toDate: "2018-01-01 10:00",
+      color: colorSet.getIndex(0).brighten(0)
+    },
+    {
+      name: "John",
+      fromDate: "2018-01-01 12:00",
+      toDate: "2018-01-01 15:00",
+      color: colorSet.getIndex(0).brighten(0.4)
+    },
+    {
+      name: "John",
+      fromDate: "2018-01-01 15:30",
+      toDate: "2018-01-01 21:30",
+      color: colorSet.getIndex(0).brighten(0.8)
+    },
+
+    {
+      name: "Jane",
+      fromDate: "2018-01-01 09:00",
+      toDate: "2018-01-01 12:00",
+      color: colorSet.getIndex(2).brighten(0)
+    },
+    {
+      name: "Jane",
+      fromDate: "2018-01-01 13:00",
+      toDate: "2018-01-01 17:00",
+      color: colorSet.getIndex(2).brighten(0.4)
+    },
+
+    {
+      name: "Peter",
+      fromDate: "2018-01-01 11:00",
+      toDate: "2018-01-01 16:00",
+      color: colorSet.getIndex(4).brighten(0)
+    },
+    {
+      name: "Peter",
+      fromDate: "2018-01-01 16:00",
+      toDate: "2018-01-01 19:00",
+      color: colorSet.getIndex(4).brighten(0.4)
+    },
+
+    {
+      name: "Melania",
+      fromDate: "2018-01-01 16:00",
+      toDate: "2018-01-01 20:00",
+      color: colorSet.getIndex(6).brighten(0)
+    },
+    {
+      name: "Melania",
+      fromDate: "2018-01-01 20:30",
+      toDate: "2018-01-01 24:00",
+      color: colorSet.getIndex(6).brighten(0.4)
+    },
+
+    {
+      name: "Donald",
+      fromDate: "2018-01-01 13:00",
+      toDate: "2018-01-01 24:00",
+      color: colorSet.getIndex(8).brighten(0)
+    }
+  ];
+
+  var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+  categoryAxis.dataFields.category = "name";
+  categoryAxis.renderer.grid.template.location = 0;
+  categoryAxis.renderer.inversed = true;
+
+  var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+  dateAxis.dateFormatter.dateFormat = "yyyy-MM-dd HH:mm";
+  dateAxis.renderer.minGridDistance = 70;
+  dateAxis.baseInterval = { count: 30, timeUnit: "minute" };
+  dateAxis.max = new Date(2018, 0, 1, 24, 0, 0, 0).getTime();
+  dateAxis.strictMinMax = true;
+  dateAxis.renderer.tooltipLocation = 0;
+
+  var series1 = chart.series.push(new am4charts.ColumnSeries());
+  series1.columns.template.width = am4core.percent(80);
+  series1.columns.template.tooltipText = "{name}: {openDateX} - {dateX}";
+
+  series1.dataFields.openDateX = "fromDate";
+  series1.dataFields.dateX = "toDate";
+  series1.dataFields.categoryY = "name";
+  series1.columns.template.propertyFields.fill = "color"; // get color from data
+  series1.columns.template.propertyFields.stroke = "color";
+  series1.columns.template.strokeOpacity = 1;
+
+  chart.scrollbarX = new am4core.Scrollbar();
+
+});
+
+  // asdasdsa 
 
   $(".sizeInput").keyup(function(){
 
@@ -976,7 +1038,7 @@
           let particionBestFit = null;
           for (let p of this.particiones) {
             if (p.isEmpty() && p.tam >= proceso.tam) {
-              if (p.tam - proceso.tam < fragInternaGlobal) {
+              if (p.tam - proceso.tam <= fragInternaGlobal) {
                 fragInternaGlobal = p.tam - proceso.tam;
                 particionBestFit = p;
               }
@@ -1054,8 +1116,8 @@
             this.colaListos.splice(0, 1);
           } else if (this.quantum == 0) {
             this.colaListos.push(this.procesoCpu);
-            this.procesoCpu = null;
             this.quantum = generalQuantum;
+            this.procesoCpu = this.colaListos[0];
           }
           if (this.colaBloqueados.length > 0 && !this.procesoEs) {
             this.procesoEs = this.colaBloqueados[0];
@@ -1078,7 +1140,7 @@
                 this.colaBloqueados.push(this.procesoCpu);
                 this.procesoCpu = null;
               }
-            }
+            } 
           } else {
             this.tiempoOcioso++;
           }
@@ -1105,12 +1167,15 @@
           this.colaListos.sort((a, b) => (a.prio > b.prio) ? 1 : -1);
         }
         SimuladorApropiativo.prototype.cicloCpu = function() {
+          //debugger;
           if (this.colaListos.length > 0 && !this.procesoCpu) {
             this.procesoCpu = this.colaListos[0];
             this.colaListos.splice(0, 1);
           } else if (this.procesoCpu && this.colaListos.length > 0 && this.colaListos[0].prio > this.procesoCpu.prio) {
             this.colaListos.push(this.procesoCpu);
             this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+            this.ordenarColaListos();
           }
           if (this.colaBloqueados.length > 0 && !this.procesoEs) {
             this.procesoEs = this.colaBloqueados[0];
@@ -1147,13 +1212,19 @@
         }
     }
 
-    for (p of parametros) {   
+    let iter = 0;
+    if (flag) {
+      iter = 4;
+    } else {
+      iter = 3;
+    }
+    for (p of parametros) { 
       let pro = new Proceso();
       let arr = []
-      for (let i = 0; i < p.length-3; i++) {
-        if (i >= 4){
+      for (var i = 0; i < p.length-3; i++) {
+        if (i >= iter){
           arr.push(p[i]);
-        } else {
+        } else if (iter == 4){
           switch (i) {
             case 0:
               pro.pid = p[i];
@@ -1168,11 +1239,27 @@
               pro.tarrivo = p[i];
               break;
           }
+        } else if (iter == 3){
+          switch (i) {
+            case 0:
+              pro.pid = p[i];
+              break;
+            case 1:
+              pro.tam = p[i];
+              break;
+            case 2:
+              pro.tarrivo = p[i];
+              pro.prio = 0;
+              break;
+          }
         }
       }
       pro.rafaga = arr;
+      console.log(pro);
       sim.colaNuevos.push(pro);
       sim.colaControl.push(pro);
+      console.log(sim.colaNuevos);
+      console.log(sim.colaControl);
     }
 
     while(sim.colaControl.length > 0){
