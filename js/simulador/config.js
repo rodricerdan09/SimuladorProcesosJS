@@ -494,7 +494,7 @@
         arrayPartitions[i]=sizepartinput;// arrayPartitions.push(sizepartinput);
         sumPart+=arrayPartitions[i]  
         totaldisp = memtotal-sumPart;
-        
+
         if (sumPart > memtotal){
            $(".textoAlertPart").text("Tamaño de Memoria excedida. Intente nuevamente con un valor menor.");
            $('.alertPart').addClass('show');
@@ -571,10 +571,10 @@
     }
     var nuevaFila=`
                   <tr id="row${idProcess}" class="hide">
-                    <td class="pt-3-half" contenteditable="false">${idProcess}</td>
-                    <td class="pt-3-half" contenteditable="false">Proc_${idProcess}</td>
-                    <td class="pt-3-half" type="number" contenteditable="true"></td>
-                    <td class="pt-3-half" type="number" contenteditable="true"></td>
+                    <td class="md-form"><input type="number" class="form-control disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
+                    <td class="md-form"><input type="text" class="form-control rafagas-p w-20 p-raf${idProcess}" min=0 max=3 value=0></td>
+                    <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+                    <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
                     <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
                     <td>
                         <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
@@ -587,8 +587,24 @@
                     </td>
                   </tr>` 
                  $("#tbodyID").append(nuevaFila);
-                 $('#tableID tr').each(function() {
-                  let values = $(this).find("td").map(function() { 
+                 
+                 $('#tableID').keyup(function(e) {
+                   let parametros=[];
+                   $('#tableID tbody tr').each(function(i,e) {
+                       let tr = [];
+                       $(this).find("td").each(function(index, element){
+                         let td = {};
+                         td["dato"+index] = $(this).find("input").val();            
+                         tr.push(td);                   
+                       });
+                       parametros.push(tr);  console.log('tr: ',tr);  
+                   }); 
+                  console.log('parametros: ',parametros);
+
+                 })
+                 
+
+                  /* let values = $(this).find("td").map(function() { 
                     return $(this).html();
                   })
                   for(let i=2;i<=4;i++){
@@ -597,29 +613,37 @@
                       } else{
                         console.log('mundo hola')
                       }
-                  }
+                  } */
                   /* console.log('col-2',values[2]);
                   console.log('col-3',values[3]);
                   console.log('col-4',values[4]); */
-                })
     return idProcess, count;
   });
-
   // evento para agregar rafagas  
   $("#tableID").off().on("click", ".add-raf", function(){
     $('.alertTable').removeClass('show');
     $('.alertTable').addClass('hide');
     let rafagas = $('#raf').children('td').length
     count+=1;console.log('count:',count);
-   
+      
       $(`#tbodyID #row${idProcess} #raf`).each(function(){
-        $(this).append(`<td class="pt-3-half" type="number" contenteditable="true">CPU</td>
-                        <td class="pt-3-half" type="number" contenteditable="true">E/S</td>
-                        <td class="pt-3-half" type="number" contenteditable="true">CPU</td>`);
-        $(this).attr('contenteditable',false);
-
-          if(rafagas == 12 || count == 4){
-            
+        if (count==1){
+          $(this).append(`
+                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
+                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
+                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
+                          `);
+          /* $(this).append(`<td class="pt-3-half" type="number" contenteditable="true">CPU</td>
+          <td class="pt-3-half" type="number" contenteditable="true">E/S</td>
+          <td class="pt-3-half" type="number" contenteditable="true">CPU</td>`);
+          $(this).attr('contenteditable',false); */
+        }else{
+          $(this).append(`<td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
+          <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>`);
+          
+        }
+        
+          if(rafagas == 12 || count == 4){         
             $(".add-raf").addClass('disabled')
             $(".textoAlertTable").text("El máximo número de rafagas que puede agregar es de 4.");
             $('.alertTable').addClass('show');
@@ -639,15 +663,17 @@
     $('.alertTable').removeClass('show');
     $('.alertTable').addClass('hide'); 
     let rafagas = $('#raf').children('td').length   
-    count-=1; console.log('count:', count)
+    
 
-    if (rafagas <= 12){
+    if (rafagas <= 12 && count > 0){
+      count-=1; console.log('count:', count)
       $('#tableID').find('tr').each(function(){       
-            let col=$(this).find('td:eq(17)').children().removeClass('disabled')
-            console.log('col:', col)
+        //let col = $(this).parents("tr").find("td:5")/* .eq(5) */;    
+        let col=$(this).find('td:eq(11)')/* .children().removeClass('disabled') */
+            console.log('colw:', col)
       })
     } else if (count == 0){
-      count+=1;
+      return count+=1;
     }
       for(let i=3; i>0; --i){
         $(`#tbodyID #row${idProcess} #raf`).each(function(){
