@@ -597,6 +597,7 @@
                         let td =  parseInt($(this).find("input").val());            
                         tr[index]=td;                   
                       });
+                      tr.splice(4, 1);
                       parametros[i]=tr;  console.log('tr: ',tr);  
                       }); 
                     console.log('parametros: ',parametros);
@@ -1019,8 +1020,9 @@
 
 
 
-    for (p of parametros) 
- {     let pro = new Proceso();
+    for (p of parametros) {    
+      debugger; 
+      let pro = new Proceso();
       let arr = []
       for (var i = 0; i < p.length-3; i++) {
         if (i >= 4){
@@ -1047,9 +1049,8 @@
       sim.colaControl.push(pro);
     }
 
-    console.log(sim);
-    debugger;
     while(sim.colaControl.length > 0){
+      debugger;
       sim.cicloMemoria();
       sim.ordenarColaListos();
       sim.cicloCpu();
