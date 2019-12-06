@@ -109,7 +109,6 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 			this.particiones[alFinal-1].proceso = null;
 			flagFinal = false;
 		}
-		debugger;
 		if (flagInicio && this.particiones[alInicio].isEmpty()) {
 			this.getParticion(proceso).tam += this.particiones[alInicio].tam;
 			this.particiones.splice(alInicio, 1);
