@@ -1035,12 +1035,15 @@ am4core.ready(function() {
           this.colaListos.sort((a, b) => (a.prio > b.prio) ? 1 : -1);
         }
         SimuladorApropiativo.prototype.cicloCpu = function() {
+          //debugger;
           if (this.colaListos.length > 0 && !this.procesoCpu) {
             this.procesoCpu = this.colaListos[0];
             this.colaListos.splice(0, 1);
           } else if (this.procesoCpu && this.colaListos.length > 0 && this.colaListos[0].prio > this.procesoCpu.prio) {
             this.colaListos.push(this.procesoCpu);
             this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+            this.ordenarColaListos();
           }
           if (this.colaBloqueados.length > 0 && !this.procesoEs) {
             this.procesoEs = this.colaBloqueados[0];
@@ -1083,7 +1086,7 @@ am4core.ready(function() {
     } else {
       iter = 3;
     }
-    for (p of parametros) {  
+    for (p of parametros) { 
       let pro = new Proceso();
       let arr = []
       for (var i = 0; i < p.length-3; i++) {
