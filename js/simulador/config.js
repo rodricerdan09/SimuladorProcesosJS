@@ -3,6 +3,12 @@
   let typeMemory = "Variable"; // tipo de Memoria
   let fitMemory = "First Fit"; //Ajuste de memoria
   let algorithm = "FCFS"; //Algoritmo de Planificacion
+  let mlq1= "FCFS"; //Algoritmo de Planificacion por defecto en la cola 1 de mdq
+  let mlq2= "FCFS"; //Algoritmo de Planificacion por defecto en la cola 2 de mdq
+  let mlq3= "FCFS"; //Algoritmo de Planificacion por defecto en la cola 3 de mdq
+  let mlq1Quantum = 2; // Quantum para roundRobin de cola 1
+  let mlq2Quantum = 2; // Quantum para roundRobin de cola 2
+  let mlq3Quantum = 2; // Quantum para roundRobin de cola 3
   let generalQuantum = 0; // Quantum para roundRobin
   let sizeMemoryCpu = 4096; // Tamaño de memoria cpu
   let sizeMemory = 8192; // Tamaño de memoria planificador
@@ -22,6 +28,7 @@
   let sim = null;
   let mem = null;
   let parametros=[];
+  let flag=false;
  /*  let arrayProcGraf = [];
   let procesosTerminados = []; // cola de procesos Terminado
   let colaListo = []; //Cola de procesos Listos
@@ -80,7 +87,7 @@
   }); */
 
   $('#config-btna').off().on('click', function(){
-    var isPrimary1 = $('#config-btna').hasClass('text-primary'); console.log(isPrimary1)
+    let isPrimary1 = $('#config-btna').hasClass('text-primary'); console.log(isPrimary1)
     if (isPrimary1 == false){
       $('.alertSimu').addClass('show')
       $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.") 
@@ -94,7 +101,6 @@
 
   $('#process-btna').off().on('click', function(){
     const isPrimary2 = $('#process-btna').hasClass('text-primary')
-    const isBorder = $('#process-btna').hasClass('border-primary')
     if (isPrimary2 == false){
       $('.alertSimu').addClass('show')
       $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
@@ -107,7 +113,7 @@
   });
 
   $('#presentation-btna').off().on('click', function(){
-    var isPrimary3 = $('#presentation-btna').hasClass('text-primary'); console.log(isPrimary3)
+    let isPrimary3 = $('#presentation-btna').hasClass('text-primary'); console.log(isPrimary3)
     if (isPrimary3 == false){
       $('.alertSimu').addClass('show')
       $(".textoAlertSimu").text("Por favor presione el botón Confirmar para avanzar a la siguinte sección.") 
@@ -129,7 +135,7 @@
   });
 
   $("#quantumid").keyup(function(){
-    var quanto = parseInt($('.quantumIn').val())
+    let quanto = parseInt($('.quantumIn').val())
     console.log(quanto)
 
     if (quanto > 0) {
@@ -149,7 +155,7 @@
   $(".algoInfo").text("FCFS");
   $("#optionAlgo").change(function(){
     $("#quantumid").removeClass('disabled');
-    var typeAlgorithm = $("#optionAlgo").find(':selected').text();
+    let typeAlgorithm = $("#optionAlgo").find(':selected').text();
 
     if (typeAlgorithm == 'FCFS'){
       algorithm = typeAlgorithm; console.log(algorithm);
@@ -158,7 +164,7 @@
       $(".algoInfo").text("FCFS");
 
     } else if (typeAlgorithm == 'RR'){
-        algorithm = typeAlgorithm; console.log(algorithm);
+        algorithm = typeAlgorithm; console.log(algorithm)
         $(".quantumIn").show();
         $(".algoInfo").text("RR");
 
@@ -179,14 +185,128 @@
         $(".quantumIn").val("");
         $(".quantumIn").hide();
         $(".algoInfo").text("SRTF");
+
     } else if (typeAlgorithm == 'MLQ'){
         algorithm = typeAlgorithm; console.log(algorithm);
-        $(".quantumIn").show();
-        //$(".quantumIn").replaceWith(`<a id="btn-parts" class="btn btn-outline-light-blue p-2 waves-effect waves-light disabled">Gestionar</a>`)
         $(".algoInfo").text("MLQ");
-       // $("#partfijas").before(`<p>Este párrafo tiene que salir entre el párrafo 1 y 2</p>`);
+       $("#partfijas").before(`
+       <div class="card mb-4" id="card-mlq">
+            <h5 class="card-header blue-grey lighten-1 white-text text-center py-4 mb-4">
+                <strong id="title-card">Gestión de Colas multinivel sin retroalimentación</strong>
+            </h5>     
+            <div class="card-body px-lg-5 pt-0">
+                <p class="lead">Seleccione el algoritmo correspondiente para cada cola.<p/>
+                    <div class="row">
+                      <span class="col-md-2 input-group-text textPart md-addon py-4">Cola 1</span>
+                        <select class="col-md-4 browser-default custom-select mr-3 mt-3 mb-2" id="optionMlq1">
+                            <option class="optionPlaningOne" selected>Selecciona</option>
+                            <option class="optionPlaningOne" value="FCFS">FCFS</option>
+                            <option class="optionPlaningTwo" value="RR">RR-Q:2</option>
+                            <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
+                            <option class="optionPlaningFour" value="SJF">SJF</option>
+                            <option class="optionPlaningFive" value="SRTF">SRTF</option>        
+                        </select><br/>
+                        <button id="btn-nuevo1" class="btn btn-outline-light-blue z-depth-0 waves-effects h-25 mt-2" type="button">Nueva Cola</button>
+                    </div>
+                    <div class="row">
+                      <span class="col-md-2 input-group-text textPart md-addon py-4">Cola 2</span>
+                        <select class="col-md-4 browser-default custom-select mr-3 mt-3 mb-2" disabled id="optionMlq2">
+                            <option class="optionPlaningOne" selected>Selecciona</option>
+                            <option class="optionPlaningOne" value="FCFS">FCFS</option>
+                            <option class="optionPlaningTwo" value="RR">RR-Q:2</option>
+                            <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
+                            <option class="optionPlaningFour" value="SJF">SJF</option>
+                            <option class="optionPlaningFive" value="SRTF">SRTF</option>        
+                        </select><br/> 
+                        <button id="btn-nuevo2" class="btn btn-outline-light-blue z-depth-0 waves-effects h-25 mt-2 disabled" type="button">Nueva Cola</button>
+                    </div>  
+                    <div class="row">
+                    <span class="col-md-2 input-group-text textPart md-addon py-4">Cola 3</span>
+                    <select class="col-md-4 browser-default custom-select mr-3 mt-3 mb-2" disabled id="optionMlq3">
+                        <option class="optionPlaningOne" selected>Selecciona</option>
+                        <option class="optionPlaningOne" value="FCFS">FCFS</option>
+                        <option class="optionPlaningTwo" value="RR">RR-Q:2</option>
+                        <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
+                        <option class="optionPlaningFour" value="SJF">SJF</option>
+                        <option class="optionPlaningFive" value="SRTF">SRTF</option>        
+                    </select><br/> 
+                    </div> 
+              </div>
+              <div class="mt-2 d-flex justify-content-center alert alert-info alert-dismissible fade hide alertMdq d-none w-75 mx-auto" role="alert">
+                <strong class="textoAlertMdq">Si desea agregar nuevas particiones, por favor realice una nueva configuración</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+              </div>    
+            <!--Confirmar formulario--> 
+            <div class="d-flex justify-content-center mb-4">
+                <button id="btn-conf-mlq" class="btn btn-outline-light-blue z-depth-0 waves-effect w-75 disabled" type="button">Confirmar</button>  
+            </div>
+            <!--Confirmar formulario--> 
+        </div>
+       `);
+        $("#optionMlq1").change(function(){
+          let val = $("#optionMlq1").find(':selected').text(); 
+          mlq1 = val; console.log(mlq1);
+          let config_part_mlq = `
+          <button type="button" class="btn btn-outline-secondary" disabled>Cola 1: ${mlq1}</button>
+          `
+          $("#config_part_size").append(config_part_mlq);
+          if(mlq1=="RR-Q:2"){
+            console.log(mlq1Quantum); return mlq1Quantum
+          }
+          return mlq1;
+        });
+        $("#optionMlq2").change(function(){
+          let val = $("#optionMlq2").find(':selected').text(); 
+          mlq2 = val; console.log(mlq2);
+          let config_part_mlq = `
+          <button type="button" class="btn btn-outline-secondary" disabled>Cola 2: ${mlq2}</button>
+          `
+          $("#config_part_size").append(config_part_mlq);
+          if(mlq2=="RR-Q:2"){
+            console.log(mlq2Quantum); return mlq2Quantum
+          }
+          return mlq2;
+        });
+        $("#optionMlq3").change(function(){
+          var val = $("#optionMlq3").find(':selected').text(); 
+          mlq3 = val; console.log(mlq3);
+          let config_part_mlq = `
+          <button type="button" class="btn btn-outline-secondary" disabled>Cola 3: ${mlq3}</button>
+          `
+          $("#config_part_size").append(config_part_mlq);
+          if(mlq3=="RR-Q:2"){
+            console.log(mlq3Quantum); return mlq3Quantum
+          }
+          return mlq3;
+        });
+        
+        $("#btn-nuevo1").on("click", function() {
+          $('#optionMlq2').removeAttr('disabled');
+          $('#btn-nuevo2').removeClass('disabled');
+          $('#btn-conf-mlq').removeClass('disabled');
+        })
+        $("#btn-nuevo2").on("click", function() {
+          $('#optionMlq3').removeAttr('disabled');
+        })
+        $("#btn-conf-mlq").on("click", function() {
+          $('.alertMdq').removeClass('alert-info');
+          $('.alertMdq').addClass('alert-success');
+          $('.alertMdq').removeClass('d-none');
+          $('.alertMdq').addClass('show');
+          $(".textoAlertMdq").text("Las colas han sido asignadas correctamente.");
+          setTimeout(function(){ 
+            $('.alertMdq').removeClass('show');
+            $('.alertMdq').addClass('hide');
+            alert('Por favor continue avanzando en la configuración principal.');  
+          },2000);
+          setTimeout(function(){ 
+            $('.alertMdq').removeClass('alert-success');
+            $('.alertMdq').addClass('alert-info');
+          },3000);   
+        })
     }
-    
       if (typeAlgorithm == 'RR'){
       $('.alertRR').removeClass('hide');
       $('.alertRR').addClass('show');
@@ -206,7 +326,7 @@
     return algorithm;
   });
   //control de la seleccion de algoritmo
-
+    
    //control de la memoria de la cpu 
    $("#tam-memory").keyup(function(){
     $('.alertPlan').removeClass('show');
@@ -255,7 +375,7 @@
     $("#btn-fit").removeClass('disabled');
     $('#btnconfirmar').removeClass('disabled'); 
     $("#btnconfirmar").removeClass('d-none');
-    var valorCurrent = parseInt($("#tam-memory-so").val()); 
+    let valorCurrent = parseInt($("#tam-memory-so").val()); 
     sizeMemoryCpu = valorCurrent;  console.log('sizememoryCPU',sizeMemoryCpu);
     sizeMemoryDisp = sizeMemory - sizeMemoryCpu;
     value = Math.round((sizeMemoryCpu*100)/8192);
@@ -298,8 +418,7 @@
 
   //control del tipo de memoria
   $("#optionType").change(function(){
-
-    var valueCurrent = $("#optionType").find(':selected').text();
+    let valueCurrent = $("#optionType").find(':selected').text();
       $(".muted-type").hide();
 
     if (valueCurrent == 'Fija'){
@@ -353,7 +472,7 @@
   //--------------------------------
   //control de ajuste de memoria
   $("#optionSet").change(function(){
-    var setMemory = $("#optionSet").find(':selected').text();
+    let setMemory = $("#optionSet").find(':selected').text();
 
     if (setMemory == 'Best Fit'){
         fitMemory = setMemory;
@@ -434,7 +553,7 @@
     $('.alertPart').removeClass('show');
     $('.alertPart').addClass('hide');
     $('#btn-asignar').removeClass('disabled');
-    var valorCurrent2 =  parseInt($("#cantpart").val());
+    let valorCurrent2 =  parseInt($("#cantpart").val());
     partition = valorCurrent2;
 
     if (partition == 0){
@@ -453,10 +572,9 @@
     $('#controlidpart').removeClass('d-none');  
     e.preventDefault();
     value1 = Math.round(memtotal/partition);
-    //value2 = memtotal%partition;
-    value3 = Math.round((sizeMemoryCpu*100)/sizeMemory);
+    value2 = Math.round((sizeMemoryCpu*100)/sizeMemory);
     totalpart = value1;
-    porcMemoryDisp = value3;
+    porcMemoryDisp = value2;
     
     $("#memoria").text('Tamaño Definido: '+memtotal+' MB.');
     $("#memoriacpu").text('Tamaño Definido para CPU: '+sizeMemoryCpu+' MB.');
@@ -467,7 +585,7 @@
       $('.alertPart').addClass('show');
       $('#btn-asignar').addClass('disabled');
     }
-    for(var i=0; i<partition; i++){     
+    for(let i=0; i<partition; i++){     
       let num_part = i+1;         
       let new_partition = `
         <div id ="inputPartsId" class="col-sm-12 d-flex justify-content-center mb-3">
@@ -482,7 +600,7 @@
         $('#btn-asignar').removeClass('disabled');
         let sumPart = 0;
 
-        for(var i=0; i<partition; i++){
+        for(let i=0; i<partition; i++){
         sizepartinput = parseInt($('.inputParts'+(i+1)).val()); console.log('part: '+i,sizepartinput);
         totalinput = sizepartinput*partition; console.log('totalinput '+i,totalinput);      
         arrayPartitions[i]=sizepartinput;// arrayPartitions.push(sizepartinput);
@@ -518,9 +636,9 @@
     $(".textoAlertPart").text("Las particiones han sido asignadas correctamente.");
 
     if(typeMemory == 'Fija'){
-      for(var i=0; i<partition; i++){
+      for(let i=0; i<partition; i++){
         num_part = i+1;
-        var config_part_size = `
+        let config_part_size = `
         <button type="button" class="btn btn-outline-secondary" disabled>Part. ${num_part}: ${arrayPartitions[i]} MB</button>
         `
         $("#config_part_size").append(config_part_size);
@@ -558,6 +676,7 @@
       idProcess+=1;
     }
     if (algorithm == 'Prioridades'){
+      flag=true;
       $('#th-prio').show();
       $('#interval-prio').show();
       var nuevaFila=`
@@ -601,6 +720,20 @@
 
       $('#tableID').keyup(function(){
       $(".confirm-rafaga").on("click", function(){
+        $(".textoAlertTable").text("El proceso se ha cargado correctamente.");
+        $('.alertTable').addClass('show');
+        $('.alertTable').removeClass('hide');
+        $('.alertTable').removeClass('alert-danger');
+        $('.alertTable').addClass('alert-success');
+        setTimeout(function(){ 
+          $('.alertTable').removeClass('show');
+          $('.alertTable').addClass('hide');
+        },2000);
+        setTimeout(function(){ 
+          $('.alertTable').removeClass('alert-success');
+          $('.alertTable').addClass('alert-danger');
+        },3000);
+
         $('#tableID tbody tr').each(function(i,e) {
             let tr = [];
             $(this).find("td").each(function(index, element){
@@ -614,7 +747,8 @@
           return parametros;
         }); 
       })
-    return idProcess, count, parametros
+      console.log('flag:', flag)
+    return idProcess, count, parametros, flag
   });
 
   // evento para agregar rafagas  
@@ -793,8 +927,8 @@
     $('.alertProcess').removeClass('show');
     $('.alertProcess').addClass('hide');
 
-    var tamProc = parseInt($('.sizeInput').val())
-    var maxTamPocess = getMaxProcessSize(typeMemory)
+    let tamProc = parseInt($('.sizeInput').val())
+    let maxTamPocess = getMaxProcessSize(typeMemory)
 
     if (tamProc > maxTamPocess) {
       $(".textoAlertProc").text("El tamaño del proceso no puede ser mayor al tamaño de la Memoria definido.");
@@ -815,7 +949,7 @@
         MemoriaVariable.prototype.particionLibre = function(proceso) {
           let fragInternaGlobal = 0;
           let particionWorstFit = null;
-          for (var p of this.particiones) {
+          for (let p of this.particiones) {
             if (p.isEmpty() && p.tam >= proceso.tam) {
               if (p.tam - proceso.tam >= fragInternaGlobal) {
                 fragInternaGlobal = p.tam - proceso.tam;
@@ -840,7 +974,7 @@
         MemoriaFija.prototype.particionLibre = function(proceso) {
           let fragInternaGlobal = 999999999999999;
           let particionBestFit = null;
-          for (var p of this.particiones) {
+          for (let p of this.particiones) {
             if (p.isEmpty() && p.tam >= proceso.tam) {
               if (p.tam - proceso.tam < fragInternaGlobal) {
                 fragInternaGlobal = p.tam - proceso.tam;
@@ -1013,13 +1147,10 @@
         }
     }
 
-
-
-    for (p of parametros) {    
-      debugger; 
+    for (p of parametros) {   
       let pro = new Proceso();
       let arr = []
-      for (var i = 0; i < p.length-3; i++) {
+      for (let i = 0; i < p.length-3; i++) {
         if (i >= 4){
           arr.push(p[i]);
         } else {
@@ -1045,13 +1176,11 @@
     }
 
     while(sim.colaControl.length > 0){
-      debugger;
       sim.cicloMemoria();
       sim.ordenarColaListos();
       sim.cicloCpu();
       console.log(sim)
     }
-
     console.log('Porcentaje utilizado de CPU: ', sim.porcActivo());
 
     for (let r of sim.resultados) {
@@ -1072,7 +1201,6 @@
                     <td><b> ${results[1].toFixed(1)} </td>
                   </tr>
                   `;
-
     $('#t-result').append(result2);
     $('#cpu').append(sim.porcActivo().toFixed(1) + '%');
 }
