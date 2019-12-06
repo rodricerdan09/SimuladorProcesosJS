@@ -1,35 +1,36 @@
-//Ambiente de variables
-let typeMemory = "Variable"; // tipo de Memoria
-let fitMemory = "First Fit"; //Ajuste de memoria
-let algorithm = "FCFS"; //Algoritmo de Planificacion
-let generalQuantum = 0; // Quantum para roundRobin
-let sizeMemoryCpu = 4096; // Tamaño de memoria cpu
-let sizeMemory = 8192; // Tamaño de memoria planificador
-let sizeMemoryDisp = 0; //Tamaño de memoria disponible para el planificador
-let sizeMemoryMin = 0; // Tamaño minimo de memoria para la cpu
-let sizeMemoryMax = 8192; // Tamaño maximo de memoria para la cpu
-let partition = 0; //Numero de particiones fijas de la memoria
-let sizepartinput =1; 
-let totalpart = 0; //Valor de cada particion
-let totaldisp = 0; //Tamaño restante de la memoria
-let totalinput = 0; //Valor de cada particion
-let memtotal = 0 // memoria total definida por el usuario
-let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
-let arrayProcess = []; //Arreglo con los procesos importados de la BD
-let arrayPartitions = []; // Memoria letiable
-let count = 0;
-let sim = null;
-let mem = null;
-let parametros=[];
-/*  let arrayProcGraf = [];
-let procesosTerminados = []; // cola de procesos Terminado
-let colaListo = []; //Cola de procesos Listos
-let cont = 0;//contador de Particiones fijas
-let maxpart = 5; //cantidad maxima de particiones fijas
-let memFija = []; // memoria fija
-let tiempo = 0
-let lenArrayProcess = 0
-*/
+  console.log('activo config.js')
+  //Ambiente de variables
+  let typeMemory = "Variable"; // tipo de Memoria
+  let fitMemory = "First Fit"; //Ajuste de memoria
+  let algorithm = "FCFS"; //Algoritmo de Planificacion
+  let generalQuantum = 0; // Quantum para roundRobin
+  let sizeMemoryCpu = 4096; // Tamaño de memoria cpu
+  let sizeMemory = 8192; // Tamaño de memoria planificador
+  let sizeMemoryDisp = 0; //Tamaño de memoria disponible para el planificador
+  let sizeMemoryMin = 0; // Tamaño minimo de memoria para la cpu
+  let sizeMemoryMax = 8192; // Tamaño maximo de memoria para la cpu
+  let partition = 0; //Numero de particiones fijas de la memoria
+  let sizepartinput =1; 
+  let totalpart = 0; //Valor de cada particion
+  let totaldisp = 0; //Tamaño restante de la memoria
+  let totalinput = 0; //Valor de cada particion
+  let memtotal = 0 // memoria total definida por el usuario
+  let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
+  let arrayProcess = []; //Arreglo con los procesos importados de la BD
+  let arrayPartitions = []; // Memoria letiable
+  let count = 0;
+  let sim = null;
+  let mem = null;
+  let parametros=[];
+ /*  let arrayProcGraf = [];
+  let procesosTerminados = []; // cola de procesos Terminado
+  let colaListo = []; //Cola de procesos Listos
+  let cont = 0;//contador de Particiones fijas
+  let maxpart = 5; //cantidad maxima de particiones fijas
+  let memFija = []; // memoria fija
+  let tiempo = 0
+  let lenArrayProcess = 0
+ */
 
   //Preparamos el entorno de trabajo
   $(function () {
@@ -582,41 +583,33 @@ let lenArrayProcess = 0
                         <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
                     </td>
                     <td>
-                      <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
+                        <button type="button" class="crear-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
+                        <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
                     </td>
                   </tr>` 
                  $("#tbodyID").append(nuevaFila);
                  
-                 $('#tableID').keyup(function(e) {
-                   
-                   $('#tableID tbody tr').each(function(i,e) {
-                       let tr = [];
-                       $(this).find("td").each(function(index, element){
-                         let td = $(this).find("input").val();            
-                         tr.push(parseInt((td)));                   
-                       });
-                       parametros.push(tr);  console.log('tr: ',tr);  
-                   }); 
-                  console.log(parametros);
-                  return parametros;
+                 $('#tableID').keyup(function(){
+                 $(".crear-rafaga").on("click", function(){
+                    $('#tableID tbody tr').each(function(i,e) {
+                      let tr = [];
+                      $(this).find("td").each(function(index, element){
+                        let td =  parseInt($(this).find("input").val());            
+                        tr[index]=td;                   
+                      });
+                      parametros[i]=tr;  console.log('tr: ',tr);  
+                      }); 
+                    console.log('parametros: ',parametros);
+                    return parametros;
+                  });
+               
+                 })
 
-                 });
-                 
-                  /* let values = $(this).find("td").map(function() { 
-                    return $(this).html();
-                  })
-                  for(let i=2;i<=4;i++){
-                      if(values[i]=="" && count>1){
-                        console.log('hola mundo')
-                      } else{
-                        console.log('mundo hola')
-                      }
-                  } */
-                  /* console.log('col-2',values[2]);
-                  console.log('col-3',values[3]);
-                  console.log('col-4',values[4]); */
-    return idProcess, count, parametros;
+
+    return idProcess, count, parametros
+
   });
+
   // evento para agregar rafagas  
   $("#tableID").off().on("click", ".add-raf", function(){
     $('.alertTable').removeClass('show');
@@ -627,9 +620,9 @@ let lenArrayProcess = 0
       $(`#tbodyID #row${idProcess} #raf`).each(function(){
         if (count==1){
           $(this).append(`
-                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
-                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
-                            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
+                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
+                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
+                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
                           `);
           /* $(this).append(`<td class="pt-3-half" type="number" contenteditable="true">CPU</td>
           <td class="pt-3-half" type="number" contenteditable="true">E/S</td>
