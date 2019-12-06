@@ -70,8 +70,7 @@
     $("#presentacion").hide()
 
   });     
-  //Preparamos el entorno de trabajo
-  //------------------------------------------------------------------------
+  //--------------------------Preparamos el entorno de trabajo-------------------------
 
   //---------------------SECCION CONFIGURACION------------------------------------------
   /* $('ul#navmenu div li a').off().on('click', function(){
@@ -105,10 +104,6 @@
         $('.alertSimu').addClass('hide');
       },3000);
     }
-    /* if (isBorder==false){ 
-      $('.alertSimu').addClass('show')
-      $(".textoAlertSimu").text("Debe presionar el botón Nueva Configuración y definir una nueva configuración.")  
-    } */
   });
 
   $('#presentation-btna').off().on('click', function(){
@@ -184,10 +179,12 @@
         $(".quantumIn").val("");
         $(".quantumIn").hide();
         $(".algoInfo").text("SRTF");
-    } else {
+    } else if (typeAlgorithm == 'MLQ'){
         algorithm = typeAlgorithm; console.log(algorithm);
-        $(".quantumIn").hide();
+        $(".quantumIn").show();
+        //$(".quantumIn").replaceWith(`<a id="btn-parts" class="btn btn-outline-light-blue p-2 waves-effect waves-light disabled">Gestionar</a>`)
         $(".algoInfo").text("MLQ");
+       // $("#partfijas").before(`<p>Este párrafo tiene que salir entre el párrafo 1 y 2</p>`);
     }
     
       if (typeAlgorithm == 'RR'){
@@ -404,7 +401,6 @@
     setTimeout(function(){ 
       $('#cargaprocesos').show();
     },100); 
-
   });
 
   $('#btnconfirmar2').off().on('click', function(){
@@ -438,7 +434,6 @@
     $('.alertPart').removeClass('show');
     $('.alertPart').addClass('hide');
     $('#btn-asignar').removeClass('disabled');
-
     var valorCurrent2 =  parseInt($("#cantpart").val());
     partition = valorCurrent2;
 
@@ -472,7 +467,6 @@
       $('.alertPart').addClass('show');
       $('#btn-asignar').addClass('disabled');
     }
-
     for(var i=0; i<partition; i++){     
       let num_part = i+1;         
       let new_partition = `
@@ -514,9 +508,6 @@
           return arrayPartitions
       });
     }    
-
-    
-
     return totalpart, totaldisp, porcMemoryDisp, partition
   });
 
@@ -527,10 +518,6 @@
     $(".textoAlertPart").text("Las particiones han sido asignadas correctamente.");
 
     if(typeMemory == 'Fija'){
-     /*  var config_part = `
-      <button type="button" class="btn btn-primary" disabled>Pariticiones</button>
-      <button type="button" class="btn btn-outline-light-blue partInfo" disabled>${partition}</button>`
-      $("#config_part").append(config_part); */
       for(var i=0; i<partition; i++){
         num_part = i+1;
         var config_part_size = `
@@ -545,7 +532,8 @@
   });
 
   //---------------------SECCION PROCESOS------------------------------------------
-
+  $('#th-prio').hide();
+  $('#interval-prio').hide();
   // Funcion para añadir una nueva fila en la tabla
   let idProcess=0;
   $("#btn-añadir").on("click", function() {  
@@ -569,46 +557,64 @@
     } else if (idProcess = (idProcess-1)) {
       idProcess+=1;
     }
-    var nuevaFila=`
-                  <tr id="row${idProcess}" class="hide">
-                    <td class="md-form"><input type="number" class="form-control disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
-                    <td class="md-form"><input type="text" class="form-control rafagas-p w-20 p-raf${idProcess}" min=0 max=3 value=0></td>
-                    <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
-                    <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
-                    <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
-                    <td>
-                        <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
-                    </td>
-                    <td>
-                        <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
-                    </td>
-                    <td>
-                        <button type="button" class="crear-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
-                        <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
-                    </td>
-                  </tr>` 
-                 $("#tbodyID").append(nuevaFila);
-                 
-                 $('#tableID').keyup(function(){
-                 $(".crear-rafaga").on("click", function(){
-                    $('#tableID tbody tr').each(function(i,e) {
-                      let tr = [];
-                      $(this).find("td").each(function(index, element){
-                        let td =  parseInt($(this).find("input").val());            
-                        tr[index]=td;                   
-                      });
-                      tr.splice(4, 1);
-                      parametros[i]=tr;  console.log('tr: ',tr);  
-                      }); 
-                    console.log('parametros: ',parametros);
-                    return parametros;
-                  });
-               
-                 })
+    if (algorithm == 'Prioridades'){
+      $('#th-prio').show();
+      $('#interval-prio').show();
+      var nuevaFila=`
+      <tr id="row${idProcess}" class="hide">
+        <td class="md-form"><input type="number" class="form-control disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
+        <td class="md-form"><input type="text" class="form-control rafagas-p w-20 p-raf${idProcess}" min=0 max=3 value=0></td>
+        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+        <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
+        <td>
+            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
+        </td>
+        <td>
+            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
+        </td>
+        <td>
+            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
+            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
+        </td>
+      </tr>` 
+    } else {
+      var nuevaFila=`
+      <tr id="row${idProcess}" class="hide">
+        <td class="md-form"><input type="number" class="form-control disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+        <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
+        <td>
+            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
+        </td>
+        <td>
+            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
+        </td>
+        <td>
+            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
+            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
+        </td>
+      </tr>` 
+    }
+    $("#tbodyID").append(nuevaFila);
 
-
+      $('#tableID').keyup(function(){
+      $(".confirm-rafaga").on("click", function(){
+        $('#tableID tbody tr').each(function(i,e) {
+            let tr = [];
+            $(this).find("td").each(function(index, element){
+              let td =  parseInt($(this).find("input").val());            
+              tr[index]=td;                  
+            });
+            tr.splice(4,1);
+            parametros[i]=tr;  console.log('tr: ',tr);  
+          }); 
+          console.log('parametros: ',parametros);
+          return parametros;
+        }); 
+      })
     return idProcess, count, parametros
-
   });
 
   // evento para agregar rafagas  
@@ -625,16 +631,10 @@
                         <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
                         <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
                           `);
-          /* $(this).append(`<td class="pt-3-half" type="number" contenteditable="true">CPU</td>
-          <td class="pt-3-half" type="number" contenteditable="true">E/S</td>
-          <td class="pt-3-half" type="number" contenteditable="true">CPU</td>`);
-          $(this).attr('contenteditable',false); */
         }else{
           $(this).append(`<td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
-          <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>`);
-          
-        }
-        
+          <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>`);        
+        } 
           if(rafagas == 12 || count == 4){         
             $(".add-raf").addClass('disabled')
             $(".textoAlertTable").text("El máximo número de rafagas que puede agregar es de 4.");
@@ -643,10 +643,6 @@
             console.log($('#raf').children('td').length);
           } 
         })
-        /* $('#tableID').find('tr').each(function(){ 
-          $(this).find('th').eq(4).after('<th>HEADER</th><th>HEADER</th>');      
-          $(this).find('td').eq(4).after(`<td class="pt-3-half" type="number" contenteditable="true"></td>
-          */
          return count
    });
 
@@ -655,7 +651,6 @@
     $('.alertTable').removeClass('show');
     $('.alertTable').addClass('hide'); 
     let rafagas = $('#raf').children('td').length   
-    
 
     if (rafagas <= 12 && count > 0){
       count-=1; console.log('count:', count)
