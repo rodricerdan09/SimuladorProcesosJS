@@ -906,7 +906,7 @@ am4core.ready(function() {
           let particionBestFit = null;
           for (var p of this.particiones) {
             if (p.isEmpty() && p.tam >= proceso.tam) {
-              if (p.tam - proceso.tam < fragInternaGlobal) {
+              if (p.tam - proceso.tam <= fragInternaGlobal) {
                 fragInternaGlobal = p.tam - proceso.tam;
                 particionBestFit = p;
               }
@@ -984,8 +984,8 @@ am4core.ready(function() {
             this.colaListos.splice(0, 1);
           } else if (this.quantum == 0) {
             this.colaListos.push(this.procesoCpu);
-            this.procesoCpu = null;
             this.quantum = generalQuantum;
+            this.procesoCpu = this.colaListos[0];
           }
           if (this.colaBloqueados.length > 0 && !this.procesoEs) {
             this.procesoEs = this.colaBloqueados[0];
@@ -1008,7 +1008,7 @@ am4core.ready(function() {
                 this.colaBloqueados.push(this.procesoCpu);
                 this.procesoCpu = null;
               }
-            }
+            } 
           } else {
             this.tiempoOcioso++;
           }
