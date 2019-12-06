@@ -1106,7 +1106,6 @@ am4core.ready(function() {
     }
 
     while(sim.colaControl.length > 0){
-      debugger;
       sim.cicloMemoria();
       sim.ordenarColaListos();
       sim.cicloCpu();
