@@ -64,9 +64,7 @@ function SimuladorApropiativo(...args) {
 	SimuladorBase.apply(this, args);
 }
 
-SimuladorApropiativo.prototype.cicloCpu = function() {
-
-}
+SimuladorApropiativo.prototype = Object.create(SimuladorBase.prototype);
 
 function SimuladorNoApropiativo(...args) {
 	SimuladorBase.apply(this, args);

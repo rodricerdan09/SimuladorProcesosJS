@@ -788,6 +788,10 @@ let lenArrayProcess = 0
   });
   //--------------------------------------------------------------------------
 
+  $('#btnconfirmar2').on('click', function(){
+    main();
+  });
+
   function main(){
     if (typeMemory == "Variable"){
       let p = new Particion(memtotal, null);     
@@ -816,6 +820,7 @@ let lenArrayProcess = 0
       }
       console.log(particiones);
       mem = new MemoriaFija(memtotal, particiones, []);
+      console.log(mem)
       if (fitMemory == "Best Fit") {
         MemoriaFija.prototype.particionLibre = function(proceso) {
           let fragInternaGlobal = 999999999999999;
@@ -837,24 +842,109 @@ let lenArrayProcess = 0
       case 'FCFS':
         sim = new SimuladorNoApropiativo(0, [],[],[], mem);
         break;
-      case 'Prioridades SJF':
-        sim = new SimuladorNoApropiativo(0, [],[],[], mem);
+      case 'SJF':
+        sim = new SimuladorNoApropiativo(0, [], [], [], mem);
         SimuladorNoApropiativo.prototype.ordenarColaListos = function() {
+          this.colaListos.sort((a, b) => (a.getRafCpu() > b.getRafCpu() ? 1 : -1));
         }
         break;
-      case 'Prioridades SRTF':
+      case 'SRTF':
         sim = new SimuladorApropiativo(0, [], [], [], mem);
         SimuladorApropiativo.prototype.ordenarColaListos = function() {
 
         }
-        break;
-      case 'Round Robin':
-        sim = new SimuladorApropiativo(0, [], [], [], mem);
-        SimuladorApropiativo.prototype.cicloCpu = function() {
+        SimuladorApropiativo.prototype.cicliCpu = function() {
+          if (this.colaListos.length > 0 && !this.procesoCpu) {
+            this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+          } else if (this.procesoCpu && this.colaListos.length > 0) {
+            // logica de SRTF
+          }
 
+          if (this.colaBloqueados.length > 0 && !this.procesoEs) {
+            this.procesoEs = this.colaBloqueados[0];
+            this.colaBloqueados.splice(0, 1);
+          }
+          if (this.procesoCpu) {
+            let rafCpuFinalizada = this.procesoCpu.tratarProceso();
+            this.procesoCpu.irrupcion++;
+            if (rafCpuFinalizada) {
+              if (this.procesoCpu.isFinished()) {
+                this.memoria.removerProceso(this.procesoCpu);
+                let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
+                this.resultados.push(p);
+                this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
+                this.procesoCpu = null;
+              } else {
+                this.colaBloqueados.push(this.procesoCpu);
+                this.procesoCpu = null;
+              }
+            }
+          } else {
+            this.tiempoOcioso++;
+          }
+
+          if (this.procesoEs) {
+            let rafEsFinalizada = this.procesoEs.tratarProceso();
+            if (rafEsFinalizada) {
+              this.colaListos.push(this.procesoEs);
+              this.procesoEs = null;
+            }
+          }
+
+          this.clock++;
         }
         break;
-      case 'Multinivel sin Retro':
+      case 'RR':
+        sim = new SimuladorApropiativo(0, [], [], [], mem);
+        sim.quantum = generalQuantum;
+        let quantumReset = false;
+        SimuladorApropiativo.prototype.cicloCpu = function() {
+          if (this.colaListos.length > 0 && !this.procesoCpu) {
+            this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+          } else if (this.quantum == 0) {
+            this.colaListos.push(this.procesoCpu);
+            this.procesoCpu = null;
+            this.quantum = generalQuantum;
+          }
+          if (this.colaBloqueados.length > 0 && !this.procesoEs) {
+            this.procesoEs = this.colaBloqueados[0];
+            this.colaBloqueados.splice(0, 1);
+          }
+          if (this.procesoCpu) {
+            let rafCpuFinalizada = this.procesoCpu.tratarProceso();
+            this.quantum--;
+            this.procesoCpu.irrupcion++;
+            if (rafCpuFinalizada) {
+              if (this.procesoCpu.isFinished()) {
+                this.memoria.removerProceso(this.procesoCpu);
+                let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
+                this.resultados.push(p);
+                this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
+                this.procesoCpu = null;
+                this.quantum = generalQuantum;
+              } else {
+                quantumReset = false;
+                this.colaBloqueados.push(this.procesoCpu);
+                this.procesoCpu = null;
+              }
+            }
+          } else {
+            this.tiempoOcioso++;
+          }
+
+          if (this.procesoEs) {
+            let rafEsFinalizada = this.procesoEs.tratarProceso();
+            if (rafEsFinalizada) {
+              this.colaListos.push(this.procesoEs);
+              this.procesoEs = null;
+            }
+          }
+          this.clock++;
+        }
+        break;
+      case 'MLQ':
         sim = new SimuladorApropiativo(0, [[], [], []], [], [], mem);
         SimuladorApropiativo.prototype.cicloCpu = function() {
 
@@ -864,6 +954,47 @@ let lenArrayProcess = 0
         sim = new SimuladorApropiativo(0, [], [], [], mem);
         SimuladorApropiativo.prototype.ordenarColaListos = function() {
           this.colaListos.sort((a, b) => (a.prio > b.prio) ? 1 : -1);
+        }
+        SimuladorApropiativo.prototype.cicloCpu = function() {
+          if (this.colaListos.length > 0 && !this.procesoCpu) {
+            this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+          } else if (this.procesoCpu && this.colaListos.length > 0 && this.colaListos[0].prio > this.procesoCpu.prio) {
+            this.colaListos.push(this.procesoCpu);
+            this.procesoCpu = this.colaListos[0];
+          }
+          if (this.colaBloqueados.length > 0 && !this.procesoEs) {
+            this.procesoEs = this.colaBloqueados[0];
+            this.colaBloqueados.splice(0, 1);
+          }
+          if (this.procesoCpu) {
+            let rafCpuFinalizada = this.procesoCpu.tratarProceso();
+            this.procesoCpu.irrupcion++;
+            if (rafCpuFinalizada) {
+              if (this.procesoCpu.isFinished()) {
+                this.memoria.removerProceso(this.procesoCpu);
+                let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
+                this.resultados.push(p);
+                this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
+                this.procesoCpu = null;
+              } else {
+                this.colaBloqueados.push(this.procesoCpu);
+                this.procesoCpu = null;
+              }
+            }
+          } else {
+            this.tiempoOcioso++;
+          }
+
+          if (this.procesoEs) {
+            let rafEsFinalizada = this.procesoEs.tratarProceso();
+            if (rafEsFinalizada) {
+              this.colaListos.push(this.procesoEs);
+              this.procesoEs = null;
+            }
+          }
+
+          this.clock++;
         }
     }
 
@@ -912,5 +1043,6 @@ let lenArrayProcess = 0
                   `;
 
     $('#t-result').append(result2);
+    $('#cpu').append(sim.porcActivo().toFixed(1) + '%');
 }
 
