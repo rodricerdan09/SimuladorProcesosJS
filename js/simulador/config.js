@@ -22,22 +22,13 @@
   let totalinput = 0; //Valor de cada particion
   let memtotal = 0 // memoria total definida por el usuario
   let porcMemoryDisp = 0; //Porcentaje restante de la memoria total
+  let count = 0; //Contador utilizado para verificar la carga de procesos
   let arrayProcess = []; //Arreglo con los procesos importados de la BD
-  let arrayPartitions = []; // Memoria letiable
-  let count = 0;
+  let arrayPartitions = []; // Arreglo de particiones para la memoria fija
+  let parametros=[]; // Arreglo de procesos cargados
   let sim = null;
   let mem = null;
-  let parametros=[];
   let flag=false;
- /*  let arrayProcGraf = [];
-  let procesosTerminados = []; // cola de procesos Terminado
-  let colaListo = []; //Cola de procesos Listos
-  let cont = 0;//contador de Particiones fijas
-  let maxpart = 5; //cantidad maxima de particiones fijas
-  let memFija = []; // memoria fija
-  let tiempo = 0
-  let lenArrayProcess = 0
- */
 
   //Preparamos el entorno de trabajo
   $(function () {
@@ -51,7 +42,6 @@
   });
 
   $(document).ready(function(){
-
     $("#Memoryinput, #controlidpart, #tam-memory, #tam-memory-so, #tbodyID, inputParts, .alertRR, .priodInput, .sizeInput, .arrivalInput, .lastCpu, .inputcpu, .inputes").keydown(function(event) {
 
     //No permite mas de 11 caracteres Numéricos
@@ -136,7 +126,7 @@
 
   $("#quantumid").keyup(function(){
     let quanto = parseInt($('.quantumIn').val())
-    console.log(quanto)
+    console.log('Quantum = ',quanto)
 
     if (quanto > 0) {
       generalQuantum = quanto;
@@ -172,7 +162,7 @@
         algorithm = typeAlgorithm; console.log(algorithm);  
         $(".quantumIn").val("");
         $(".quantumIn").hide();
-        $(".algoInfo").text("Prioridades");
+        $(".algoInfo").text("PRIO");
 
       } else if (typeAlgorithm == 'SJF'){ 
         algorithm = typeAlgorithm; console.log(algorithm);
@@ -195,11 +185,11 @@
                 <strong id="title-card">Gestión de Colas multinivel sin retroalimentación</strong>
             </h5>     
             <div class="card-body px-lg-5 pt-0">
-                <p class="lead">Seleccione el algoritmo correspondiente para cada cola.<p/>
+                <p class="lead">Seleccione el algoritmo correspondiente a cada cola.<p/>
                     <div class="row">
                       <span class="col-md-2 input-group-text textPart md-addon py-4">Cola 1</span>
                         <select class="col-md-4 browser-default custom-select mr-3 mt-3 mb-2" id="optionMlq1">
-                            <option class="optionPlaningOne" selected>Selecciona</option>
+                            <option class="optionPlaningOne" selected>Seleccione</option>
                             <option class="optionPlaningOne" value="FCFS">FCFS</option>
                             <option class="optionPlaningTwo" value="RR">RR-Q:2</option>
                             <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
@@ -211,7 +201,7 @@
                     <div class="row">
                       <span class="col-md-2 input-group-text textPart md-addon py-4">Cola 2</span>
                         <select class="col-md-4 browser-default custom-select mr-3 mt-3 mb-2" disabled id="optionMlq2">
-                            <option class="optionPlaningOne" selected>Selecciona</option>
+                            <option class="optionPlaningOne" selected>Seleccione</option>
                             <option class="optionPlaningOne" value="FCFS">FCFS</option>
                             <option class="optionPlaningTwo" value="RR">RR-Q:2</option>
                             <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
@@ -223,7 +213,7 @@
                     <div class="row">
                     <span class="col-md-2 input-group-text textPart md-addon py-4">Cola 3</span>
                     <select class="col-md-4 browser-default custom-select mr-3 mt-3 mb-2" disabled id="optionMlq3">
-                        <option class="optionPlaningOne" selected>Selecciona</option>
+                        <option class="optionPlaningOne" selected>Seleccione</option>
                         <option class="optionPlaningOne" value="FCFS">FCFS</option>
                         <option class="optionPlaningTwo" value="RR">RR-Q:2</option>
                         <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
@@ -253,7 +243,7 @@
           `
           $("#config_part_size").append(config_part_mlq);
           if(mlq1=="RR-Q:2"){
-            console.log(mlq1Quantum); return mlq1Quantum
+            console.log('Quantum cola 1:',mlq1Quantum); return mlq1Quantum
           }
           return mlq1;
         });
@@ -265,7 +255,7 @@
           `
           $("#config_part_size").append(config_part_mlq);
           if(mlq2=="RR-Q:2"){
-            console.log(mlq2Quantum); return mlq2Quantum
+            console.log('Quantum cola 2:',mlq2Quantum); return mlq2Quantum
           }
           return mlq2;
         });
@@ -277,7 +267,7 @@
           `
           $("#config_part_size").append(config_part_mlq);
           if(mlq3=="RR-Q:2"){
-            console.log(mlq3Quantum); return mlq3Quantum
+            console.log('Quantum cola 3:',mlq3Quantum); return mlq3Quantum
           }
           return mlq3;
         });
@@ -307,7 +297,7 @@
           },3000);   
         })
     }
-      if (typeAlgorithm == 'RR'){
+     /*  if (typeAlgorithm == 'RR'){
       $('.alertRR').removeClass('hide');
       $('.alertRR').addClass('show');
       } else{
@@ -322,7 +312,7 @@
         $('.alertPriod').removeClass('show');
         $('.alertPriod').addClass('hide');
         $(".alertPriod").addClass("disabled");
-      }
+      } */
     return algorithm;
   });
   //control de la seleccion de algoritmo
@@ -335,7 +325,7 @@
     $("#btn-memory").removeClass("disabled");
     $('#tam-memory-so').val('');
     let valorCurrent = parseInt($("#tam-memory").val());
-    sizeMemory = valorCurrent;  console.log('sizememory',sizeMemory);
+    sizeMemory = valorCurrent;  console.log('sizeMemory',sizeMemory);
     sizeMemoryMin= Math.round(sizeMemory*0.05)
     sizeMemoryMax= Math.round(sizeMemory*0.15)
     
@@ -432,7 +422,6 @@
         $("#collapseExample").addClass("show");;
         $(".optionFitTwo").hide();
         $(".optionFitOne").show();
-
     } else {
         $(".fixedPart").hide();
         $(".memInfo").text("Variable");
@@ -452,8 +441,6 @@
     if(sizeMemory==8192){
       $(".alertMem").removeClass("show");
       $(".alertMem").addClass("disabled")
-      $('.alertPlan').addClass('show');
-      $(".textoAlertPlan").text("Debe definir el tamaño de la memoria del planificador.");
       $('.alertPlan').addClass('show');
       $(".textoAlertPlan").text("Debe definir el tamaño de la memoria del planificador.");
       $('#btnconfirmar').addClass('disabled');
@@ -489,7 +476,7 @@
         console.log(fitMemory);
         $(".ajuInfo").text(fitMemory);
     }
-  return fitMemory;
+    return fitMemory;
   });
 
   $('#btnconfirmar').off().on('click', function(){
@@ -571,11 +558,9 @@
     $('.inputParts').removeClass('disabled');
     $('#controlidpart').removeClass('d-none');  
     e.preventDefault();
-    value1 = Math.round(memtotal/partition);
-    value2 = Math.round((sizeMemoryCpu*100)/sizeMemory);
-    totalpart = value1;
-    porcMemoryDisp = value2;
-    
+    totalpart = Math.round(memtotal/partition);
+    porcMemoryDisp = Math.round((sizeMemoryCpu*100)/sizeMemory);
+     
     $("#memoria").text('Tamaño Definido: '+memtotal+' MB.');
     $("#memoriacpu").text('Tamaño Definido para CPU: '+sizeMemoryCpu+' MB.');
     $("#porcentajeTotal").text('Porcentaje de la memoria total utilizada por el Planificador: '+porcMemoryDisp+'%');
@@ -639,8 +624,7 @@
       for(let i=0; i<partition; i++){
         num_part = i+1;
         let config_part_size = `
-        <button type="button" class="btn btn-outline-secondary" disabled>Part. ${num_part}: ${arrayPartitions[i]} MB</button>
-        `
+        <button type="button" class="btn btn-outline-secondary" disabled>Part. ${num_part}: ${arrayPartitions[i]} MB</button>`
         $("#config_part_size").append(config_part_size);
       }     
     }
@@ -650,9 +634,9 @@
   });
 
   //---------------------SECCION PROCESOS------------------------------------------
+  // Funcion para añadir una nueva fila en la tabla
   $('#th-prio').hide();
   $('#interval-prio').hide();
-  // Funcion para añadir una nueva fila en la tabla
   let idProcess=0;
   $("#btn-añadir").on("click", function() {  
     $('.alertTable').removeClass('show');
@@ -667,8 +651,7 @@
       $(".textoAlertTable").text("Debe agregar como mínimo una ráfaga al proceso.");
       $('.alertTable').addClass('show');
       $('.alertTable').removeClass('hide'); 
-    }
-    
+    }   
     count=0;
     if (idProcess < 20) {
       idProcess+=1;
@@ -719,35 +702,35 @@
     $("#tbodyID").append(nuevaFila);
 
       $('#tableID').keyup(function(){
-      $(".confirm-rafaga").on("click", function(){
-        $(".textoAlertTable").text("El proceso se ha cargado correctamente.");
-        $('.alertTable').addClass('show');
-        $('.alertTable').removeClass('hide');
-        $('.alertTable').removeClass('alert-danger');
-        $('.alertTable').addClass('alert-success');
-        setTimeout(function(){ 
-          $('.alertTable').removeClass('show');
-          $('.alertTable').addClass('hide');
-        },2000);
-        setTimeout(function(){ 
-          $('.alertTable').removeClass('alert-success');
-          $('.alertTable').addClass('alert-danger');
-        },3000);
+        $(".confirm-rafaga").on("click", function(){
+          $(".textoAlertTable").text("El proceso se ha cargado correctamente.");
+          $('.alertTable').addClass('show');
+          $('.alertTable').removeClass('hide');
+          $('.alertTable').removeClass('alert-danger');
+          $('.alertTable').addClass('alert-success');
+          setTimeout(function(){ 
+            $('.alertTable').removeClass('show');
+            $('.alertTable').addClass('hide');
+          },2000);
+          setTimeout(function(){ 
+            $('.alertTable').removeClass('alert-success');
+            $('.alertTable').addClass('alert-danger');
+          },3000);
 
-        $('#tableID tbody tr').each(function(i,e) {
-            let tr = [];
-            $(this).find("td").each(function(index, element){
-              let td =  parseInt($(this).find("input").val());            
-              tr[index]=td;                  
-            });
-            tr.splice(4,1);
-            parametros[i]=tr;  console.log('tr: ',tr);  
+          $('#tableID tbody tr').each(function(i,e) {
+              let tr = [];
+              $(this).find("td").each(function(index, element){
+                let td =  parseInt($(this).find("input").val());            
+                tr[index]=td;                  
+              });
+              tr.splice(4,1);
+              parametros[i]=tr;  console.log('tr: ',tr);  
+            }); 
+            console.log('parametros: ',parametros);
+            return parametros;
           }); 
-          console.log('parametros: ',parametros);
-          return parametros;
-        }); 
-      })
-      console.log('flag:', flag)
+        })
+    console.log('flag:', flag)
     return idProcess, count, parametros, flag
   });
 
@@ -761,20 +744,20 @@
       $(`#tbodyID #row${idProcess} #raf`).each(function(){
         if (count==1){
           $(this).append(`
-                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
-                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
-                        <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
-                          `);
+            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
+            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
+            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>
+              `);
         }else{
-          $(this).append(`<td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
-          <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>`);        
+            $(this).append(`<td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="E/S"></td>
+            <td class="md-form"><input id="p-raf${idProcess}" type="number" class="form-control rafagas-p w-20" placeholder="CPU"></td>`);        
         } 
-          if(rafagas == 12 || count == 4){         
-            $(".add-raf").addClass('disabled')
-            $(".textoAlertTable").text("El máximo número de rafagas que puede agregar es de 4.");
-            $('.alertTable').addClass('show');
-            $('.alertTable').removeClass('hide');
-            console.log($('#raf').children('td').length);
+        if(rafagas == 12 || count == 4){         
+          $(".add-raf").addClass('disabled')
+          $(".textoAlertTable").text("El máximo número de rafagas que puede agregar es de 4.");
+          $('.alertTable').addClass('show');
+          $('.alertTable').removeClass('hide');
+          console.log($('#raf').children('td').length);
           } 
         })
          return count
@@ -813,12 +796,23 @@
 
   $("#presentation-btna").on("click", function() {
     $('.alertSimu').addClass('show')
-    $(".textoAlertSimu").text('Por favor presione el botón Confirmar para avanzar a la siguinte sección.') 
-
+    $(".textoAlertSimu").text('Por favor presione el botón Confirmar para avanzar a la siguinte sección.'); 
     setTimeout(function(){ 
       $('.alertSimu').removeClass('show');
       $('.alertSimu').addClass('hide');
     },3500);
+  });
+
+  $(".sizeInput").keyup(function(){
+    $('.alertProcess').removeClass('show');
+    $('.alertProcess').addClass('hide');
+    let tamProc = parseInt($('.sizeInput').val())
+    let maxTamPocess = getMaxProcessSize(typeMemory)
+
+    if (tamProc > maxTamPocess) {
+      $(".textoAlertProc").text("El tamaño del proceso no puede ser mayor al tamaño de la Memoria definido.");
+      $('.alertProcess').addClass('show');
+    }
   });
   ////--------------------------MAPA DE MEMORIA-------------------------------------------
     /* am4core.ready(function() {
@@ -981,22 +975,6 @@ am4core.ready(function() {
   chart.scrollbarX = new am4core.Scrollbar();
 
 });
-
-  // asdasdsa 
-
-  $(".sizeInput").keyup(function(){
-
-    $('.alertProcess').removeClass('show');
-    $('.alertProcess').addClass('hide');
-
-    let tamProc = parseInt($('.sizeInput').val())
-    let maxTamPocess = getMaxProcessSize(typeMemory)
-
-    if (tamProc > maxTamPocess) {
-      $(".textoAlertProc").text("El tamaño del proceso no puede ser mayor al tamaño de la Memoria definido.");
-      $('.alertProcess').addClass('show');
-    }
-  });
   //--------------------------------------------------------------------------
 
   $('#btnconfirmar2').on('click', function(){
