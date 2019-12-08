@@ -25,10 +25,15 @@
 <body>
     <!--Cabecera-->
     <nav class="navbar navbar-dark white" id="cabecera">
-        <a class="navbar-brand" href="./index.html">
-            <img src="./img/utnlogo.png" height="80" alt="utn-logo">
+        <a class="navbar-brand mx-0" href="./index.html">
+            <img src="./img/utnlogo.png" class="px-5" height="80" alt="utn-logo">
         </a>
-        <h2 class="lead blue-grey-text pl-5 col-md-8"><strong>Simulador de Planificación de procesos - Grupo C1G6</strong></h2>   
+        <h2 class="lead blue-grey-text pl-5 col-md-6 d-flex justify-content-center">
+            <strong>
+                Simulador de Planificación de procesos - Grupo C1G6
+            </strong>
+        </h2> 
+        <img src="./img/logoC1G6.png" class="d-flex justify-content-end mx-5 px-4" height="80" alt="C1G6-logo">  
     </nav>
     <!--Cabecera-->
 
@@ -102,7 +107,7 @@
                                             <option class="optionPlaningFive" value="SRTF">SRTF</option>
                                             <option class="optionPlaningSix" value="MLQ">MLQ</option>         
                                         </select> 
-                                        <div class="col-md-4 text-center fade hide alertRR mt-3 mb-2 px-0 disabled" id="quantumid">
+                                        <div class="col-md-4 text-center fade alertRR mt-3 mb-2 px-0 disabled" id="quantumid">
                                             <input type="text" class="form-control w-75 quantumIn" placeholder="Quantum">
                                         </div>
                                         <p class="text-muted p-0">El algoritmo por defecto es FCFS.</p>

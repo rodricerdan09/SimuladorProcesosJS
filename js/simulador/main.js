@@ -52,7 +52,7 @@ function instSimulador() {
     case 'SJF':
       sim = new SimuladorNoApropiativo(0, [], [], [], mem);
       SimuladorNoApropiativo.prototype.ordenarColaListos = function() {
-        this.colaListos.sort((a, b) => ((a.getRafCpu() < b.getRafCpu()) ? 1 : -1));
+        this.colaListos.sort((a, b) => ((a.getRafCpu() > b.getRafCpu()) ? 1 : -1));
       }
       break;
     case 'SRTF':
