@@ -985,7 +985,7 @@
             } else if (this.quantum == 0) {
               this.colaListos.push(this.procesoCpu);
               this.quantum = generalQuantum;
-              this.procesoCpu.inicio=true;
+              this.procesoCpu.inicio = true;
               let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00");	// objeto resultado para el gantt del cpu
               this.res.push(r);
               this.procesoCpu = this.colaListos[0];
@@ -1014,7 +1014,6 @@
                   this.procesoCpu = null;
                   this.quantum = generalQuantum;
                 } else {
-                  
                   this.colaBloqueados.push(this.procesoCpu);
                   let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00");	
                   this.res.push(r);	
