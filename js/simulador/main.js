@@ -102,59 +102,80 @@ function instSimulador() {
         this.clock++;
       }
       break;
-    case 'RR':
-      sim = new SimuladorApropiativo(0, [], [], [], mem);
-      sim.quantum = generalQuantum;
-      let quantumReset = false;
-      SimuladorApropiativo.prototype.cicloCpu = function() {
-        if (this.colaListos.length > 0 && !this.procesoCpu) {
-          this.procesoCpu = this.colaListos[0];
-          this.colaListos.splice(0, 1);
-        } else if (this.quantum == 0) {
-          this.colaListos.push(this.procesoCpu);
-          this.quantum = generalQuantum;
-          this.procesoCpu = this.colaListos[0];
-        }
-        if (this.colaBloqueados.length > 0 && !this.procesoEs) {
-          this.procesoEs = this.colaBloqueados[0];
-          this.colaBloqueados.splice(0, 1);
-        }
-        if (this.procesoCpu) {
-          let rafCpuFinalizada = this.procesoCpu.tratarProceso();
-          this.quantum--;
-          this.procesoCpu.irrupcion++;
-          if (rafCpuFinalizada) {
-            if (this.procesoCpu.isFinished()) {
-              this.memoria.removerProceso(this.procesoCpu);
-              let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
-              this.resultados.push(p);
-              this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
-              this.procesoCpu = null;
-              this.quantum = generalQuantum;
-            } else {
-              quantumReset = false;
-              this.colaBloqueados.push(this.procesoCpu);
-              this.procesoCpu = null;
-            }
-          } 
-        } else {
-          this.tiempoOcioso++;
-        }
+      case 'RR':
+        sim = new SimuladorApropiativo(0, [], [], [], mem);
+        sim.quantum = generalQuantum;
+        let quantumReset = false;
+        SimuladorApropiativo.prototype.cicloCpu = function() {
+          debugger;
+          let clock = this.clock;// estos clocks son mas que nada para incrementar en 1 en cada ciclo el clock por el
+          let clocki = this.clock;// hecho que a veces no incrementa al estar al final
 
-        if (this.procesoEs) {
-          let rafEsFinalizada = this.procesoEs.tratarProceso();
-          if (rafEsFinalizada) {
-            this.colaListos.push(this.procesoEs);
-            this.procesoEs = null;
+          if (this.colaListos.length > 0 && !this.procesoCpu) {
+            this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);
+          } else if (this.quantum == 0) {
+            this.colaListos.push(this.procesoCpu);
+            this.quantum = generalQuantum;
+            this.procesoCpu.inicio = true;
+            let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); // objeto resultado para el gantt del cpu
+            this.res.push(r);
+            this.procesoCpu = this.colaListos[0];
+            this.colaListos.splice(0, 1);//este faltaba, era uno de los errores del quantum no lo eliminaba de la cola
           }
+          if (this.colaBloqueados.length > 0 && !this.procesoEs) {
+            this.procesoEs = this.colaBloqueados[0];
+            this.colaBloqueados.splice(0, 1);
+          }
+          if (this.procesoCpu) {
+            clock++;
+            if (this.procesoCpu.inicio){
+              this.procesoCpu.iniclock = this.clock;
+            } 
+            let rafCpuFinalizada = this.procesoCpu.tratarProceso();
+            this.quantum--;
+            this.procesoCpu.irrupcion++;
+            if (rafCpuFinalizada) {
+              if (this.procesoCpu.isFinished()) {
+                this.memoria.removerProceso(this.procesoCpu);
+                let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
+                this.res.push(r); 
+                let p = new Resultado(this.procesoCpu.pid, clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(clock)));
+                this.resultados.push(p);
+                this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
+                this.procesoCpu = null;
+                this.quantum = generalQuantum;
+              } else {
+                this.colaBloqueados.push(this.procesoCpu);
+                let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
+                this.res.push(r); 
+                this.procesoCpu = null;
+                this.quantum = generalQuantum;//al final de cada rafaga siempre se resetea el quantum
+              }
+            } 
+          } else {
+            this.tiempoOcioso++;
+          }
+
+          if (this.procesoEs) {
+            clocki++;
+            if (this.procesoEs.inicio){
+              this.procesoEs.iniclock = this.clock;
+            }
+            let rafEsFinalizada = this.procesoEs.tratarProceso();
+            if (rafEsFinalizada) {
+              this.colaListos.push(this.procesoEs);
+              let r = new Res(this.procesoEs.pid, "E/S" , this.procesoEs.iniclock , clocki, "#00D4FF"); //objeto para el gantt de la E/S
+              this.res.push(r);
+              this.procesoEs = null;
+            }
+          }
+          this.clock++;
         }
-        this.clock++;
-      }
-      break;
+        break;
     case 'MLQ':
       sim = new SimuladorApropiativo(0, [[], [], []], [], [], mem);
       SimuladorApropiativo.prototype.cicloCpu = function() {
-
       }
       break;
     case 'Prioridades':
@@ -206,6 +227,7 @@ function instSimulador() {
 
         this.clock++;
       }
+      break;
   }
   return sim;
 }
@@ -255,6 +277,54 @@ function instProcesos() {
 }
 
 function cargaResultados() {
+  let listaResult = []; //LISTA DE DATOS DE LOS RESULTADOS PROCESADOS EN EL GANTT
+  for (let r of sim.res) {
+    listaResult.push(r);
+  }
+  
+  am4core.ready(function() {
+    // Themes begin
+    am4core.useTheme(am4themes_animated);
+    // Themes end
+    var chart = am4core.create("chartdiv-d", am4charts.XYChart); //chart usa datos tipo json o array de objetos por eso paso la lista de resultados
+    chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+    chart.paddingRight = 30;
+  
+    var colorSet = new am4core.ColorSet();
+    colorSet.saturation = 0.4;
+
+    chart.data = listaResult; // Esta es la lista de resultados xd
+  
+    var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis()); //CategoryAxis es para usar datos tipo text
+    categoryAxis.title.text = "Procesos"; // TITULO AXI-Y
+    categoryAxis.dataFields.category = "name"; //datafields son los datos recolectados de la lista en este caso el nombre pasado al grafico
+    categoryAxis.renderer.grid.template.location = 0;
+    categoryAxis.renderer.inversed = true;
+  
+    var xAxis = chart.xAxes.push(new am4charts.DurationAxis()); //DurationAxis usa datos tipo numerico en forma de tiempo
+    xAxis.baseUnit = "second"; //unidad de tiempo
+    xAxis.title.text = "tiempo" //TITULO AXI-X
+    xAxis.renderer.minGridDistance = 70;
+    xAxis.baseInterval = { count: 30, timeUnit: "minute" };
+    xAxis.max = 60; //maximo se puede cambiar pero se me hace que un minuto esta bien
+    xAxis.min = 0;
+    xAxis.strictMinMax = true;
+    xAxis.renderer.tooltipLocation = 0;
+  
+    var series1 = chart.series.push(new am4charts.ColumnSeries()); 
+    series1.columns.template.width = am4core.percent(80);
+    series1.dataFields.openValueX = "fromDur";//valor desde
+    series1.dataFields.valueX = "toDur";// valor hasta
+    series1.dataFields.categoryY = "name";// valor del nombre
+    series1.columns.template.propertyFields.fill = "color"; // get color from data
+    series1.columns.template.propertyFields.stroke = "color";
+    series1.columns.template.strokeOpacity = 1;
+    series1.columns.template.tooltipText = "P{name}: {rafaga} ({fromDur} - {toDur}) "; //esto es lo que muestra cuando pasas el mouse por el grafico
+
+    chart.scrollbarX = new am4core.Scrollbar();
+  });
+    //AMCHART------------------------------------------------------------------
+
   for (let r of sim.resultados) {
     let result = ` <tr>
                   <td> ${r.pid} </td>

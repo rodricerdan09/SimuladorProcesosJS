@@ -52,8 +52,8 @@ MemoriaVariable.prototype = Object.create(MemoriaBase.prototype);
 
 MemoriaVariable.prototype.insertarProceso = function(proceso) {
 	let particionLibre = this.particionLibre(proceso);
-	if (particionLibre && particionLibre.fragInterna(proceso) >= 16) {
-		let particionNueva = new Particion((particionLibre.tam - proceso.tam), null);
+	if (particionLibre && particionLibre.fragInterna(proceso) >= 0) { // tuve que poner mayor a 0 porque si sale uno que tiene igual tamaño
+		let particionNueva = new Particion((particionLibre.tam - proceso.tam), null);// de uno que entra en este ciclo en variable
 		particionLibre.tam -= particionLibre.fragInterna(proceso);
 		particionLibre.proceso = proceso;
 		this.particiones.push(particionNueva);
