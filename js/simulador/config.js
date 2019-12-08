@@ -863,7 +863,6 @@
     //---------------------SECCION PRESENTACION------------------------------------------
 
 
-$('#btnconfirmar2').on('click', function(){
-  main();
-});
-
+  $('#btnconfirmar2').on('click', function(){
+    main();
+  });

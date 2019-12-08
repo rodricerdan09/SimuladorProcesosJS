@@ -52,7 +52,7 @@ function instSimulador() {
     case 'SJF':
       sim = new SimuladorNoApropiativo(0, [], [], [], mem);
       SimuladorNoApropiativo.prototype.ordenarColaListos = function() {
-        this.colaListos.sort((a, b) => (a.getRafCpu() > b.getRafCpu() ? 1 : -1));
+        this.colaListos.sort((a, b) => ((a.getRafCpu() < b.getRafCpu()) ? 1 : -1));
       }
       break;
     case 'SRTF':
@@ -181,10 +181,13 @@ function instSimulador() {
     case 'Prioridades':
       sim = new SimuladorApropiativo(0, [], [], [], mem);
       SimuladorApropiativo.prototype.ordenarColaListos = function() {
-        this.colaListos.sort((a, b) => (a.prio > b.prio) ? 1 : -1);
+        this.colaListos.sort((a, b) => (a.prio < b.prio) ? 1 : -1);
       }
       SimuladorApropiativo.prototype.cicloCpu = function() {
         //debugger;
+        let clock = this.clock;
+        let clocki = this.clock;
+
         if (this.colaListos.length > 0 && !this.procesoCpu) {
           this.procesoCpu = this.colaListos[0];
           this.colaListos.splice(0, 1);
@@ -199,17 +202,25 @@ function instSimulador() {
           this.colaBloqueados.splice(0, 1);
         }
         if (this.procesoCpu) {
+          clock++;
+          if (this.procesoCpu.inicio) {
+            this.procesoCpu.iniclock = this.clock;
+          }
           let rafCpuFinalizada = this.procesoCpu.tratarProceso();
           this.procesoCpu.irrupcion++;
           if (rafCpuFinalizada) {
             if (this.procesoCpu.isFinished()) {
               this.memoria.removerProceso(this.procesoCpu);
+              let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
+              this.res.push(r); 
               let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
               this.resultados.push(p);
               this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
               this.procesoCpu = null;
             } else {
               this.colaBloqueados.push(this.procesoCpu);
+              let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
+              this.res.push(r);
               this.procesoCpu = null;
             }
           }
@@ -218,9 +229,15 @@ function instSimulador() {
         }
 
         if (this.procesoEs) {
+          clocki++;
+          if (this.procesoEs.inicio){
+            this.procesoEs.iniclock = this.clock;
+          } 
           let rafEsFinalizada = this.procesoEs.tratarProceso();
           if (rafEsFinalizada) {
             this.colaListos.push(this.procesoEs);
+            let r = new Res(this.procesoEs.pid, "E/S" , this.procesoEs.iniclock , clocki, "#00D4FF");
+            this.res.push(r);
             this.procesoEs = null;
           }
         }

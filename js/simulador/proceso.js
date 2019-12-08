@@ -12,13 +12,18 @@ function Proceso(pid, prio, tam, tarrivo, rafaga) {
 
 Proceso.prototype.tratarProceso = function() {
 	this.inicio = false;
-	this.rafaga[0] -= 1;
-	if (this.rafaga[0] == 0) {
-		this.rafaga.splice(0, 1);
-		this.inicio = true;//cuando termina una rafaga comienza otra
-		return true;
+	if (this.rafaga[0] > 0) {
+		this.rafaga[0] -= 1;
+		if (this.rafaga[0] == 0) {
+			this.rafaga.splice(0, 1);
+			this.inicio = true; //cuando termina una rafaga comienza otra
+			return true;
+		}
+		return false;
 	}
-	return false;
+	this.rafaga.splice(0, 1);
+	this.inicio = true;
+	return true;
 }
 
 Proceso.prototype.getRafCpu = function() {

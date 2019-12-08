@@ -14,9 +14,9 @@ function SimuladorBase(clock, colaListos, colaNuevos, colaBloqueados, memoria) {
 }
 
 SimuladorBase.prototype.cicloMemoria = function() {
-	debugger;
+	//debugger;
 	let c = 0;
-	this.colaNuevos.sort((a, b) => a.tarrivo - b.tarrivo);
+	this.colaNuevos.sort((a, b) => (a.tarrivo > b.tarrivo) ? 1 : -1);
 	for (let p of this.colaNuevos) {
 		if (p.tarrivo == this.clock) {
 			this.memoria.encolarProceso(p);
@@ -25,7 +25,7 @@ SimuladorBase.prototype.cicloMemoria = function() {
 	}
 	this.colaNuevos.splice(0, c);
 	c = 0;
-	this.memoria.colaMemoria.sort((a, b) => a.tam - b.tam);
+	this.memoria.colaMemoria.sort((a, b) => (a.tam < b.tam) ? 1 : -1);
 	for (let p of this.memoria.colaMemoria) {
 		let proc = this.memoria.insertarProceso(p);
 		if (proc) {
@@ -86,7 +86,6 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 	//mismos cambios que para el rr
 	let clock = this.clock;
 	let clocki = this.clock;
-	
 
 	if (this.colaListos.length > 0 && !this.procesoCpu) {
 		this.procesoCpu = this.colaListos[0];
@@ -101,7 +100,7 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 	if (this.procesoCpu) {
 		clock++;
 		if (this.procesoCpu.inicio){
-			this.procesoCpu.iniclock = this.clock;//setea el tiempo en que inicia la rafaga
+			this.procesoCpu.iniclock = this.clock; //setea el tiempo en que inicia la rafaga
 		}		
 		let rafCpuFinalizada = this.procesoCpu.tratarProceso();
 		this.procesoCpu.irrupcion++;
