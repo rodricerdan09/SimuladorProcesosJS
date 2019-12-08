@@ -107,7 +107,7 @@ function instSimulador() {
       sim.quantum = generalQuantum;
       let quantumReset = false;
       SimuladorApropiativo.prototype.cicloCpu = function() {
-        debugger;
+        //debugger;
         let clock = this.clock;// estos clocks son mas que nada para incrementar en 1 en cada ciclo el clock por el
         let clocki = this.clock;// hecho que a veces no incrementa al estar al final
 
@@ -193,6 +193,9 @@ function instSimulador() {
           this.colaListos.splice(0, 1);
         } else if (this.procesoCpu && this.colaListos.length > 0 && this.colaListos[0].prio > this.procesoCpu.prio) {
           this.colaListos.push(this.procesoCpu);
+          this.procesoCpu.inicio = true;
+          let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); // objeto resultado para el gantt del cpu
+          this.res.push(r);
           this.procesoCpu = this.colaListos[0];
           this.colaListos.splice(0, 1);
           this.ordenarColaListos();
