@@ -126,7 +126,7 @@
 
   $("#quantumid").keyup(function(){
     let quanto = parseInt($('.quantumIn').val())
-    console.log('Quantum = ',quanto)
+    console.log('Quantum =',quanto)
 
     if (quanto > 0) {
       generalQuantum = quanto;
@@ -154,8 +154,9 @@
       $(".algoInfo").text("FCFS");
 
     } else if (typeAlgorithm == 'RR'){
-        algorithm = typeAlgorithm; console.log(algorithm)
-        $(".quantumIn").show();
+      algorithm = typeAlgorithm; console.log(algorithm)
+      //$(".quantumIn").show();
+        $('#quantumid').removeClass('fade')
         $(".algoInfo").text("RR");
 
     } else if (typeAlgorithm == 'Prioridades'){ 
@@ -184,7 +185,7 @@
             <h5 class="card-header blue-grey lighten-1 white-text text-center py-4 mb-4">
                 <strong id="title-card">Gestión de Colas multinivel sin retroalimentación</strong>
             </h5>     
-            <div class="card-body px-lg-5 pt-0">
+            <div class="card-body px-lg-5 py-0">
                 <p class="lead">Seleccione el algoritmo correspondiente a cada cola.<p/>
                     <div class="row">
                       <span class="col-md-2 input-group-text textPart md-addon py-4">Cola 1</span>
@@ -222,7 +223,7 @@
                     </select><br/> 
                     </div> 
               </div>
-              <div class="mt-2 d-flex justify-content-center alert alert-info alert-dismissible fade hide alertMdq d-none w-75 mx-auto" role="alert">
+              <div class="mt-2 d-flex justify-content-center alert alert-info alert-dismissible fade hide alertMdq d-none w-75 mx-auto my-1" role="alert">
                 <strong class="textoAlertMdq">Si desea agregar nuevas particiones, por favor realice una nueva configuración</strong>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -236,11 +237,11 @@
         </div>
        `);
         $("#optionMlq1").change(function(){
-          let val = $("#optionMlq1").find(':selected').text(); 
+          let val = $("#optionMlq1").find(':selected').text();
+          $('#btn-conf-mlq').removeClass('disabled'); 
           mlq1 = val; console.log(mlq1);
           let config_part_mlq = `
-          <button type="button" class="btn btn-outline-secondary" disabled>Cola 1: ${mlq1}</button>
-          `
+          <button type="button" class="btn btn-outline-secondary" disabled>Cola 1: ${mlq1}</button>`
           $("#config_part_size").append(config_part_mlq);
           if(mlq1=="RR-Q:2"){
             console.log('Quantum cola 1:',mlq1Quantum); return mlq1Quantum
@@ -251,8 +252,7 @@
           let val = $("#optionMlq2").find(':selected').text(); 
           mlq2 = val; console.log(mlq2);
           let config_part_mlq = `
-          <button type="button" class="btn btn-outline-secondary" disabled>Cola 2: ${mlq2}</button>
-          `
+          <button type="button" class="btn btn-outline-secondary" disabled>Cola 2: ${mlq2}</button>`
           $("#config_part_size").append(config_part_mlq);
           if(mlq2=="RR-Q:2"){
             console.log('Quantum cola 2:',mlq2Quantum); return mlq2Quantum
@@ -275,7 +275,6 @@
         $("#btn-nuevo1").on("click", function() {
           $('#optionMlq2').removeAttr('disabled');
           $('#btn-nuevo2').removeClass('disabled');
-          $('#btn-conf-mlq').removeClass('disabled');
         })
         $("#btn-nuevo2").on("click", function() {
           $('#optionMlq3').removeAttr('disabled');
@@ -521,7 +520,7 @@
     $('.alertSimu').removeClass('alert-danger');
     $('.alertSimu').addClass('alert-success');
     $('.alertSimu').addClass('show');
-    $(".textoAlertSimu").text("Los procesos se han guardado correctamente.");
+    $(".textoAlertSimu").text("El proceso se ha guardado correctamente.");
     
     setTimeout(function(){ 
       $('.alertSimu').removeClass('show');
