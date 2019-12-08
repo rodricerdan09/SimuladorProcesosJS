@@ -9,12 +9,14 @@ function SimuladorBase(clock, colaListos, colaNuevos, colaBloqueados, memoria) {
 	this.procesoEs = null;
 	this.tiempoOcioso = 0;
 	this.resultados = [];
+	this.res = [];//cola re resultados para el gantt
 	this.colaControl = [];
 }
 
 SimuladorBase.prototype.cicloMemoria = function() {
+	//debugger;
 	let c = 0;
-	this.colaNuevos.sort((a, b) => a.tarrivo - b.tarrivo);
+	this.colaNuevos.sort((a, b) => (a.tarrivo > b.tarrivo) ? 1 : -1);
 	for (let p of this.colaNuevos) {
 		if (p.tarrivo == this.clock) {
 			this.memoria.encolarProceso(p);
@@ -23,7 +25,7 @@ SimuladorBase.prototype.cicloMemoria = function() {
 	}
 	this.colaNuevos.splice(0, c);
 	c = 0;
-	this.memoria.colaMemoria.sort((a, b) => a.tam - b.tam);
+	this.memoria.colaMemoria.sort((a, b) => (a.tam < b.tam) ? 1 : -1);
 	for (let p of this.memoria.colaMemoria) {
 		let proc = this.memoria.insertarProceso(p);
 		if (proc) {
@@ -52,6 +54,14 @@ SimuladorBase.prototype.ordenarColaListos = function() {
 	
 }
 
+function Res(name, rafaga, fromDur, toDur, color) {//constructor de la lista
+	this.name = name;
+	this.rafaga = rafaga;
+	this.fromDur = fromDur;
+	this.toDur = toDur;
+	this.color = color;
+}
+
 function Resultado(pid, tSalida, tArrivo, tRetorno, tEspera) {
 	this.pid = pid;
 	this.tSalida = tSalida;
@@ -73,6 +83,10 @@ function SimuladorNoApropiativo(...args) {
 SimuladorNoApropiativo.prototype = Object.create(SimuladorBase.prototype);
 
 SimuladorNoApropiativo.prototype.cicloCpu = function() {
+	//mismos cambios que para el rr
+	let clock = this.clock;
+	let clocki = this.clock;
+
 	if (this.colaListos.length > 0 && !this.procesoCpu) {
 		this.procesoCpu = this.colaListos[0];
 		this.colaListos.splice(0, 1);
@@ -84,17 +98,25 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 	}
 	
 	if (this.procesoCpu) {
+		clock++;
+		if (this.procesoCpu.inicio){
+			this.procesoCpu.iniclock = this.clock; //setea el tiempo en que inicia la rafaga
+		}		
 		let rafCpuFinalizada = this.procesoCpu.tratarProceso();
 		this.procesoCpu.irrupcion++;
 		if (rafCpuFinalizada) {
 			if (this.procesoCpu.isFinished()) {
-				this.memoria.removerProceso(this.procesoCpu);
-				let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
+				this.memoria.removerProceso(this.procesoCpu);		
+				let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00");	
+				this.res.push(r);	
+				let p = new Resultado(this.procesoCpu.pid, clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(clock)));
 				this.resultados.push(p);
 				this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
 				this.procesoCpu = null;
 			} else {
 				this.colaBloqueados.push(this.procesoCpu);
+				let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00");	
+				this.res.push(r);
 				this.procesoCpu = null;
 			}
 		}
@@ -103,13 +125,20 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 	}
 
 	if (this.procesoEs) {
+		clocki++;
+		if (this.procesoEs.inicio){
+			this.procesoEs.iniclock = this.clock;
+		}	
 		let rafEsFinalizada = this.procesoEs.tratarProceso();
 		if (rafEsFinalizada) {
 			this.colaListos.push(this.procesoEs);
+			let r = new Res(this.procesoEs.pid, "E/S" , this.procesoEs.iniclock , clocki, "#00D4FF");
+			this.res.push(r);
 			this.procesoEs = null;
+			
 		}
 	}
-
+	
 	this.clock++;
 }
 
