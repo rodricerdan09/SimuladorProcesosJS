@@ -107,7 +107,7 @@ function instSimulador() {
       sim.quantum = generalQuantum;
       let quantumReset = false;
       SimuladorApropiativo.prototype.cicloCpu = function() {
-        debugger;
+        //debugger;
         let clock = this.clock;// estos clocks son mas que nada para incrementar en 1 en cada ciclo el clock por el
         let clocki = this.clock;// hecho que a veces no incrementa al estar al final
 
