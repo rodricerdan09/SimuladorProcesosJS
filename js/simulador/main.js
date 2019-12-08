@@ -102,77 +102,77 @@ function instSimulador() {
         this.clock++;
       }
       break;
-      case 'RR':
-        sim = new SimuladorApropiativo(0, [], [], [], mem);
-        sim.quantum = generalQuantum;
-        let quantumReset = false;
-        SimuladorApropiativo.prototype.cicloCpu = function() {
-          debugger;
-          let clock = this.clock;// estos clocks son mas que nada para incrementar en 1 en cada ciclo el clock por el
-          let clocki = this.clock;// hecho que a veces no incrementa al estar al final
+    case 'RR':
+      sim = new SimuladorApropiativo(0, [], [], [], mem);
+      sim.quantum = generalQuantum;
+      let quantumReset = false;
+      SimuladorApropiativo.prototype.cicloCpu = function() {
+        debugger;
+        let clock = this.clock;// estos clocks son mas que nada para incrementar en 1 en cada ciclo el clock por el
+        let clocki = this.clock;// hecho que a veces no incrementa al estar al final
 
-          if (this.colaListos.length > 0 && !this.procesoCpu) {
-            this.procesoCpu = this.colaListos[0];
-            this.colaListos.splice(0, 1);
-          } else if (this.quantum == 0) {
-            this.colaListos.push(this.procesoCpu);
-            this.quantum = generalQuantum;
-            this.procesoCpu.inicio = true;
-            let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); // objeto resultado para el gantt del cpu
-            this.res.push(r);
-            this.procesoCpu = this.colaListos[0];
-            this.colaListos.splice(0, 1);//este faltaba, era uno de los errores del quantum no lo eliminaba de la cola
-          }
-          if (this.colaBloqueados.length > 0 && !this.procesoEs) {
-            this.procesoEs = this.colaBloqueados[0];
-            this.colaBloqueados.splice(0, 1);
-          }
-          if (this.procesoCpu) {
-            clock++;
-            if (this.procesoCpu.inicio){
-              this.procesoCpu.iniclock = this.clock;
-            } 
-            let rafCpuFinalizada = this.procesoCpu.tratarProceso();
-            this.quantum--;
-            this.procesoCpu.irrupcion++;
-            if (rafCpuFinalizada) {
-              if (this.procesoCpu.isFinished()) {
-                this.memoria.removerProceso(this.procesoCpu);
-                let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
-                this.res.push(r); 
-                let p = new Resultado(this.procesoCpu.pid, clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(clock)));
-                this.resultados.push(p);
-                this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
-                this.procesoCpu = null;
-                this.quantum = generalQuantum;
-              } else {
-                this.colaBloqueados.push(this.procesoCpu);
-                let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
-                this.res.push(r); 
-                this.procesoCpu = null;
-                this.quantum = generalQuantum;//al final de cada rafaga siempre se resetea el quantum
-              }
-            } 
-          } else {
-            this.tiempoOcioso++;
-          }
-
-          if (this.procesoEs) {
-            clocki++;
-            if (this.procesoEs.inicio){
-              this.procesoEs.iniclock = this.clock;
-            }
-            let rafEsFinalizada = this.procesoEs.tratarProceso();
-            if (rafEsFinalizada) {
-              this.colaListos.push(this.procesoEs);
-              let r = new Res(this.procesoEs.pid, "E/S" , this.procesoEs.iniclock , clocki, "#00D4FF"); //objeto para el gantt de la E/S
-              this.res.push(r);
-              this.procesoEs = null;
-            }
-          }
-          this.clock++;
+        if (this.colaListos.length > 0 && !this.procesoCpu) {
+          this.procesoCpu = this.colaListos[0];
+          this.colaListos.splice(0, 1);
+        } else if (this.quantum == 0) {
+          this.colaListos.push(this.procesoCpu);
+          this.quantum = generalQuantum;
+          this.procesoCpu.inicio = true;
+          let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); // objeto resultado para el gantt del cpu
+          this.res.push(r);
+          this.procesoCpu = this.colaListos[0];
+          this.colaListos.splice(0, 1);//este faltaba, era uno de los errores del quantum no lo eliminaba de la cola
         }
-        break;
+        if (this.colaBloqueados.length > 0 && !this.procesoEs) {
+          this.procesoEs = this.colaBloqueados[0];
+          this.colaBloqueados.splice(0, 1);
+        }
+        if (this.procesoCpu) {
+          clock++;
+          if (this.procesoCpu.inicio){
+            this.procesoCpu.iniclock = this.clock;
+          } 
+          let rafCpuFinalizada = this.procesoCpu.tratarProceso();
+          this.quantum--;
+          this.procesoCpu.irrupcion++;
+          if (rafCpuFinalizada) {
+            if (this.procesoCpu.isFinished()) {
+              this.memoria.removerProceso(this.procesoCpu);
+              let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
+              this.res.push(r); 
+              let p = new Resultado(this.procesoCpu.pid, clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(clock)));
+              this.resultados.push(p);
+              this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
+              this.procesoCpu = null;
+              this.quantum = generalQuantum;
+            } else {
+              this.colaBloqueados.push(this.procesoCpu);
+              let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
+              this.res.push(r); 
+              this.procesoCpu = null;
+              this.quantum = generalQuantum;//al final de cada rafaga siempre se resetea el quantum
+            }
+          } 
+        } else {
+          this.tiempoOcioso++;
+        }
+
+        if (this.procesoEs) {
+          clocki++;
+          if (this.procesoEs.inicio){
+            this.procesoEs.iniclock = this.clock;
+          }
+          let rafEsFinalizada = this.procesoEs.tratarProceso();
+          if (rafEsFinalizada) {
+            this.colaListos.push(this.procesoEs);
+            let r = new Res(this.procesoEs.pid, "E/S" , this.procesoEs.iniclock , clocki, "#00D4FF"); //objeto para el gantt de la E/S
+            this.res.push(r);
+            this.procesoEs = null;
+          }
+        }
+        this.clock++;
+      }
+      break;
     case 'MLQ':
       sim = new SimuladorApropiativo(0, [[], [], []], [], [], mem);
       SimuladorApropiativo.prototype.cicloCpu = function() {
@@ -281,7 +281,7 @@ function cargaResultados() {
   for (let r of sim.res) {
     listaResult.push(r);
   }
-  
+
   am4core.ready(function() {
     // Themes begin
     am4core.useTheme(am4themes_animated);
