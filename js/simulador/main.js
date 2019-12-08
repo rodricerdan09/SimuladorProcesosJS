@@ -193,6 +193,9 @@ function instSimulador() {
           this.colaListos.splice(0, 1);
         } else if (this.procesoCpu && this.colaListos.length > 0 && this.colaListos[0].prio > this.procesoCpu.prio) {
           this.colaListos.push(this.procesoCpu);
+          this.procesoCpu.inicio = true;
+          let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); // objeto resultado para el gantt del cpu
+          this.res.push(r);
           this.procesoCpu = this.colaListos[0];
           this.colaListos.splice(0, 1);
           this.ordenarColaListos();
