@@ -793,15 +793,6 @@
     return idProcess;
   });
 
-  $("#presentation-btna").on("click", function() {
-    $('.alertSimu').addClass('show')
-    $(".textoAlertSimu").text('Por favor presione el botón Confirmar para avanzar a la siguinte sección.'); 
-    setTimeout(function(){ 
-      $('.alertSimu').removeClass('show');
-      $('.alertSimu').addClass('hide');
-    },3500);
-  });
-
   $(".sizeInput").keyup(function(){
     $('.alertProcess').removeClass('show');
     $('.alertProcess').addClass('hide');
@@ -813,7 +804,23 @@
       $('.alertProcess').addClass('show');
     }
   });
-  ////--------------------------MAPA DE MEMORIA-------------------------------------------
+  //---------------------SECCION PRESENTACION------------------------------------------
+
+    $('#btnconfirmar2').on('click', function(){
+      main();
+
+    });
+    
+    $("#presentation-btna").on("click", function() {
+      $('.alertSimu').addClass('show')
+      $(".textoAlertSimu").text('Por favor presione el botón Confirmar para avanzar a la siguinte sección.'); 
+      setTimeout(function(){ 
+        $('.alertSimu').removeClass('show');
+        $('.alertSimu').addClass('hide');
+      },3500);
+    });
+
+    ////--------------------------MAPA DE MEMORIA-------------------------------------------
     /* am4core.ready(function() {
     
     // Themes begin
@@ -858,11 +865,3 @@
     pieSeries.hiddenState.properties.startAngle = -90;
     
     }); // end am4core.ready() */
-
-    //---------------------SECCION PRESENTACION------------------------------------------
-
-
-  //--------------------------GANTT DE PROCESOS-------------------------------------------
-  $('#btnconfirmar2').on('click', function(){
-    main();
-  });
