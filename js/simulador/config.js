@@ -242,7 +242,7 @@
           mlq1 = val; console.log(mlq1);
           let config_part_mlq = `
           <button type="button" class="btn btn-outline-secondary" disabled>Cola 1: ${mlq1}</button>`
-          $("#config_part_size").append(config_part_mlq);
+          $(".config_part_size").append(config_part_mlq);
           if(mlq1=="RR-Q:2"){
             console.log('Quantum cola 1:',mlq1Quantum); return mlq1Quantum
           }
@@ -253,7 +253,7 @@
           mlq2 = val; console.log(mlq2);
           let config_part_mlq = `
           <button type="button" class="btn btn-outline-secondary" disabled>Cola 2: ${mlq2}</button>`
-          $("#config_part_size").append(config_part_mlq);
+          $(".config_part_size").append(config_part_mlq);
           if(mlq2=="RR-Q:2"){
             console.log('Quantum cola 2:',mlq2Quantum); return mlq2Quantum
           }
@@ -265,7 +265,7 @@
           let config_part_mlq = `
           <button type="button" class="btn btn-outline-secondary" disabled>Cola 3: ${mlq3}</button>
           `
-          $("#config_part_size").append(config_part_mlq);
+          $(".config_part_size").append(config_part_mlq);
           if(mlq3=="RR-Q:2"){
             console.log('Quantum cola 3:',mlq3Quantum); return mlq3Quantum
           }
@@ -611,7 +611,7 @@
         num_part = i+1;
         let config_part_size = `
         <button type="button" class="btn btn-outline-secondary ml-3" disabled>Part. ${num_part}: ${arrayPartitions[i]} MB</button>`
-        $("#config_part_size").append(config_part_size);
+        $(".config_part_size").append(config_part_size);
       }     
     }
     setTimeout(function() {
@@ -652,38 +652,38 @@
       $('#interval-prio').show();
       var nuevaFila=`
       <tr id="row${idProcess}" class="hide">
-        <td class="md-form"><input type="number" class="form-control disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
-        <td class="md-form"><input id="prio-input${idProcess}" type="number" class="form-control rafagas-p w-20 p-raf${idProcess}" min=0 max=3 value=0></td>
-        <td class="md-form"><input id="tam-input${idProcess}" type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
-        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control mt-3 disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
+        <td class="md-form"><input id="prio-input${idProcess}" type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}" min=0 max=3 value=0></td>
+        <td class="md-form"><input id="tam-input${idProcess}" type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
         <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
         <td>
-            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
+            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm mt-4 waves-effect waves-light">Agregar</button>
         </td>
         <td>
-            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
+            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button>    
         </td>
         <td>
-            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
-            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
+            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm mt-4 waves-effect waves-light">Confirmar</button>
+            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button></span>
         </td>
       </tr>` 
     } else {
       var nuevaFila=`
       <tr id="row${idProcess}" class="hide">
-        <td class="md-form"><input type="number" class="form-control disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
-        <td class="md-form"><input id="tam-input${idProcess}" type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
-        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control mt-3 disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
+        <td class="md-form"><input id="tam-input${idProcess}" type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
         <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
         <td>
-            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
+            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm mt-4 waves-effect waves-light">Agregar</button>
         </td>
         <td>
-            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
+            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button>    
         </td>
         <td>
-            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
-            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
+            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm mt-4 waves-effect waves-light">Confirmar</button>
+            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button></span>
         </td>
       </tr>` 
     }
@@ -742,11 +742,11 @@
           setTimeout(function(){ 
             $('.alertTable').removeClass('show');
             $('.alertTable').addClass('hide');
-          },2000);
+          },3000);
           setTimeout(function(){ 
             $('.alertTable').removeClass('alert-success');
             $('.alertTable').addClass('alert-danger');
-          },3000);
+          },4000);
   //evento para agregar los datos del proceso al array parametros
           $('#tableID tbody tr').each(function(i,e) {
               let tr = [];
@@ -864,48 +864,5 @@
         $('.alertSimu').addClass('hide');
       },3500);
     });
-    ////--------------------------MAPA DE MEMORIA-------------------------------------------
-    /* am4core.ready(function() {
-    
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
-    
-    // Create chart instance
-    var chart = am4core.create("chartdiv", am4charts.PieChart);
-    
-    for(var i=0; i<partition; i++){
-    }
-    // Add data
-    chart.data = [ {
-      "number-partition": "Proc_"+i,
-      "size-partition": 25
-    }, {
-      "number-partition": "Proc_1",
-      "size-partition": 25
-    }, {
-      "number-partition": "Proc_2",
-      "size-partition": 25
-    }, {
-      "number-partition": "Proc_3",
-      "size-partition": 25
-    }];     
+    ////--------------------------FIN DE PROGRAMA-------------------------------------------
 
-    // Add a legend
-    chart.legend = new am4charts.Legend();
-    chart.legend.position = "button";
-    
-    // Add and configure Series
-    var pieSeries = chart.series.push(new am4charts.PieSeries());
-    pieSeries.dataFields.value = "size-partition";
-    pieSeries.dataFields.category = "number-partition";
-    pieSeries.slices.template.stroke = am4core.color("#fff");
-    pieSeries.slices.template.strokeWidth = 2;
-    pieSeries.slices.template.strokeOpacity = 1;
-    
-    // This creates initial animation
-    pieSeries.hiddenState.properties.opacity = 1;
-    pieSeries.hiddenState.properties.endAngle = -90;
-    pieSeries.hiddenState.properties.startAngle = -90;
-    
-    }); // end am4core.ready() */
