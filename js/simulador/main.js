@@ -301,37 +301,40 @@ function cargaResultados() {
   for (let r of sim.res) {
     listaResult.push(r);
   }
+  let listaResCola = []; //LISTA DE DATOS DE LOS RESULTADOS PROCESADOS EN EL GANTT
+  for (let r of sim.rescola) {
+    listaResCola.push(r);
+  }
 
   am4core.ready(function() {
     // Themes begin
     am4core.useTheme(am4themes_animated);
     // Themes end
-    var chart = am4core.create("chartdiv-d", am4charts.XYChart); //chart usa datos tipo json o array de objetos por eso paso la lista de resultados
+    let chart = am4core.create("chartdiv-d", am4charts.XYChart); //chart usa datos tipo json o array de objetos por eso paso la lista de resultados
     chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
     chart.paddingRight = 30;
   
-    var colorSet = new am4core.ColorSet();
+    let colorSet = new am4core.ColorSet();
     colorSet.saturation = 0.4;
 
     chart.data = listaResult; // Esta es la lista de resultados xd
   
-    var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis()); //CategoryAxis es para usar datos tipo text
+    let categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis()); //CategoryAxis es para usar datos tipo text
     categoryAxis.title.text = "Procesos"; // TITULO AXI-Y
     categoryAxis.dataFields.category = "name"; //datafields son los datos recolectados de la lista en este caso el nombre pasado al grafico
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.renderer.inversed = true;
   
-    var xAxis = chart.xAxes.push(new am4charts.DurationAxis()); //DurationAxis usa datos tipo numerico en forma de tiempo
+    let xAxis = chart.xAxes.push(new am4charts.DurationAxis()); //DurationAxis usa datos tipo numerico en forma de tiempo
     xAxis.baseUnit = "second"; //unidad de tiempo
     xAxis.title.text = "tiempo" //TITULO AXI-X
     xAxis.renderer.minGridDistance = 70;
     xAxis.baseInterval = { count: 30, timeUnit: "minute" };
-    xAxis.max = 60; //maximo se puede cambiar pero se me hace que un minuto esta bien
     xAxis.min = 0;
     xAxis.strictMinMax = true;
     xAxis.renderer.tooltipLocation = 0;
   
-    var series1 = chart.series.push(new am4charts.ColumnSeries()); 
+    let series1 = chart.series.push(new am4charts.ColumnSeries()); 
     series1.columns.template.width = am4core.percent(80);
     series1.dataFields.openValueX = "fromDur";//valor desde
     series1.dataFields.valueX = "toDur";// valor hasta
@@ -344,6 +347,52 @@ function cargaResultados() {
     chart.scrollbarX = new am4core.Scrollbar();
   });
     //AMCHART------------------------------------------------------------------
+  
+
+  am4core.ready(function() {
+   
+      // Themes begin
+  am4core.useTheme(am4themes_animated);
+  let chart = am4core.create("chartdiv2", am4charts.XYChart);
+  
+  // Add data
+  chart.data = listaResCola;
+  
+  // Create axes
+  let xAxis = chart.xAxes.push(new am4charts.ValueAxis());
+  
+  xAxis.renderer.minGridDistance = 40;
+  
+  
+  // Create value axis
+  let yAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+  yAxis.dataFields.category = "cola";
+  // Create series
+  let series1 = chart.series.push(new am4charts.LineSeries());
+  series1.dataFields.valueX = "clock";
+  series1.dataFields.categoryY = "cola";
+  series1.strokeWidth = 0;
+  
+  let bullet1 = series1.bullets.push(new am4charts.CircleBullet());
+  series1.heatRules.push({
+    target: bullet1.circle,
+    min: 5,
+    max: 20,
+    property: "radius",
+    color:"color"
+  });
+  
+  bullet1.tooltipText = "{name}";
+  
+  
+  //scrollbars
+  chart.scrollbarX = new am4core.Scrollbar();
+  
+  
+  }); // end am4core.ready()
+
+
+
 
   for (let r of sim.resultados) {
     let result = ` <tr>
@@ -367,7 +416,76 @@ function cargaResultados() {
   $('#t-result').append(result2);
   $('#cpu').append(sim.porcActivo().toFixed(1) + '%');
 }
+function myFunction(){
+  let x = document.getElementById("rangeid");
+  x.max=sim.resmem.length-1;
+  x.min=0;
+  let i = sim.resmem[x.value];
+  return i;
+  
+}
+function torta(){ 
 
+    am4core.ready(function() {
+      debugger;
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+        
+        // Create chart instance
+        var chart = am4core.create("chartdiv3", am4charts.PieChart);
+        
+        var selected;
+        var memory = myFunction();
+        
+        // Add data
+        chart.data = generateChartData();
+        
+        // Add and configure Series
+        var pieSeries = chart.series.push(new am4charts.PieSeries());
+        pieSeries.dataFields.value = "size";
+        pieSeries.dataFields.category = "partition";
+        pieSeries.slices.template.propertyFields.fill = "color";
+        pieSeries.slices.template.propertyFields.isActive = "pulled";
+        pieSeries.slices.template.strokeWidth = 0;
+        
+        function generateChartData() {
+        var chartData = [];
+        for (var i = 0; i < memory.length; i++) {
+            if (i == selected && memory[i].subs.length > 0 ) {
+            for (var x = 0; x < memory[i].subs.length; x++) {
+                chartData.push({
+                partition: memory[i].subs[x].partition,
+                size: memory[i].subs[x].size,
+                color: memory[i].color,
+                pulled: true
+                });
+            }
+            } else {
+            chartData.push({
+                partition: memory[i].partition,
+                size: memory[i].size,
+                color: memory[i].color,
+                id: i
+            });
+            }
+        }
+        return chartData;
+        }
+        
+        pieSeries.slices.template.events.on("hit", function(event) {
+        if (event.target.dataItem.dataContext.id != undefined) {
+            selected = event.target.dataItem.dataContext.id;
+        } else {
+            selected = undefined;
+        }
+        chart.data = generateChartData();
+        });
+
+        
+        
+    }); // end am4core.ready()
+}
 
 function main(){
   instMemoria();
@@ -381,5 +499,6 @@ function main(){
   }
 
   cargaResultados();
+  torta();
 }
 
