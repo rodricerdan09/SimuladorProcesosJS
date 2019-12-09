@@ -32,6 +32,7 @@ function MemoriaFija(...args) {
 MemoriaFija.prototype = Object.create(MemoriaBase.prototype);
 
 MemoriaFija.prototype.insertarProceso = function(proceso) {
+	
 	let particionLibre = this.particionLibre(proceso);
 	if (particionLibre) {
 		particionLibre.proceso = proceso;
