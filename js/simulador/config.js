@@ -3,9 +3,9 @@
   let typeMemory = "Variable"; // tipo de Memoria
   let fitMemory = "First Fit"; //Ajuste de memoria
   let algorithm = "FCFS"; //Algoritmo de Planificacion
-  let mlq1= "FCFS"; //Algoritmo de Planificacion por defecto en la cola 1 de mdq
-  let mlq2= "FCFS"; //Algoritmo de Planificacion por defecto en la cola 2 de mdq
-  let mlq3= "FCFS"; //Algoritmo de Planificacion por defecto en la cola 3 de mdq
+  let mlq1= null; //Algoritmo de Planificacion por defecto en la cola 1 de mdq
+  let mlq2= null; //Algoritmo de Planificacion por defecto en la cola 2 de mdq
+  let mlq3= null; //Algoritmo de Planificacion por defecto en la cola 3 de mdq
   let mlq1Quantum = 2; // Quantum para roundRobin de cola 1
   let mlq2Quantum = 2; // Quantum para roundRobin de cola 2
   let mlq3Quantum = 2; // Quantum para roundRobin de cola 3
@@ -75,7 +75,6 @@
     $(this).addClass('text-primary')
     var activetab=$(this).attr('href'); console.log(activetab)
   }); */
-
   $('#config-btna').off().on('click', function(){
     let isPrimary1 = $('#config-btna').hasClass('text-primary'); console.log(isPrimary1)
     if (isPrimary1 == false){
@@ -146,6 +145,7 @@
   $("#optionAlgo").change(function(){
     $("#quantumid").removeClass('disabled');
     let typeAlgorithm = $("#optionAlgo").find(':selected').text();
+    $("#card-mlq").hide();
 
     if (typeAlgorithm == 'FCFS'){
       algorithm = typeAlgorithm; console.log(algorithm);
@@ -182,7 +182,7 @@
         $(".algoInfo").text("MLQ");
        $("#partfijas").before(`
        <div class="card mb-4" id="card-mlq">
-            <h5 class="card-header blue-grey lighten-1 white-text text-center py-4 mb-4">
+            <h5 class="card-header blue-grey lighten-1 white-text text-center py-4 mb-3">
                 <strong id="title-card">Gestión de Colas multinivel sin retroalimentación</strong>
             </h5>     
             <div class="card-body px-lg-5 py-0">
@@ -223,14 +223,14 @@
                     </select><br/> 
                     </div> 
               </div>
-              <div class="mt-2 d-flex justify-content-center alert alert-info alert-dismissible fade hide alertMdq d-none w-75 mx-auto my-1" role="alert">
+              <div class="mt-2 d-flex justify-content-center alert alert-info alert-dismissible fade hide alertMdq d-none mx-auto my-1" role="alert">
                 <strong class="textoAlertMdq">Si desea agregar nuevas particiones, por favor realice una nueva configuración</strong>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <button type="button" class="close p-1" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
               </div>    
             <!--Confirmar formulario--> 
-            <div class="d-flex justify-content-center mb-4">
+            <div class="d-flex justify-content-center mb-3">
                 <button id="btn-conf-mlq" class="btn btn-outline-light-blue z-depth-0 waves-effect w-75 disabled" type="button">Confirmar</button>  
             </div>
             <!--Confirmar formulario--> 
@@ -242,7 +242,7 @@
           mlq1 = val; console.log(mlq1);
           let config_part_mlq = `
           <button type="button" class="btn btn-outline-secondary" disabled>Cola 1: ${mlq1}</button>`
-          $("#config_part_size").append(config_part_mlq);
+          $(".config_part_size").append(config_part_mlq);
           if(mlq1=="RR-Q:2"){
             console.log('Quantum cola 1:',mlq1Quantum); return mlq1Quantum
           }
@@ -253,7 +253,7 @@
           mlq2 = val; console.log(mlq2);
           let config_part_mlq = `
           <button type="button" class="btn btn-outline-secondary" disabled>Cola 2: ${mlq2}</button>`
-          $("#config_part_size").append(config_part_mlq);
+          $(".config_part_size").append(config_part_mlq);
           if(mlq2=="RR-Q:2"){
             console.log('Quantum cola 2:',mlq2Quantum); return mlq2Quantum
           }
@@ -265,7 +265,7 @@
           let config_part_mlq = `
           <button type="button" class="btn btn-outline-secondary" disabled>Cola 3: ${mlq3}</button>
           `
-          $("#config_part_size").append(config_part_mlq);
+          $(".config_part_size").append(config_part_mlq);
           if(mlq3=="RR-Q:2"){
             console.log('Quantum cola 3:',mlq3Quantum); return mlq3Quantum
           }
@@ -296,22 +296,6 @@
           },3000);   
         })
     }
-     /*  if (typeAlgorithm == 'RR'){
-      $('.alertRR').removeClass('hide');
-      $('.alertRR').addClass('show');
-      } else{
-      $('.alertRR').removeClass('show');
-      $('.alertRR').addClass('hide');
-      $(".alertRR").addClass("disabled");
-      }
-      if (typeAlgorithm == 'Prioridades'){
-        $('.alertPriod').removeClass('hide');
-        $('.alertPriod').addClass('show');
-      } else{
-        $('.alertPriod').removeClass('show');
-        $('.alertPriod').addClass('hide');
-        $(".alertPriod").addClass("disabled");
-      } */
     return algorithm;
   });
   //control de la seleccion de algoritmo
@@ -366,7 +350,7 @@
     $("#btnconfirmar").removeClass('d-none');
     let valorCurrent = parseInt($("#tam-memory-so").val()); 
     sizeMemoryCpu = valorCurrent;  console.log('sizememoryCPU',sizeMemoryCpu);
-    sizeMemoryDisp = sizeMemory - sizeMemoryCpu;
+    sizeMemoryDisp = sizeMemory - sizeMemoryCpu; console.log('sizememoryDisp',sizeMemoryDisp);
     value = Math.round((sizeMemoryCpu*100)/8192);
     porcMemoryDispCpu = value;
     memtotal = sizeMemory-sizeMemoryCpu; console.log('memtotal: ',memtotal)
@@ -404,7 +388,6 @@
     return sizeMemoryDisp, porcMemoryDispCpu, sizeMemoryCpu, memtotal;
   });
   //control de la memoria del planificador
-
   //control del tipo de memoria
   $("#optionType").change(function(){
     let valueCurrent = $("#optionType").find(':selected').text();
@@ -487,7 +470,7 @@
     $('#process-btna').addClass('border-primary');
     $('#process-btna').addClass('border-bottom-0');
 
-    $(".tamInfo").text(sizeMemory+' MB');
+    $(".tamInfo").text(memtotal+' MB');
     $(".memInfo").text(typeMemory);
     $(".ajuInfo").text(fitMemory);
     $('.alertSimu').removeClass('alert-danger');
@@ -563,7 +546,8 @@
     $("#memoria").text('Tamaño Definido: '+memtotal+' MB.');
     $("#memoriacpu").text('Tamaño Definido para CPU: '+sizeMemoryCpu+' MB.');
     $("#porcentajeTotal").text('Porcentaje de la memoria total utilizada por el Planificador: '+porcMemoryDisp+'%');
-
+    $("#disponible").text('Espacio Libre: '+totaldisp+' MB.');
+    
     if (partition == 0){
       $(".textoAlertPart").text("La cantidad de particiones debe ser un número entero positivo.");
       $('.alertPart').addClass('show');
@@ -586,9 +570,9 @@
 
         for(let i=0; i<partition; i++){
         sizepartinput = parseInt($('.inputParts'+(i+1)).val()); console.log('part: '+i,sizepartinput);
-        totalinput = sizepartinput*partition; console.log('totalinput '+i,totalinput);      
         arrayPartitions[i]=sizepartinput;// arrayPartitions.push(sizepartinput);
         sumPart+=arrayPartitions[i]  
+        totalinput = sizepartinput*partition; //console.log('totalinput '+i,totalinput);      
         totaldisp = memtotal-sumPart;
 
         if (sumPart > memtotal){
@@ -604,13 +588,12 @@
           $('.alertPart').addClass('hide');
           $('#btn-asignar').removeClass('disabled');
          }
+         $("#disponible").text('Espacio Libre: '+totaldisp+' MB.');
         }   
-        console.log('arrayPartitions: ',arrayPartitions); console.log('suma total: ',sumPart);
-        $("#disponible").text('Tamaño Disponible: '+totaldisp+' MB.');
-          return arrayPartitions
+        //console.log('arrayPartitions: ',arrayPartitions); console.log('suma total: ',sumPart);
       });
     }    
-    return totalpart, totaldisp, porcMemoryDisp, partition
+    return totalpart, totaldisp, porcMemoryDisp, partition, sizepartinput
   });
 
   $("#btn-asignar").on( "click", function() {
@@ -619,17 +602,23 @@
     $('.alertPart').addClass('show');
     $(".textoAlertPart").text("Las particiones han sido asignadas correctamente.");
 
+    for(let i=0; i<partition; i++){ 
+      sizepartinput = parseInt($('.inputParts'+(i+1)).val()); console.log('part: '+i,sizepartinput);
+      arrayPartitions[i]=sizepartinput;    
+    }
     if(typeMemory == 'Fija'){
       for(let i=0; i<partition; i++){
         num_part = i+1;
         let config_part_size = `
-        <button type="button" class="btn btn-outline-secondary" disabled>Part. ${num_part}: ${arrayPartitions[i]} MB</button>`
-        $("#config_part_size").append(config_part_size);
+        <button type="button" class="btn btn-outline-secondary ml-3" disabled>Part. ${num_part}: ${arrayPartitions[i]} MB</button>`
+        $(".config_part_size").append(config_part_size);
       }     
     }
     setTimeout(function() {
       alert('Por favor presione el botón Confirmar para avanzar a la siguinte sección.');            
     },1000);
+    console.log('arrayPartitions: ',arrayPartitions);
+    return arrayPartitions
   });
 
   //---------------------SECCION PROCESOS------------------------------------------
@@ -646,7 +635,7 @@
       $(".add-raf").addClass('disabled')
       $(".del-raf").addClass('disabled')
     } else if (rafagas == 0 && count >=1){
-      $("tr-rafaga").addClass('disabled')
+      //$("#tr-rafaga").addClass('disabled')
       $(".textoAlertTable").text("Debe agregar como mínimo una ráfaga al proceso.");
       $('.alertTable').addClass('show');
       $('.alertTable').removeClass('hide'); 
@@ -663,45 +652,88 @@
       $('#interval-prio').show();
       var nuevaFila=`
       <tr id="row${idProcess}" class="hide">
-        <td class="md-form"><input type="number" class="form-control disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
-        <td class="md-form"><input type="text" class="form-control rafagas-p w-20 p-raf${idProcess}" min=0 max=3 value=0></td>
-        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
-        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control mt-3 disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
+        <td class="md-form"><input id="prio-input${idProcess}" type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}" min=0 max=3 value=0></td>
+        <td class="md-form"><input id="tam-input${idProcess}" type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
         <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
         <td>
-            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
+            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm mt-4 waves-effect waves-light">Agregar</button>
         </td>
         <td>
-            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
+            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button>    
         </td>
         <td>
-            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
-            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
+            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm mt-4 waves-effect waves-light">Confirmar</button>
+            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button></span>
         </td>
       </tr>` 
     } else {
       var nuevaFila=`
       <tr id="row${idProcess}" class="hide">
-        <td class="md-form"><input type="number" class="form-control disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
-        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
-        <td class="md-form"><input type="number" class="form-control rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control mt-3 disabled rafagas-p w-20 p-raf${idProcess}" value="${idProcess}"></td>
+        <td class="md-form"><input id="tam-input${idProcess}" type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
+        <td class="md-form"><input type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
         <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
         <td>
-            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm my-0 waves-effect waves-light">Agregar</button>
+            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm mt-4 waves-effect waves-light">Agregar</button>
         </td>
         <td>
-            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button>    
+            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button>    
         </td>
         <td>
-            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm my-0 waves-effect waves-light">Confirmar</button>
-            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm my-0 waves-effect waves-light">Eliminar</button></span>
+            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm mt-4 waves-effect waves-light">Confirmar</button>
+            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button></span>
         </td>
       </tr>` 
     }
     $("#tbodyID").append(nuevaFila);
 
+    $(`#prio-input${idProcess}`).keyup(function(){
+      let prioValue = $(`#prio-input${idProcess}`).val();
+      if (prioValue > 3){
+        $(`#prio-input${idProcess}`).val('');
+        $(".textoAlertTable").text("La máxima prioridad que puede ingresar es 3. Intente nuevamente.");
+        $('.alertTable').addClass('show');
+        $('.alertTable').removeClass('hide');
+          setTimeout(function(){ 
+            $('.alertTable').removeClass('show');
+            $('.alertTable').addClass('hide');
+          },3000);
+      }
+    });
+      $(`#tam-input${idProcess}`).keyup(function(){
+        let tamValue = parseInt($(`#tam-input${idProcess}`).val()); console.log('taminput',tamValue);
+        if (typeMemory=="Variable"){
+          if(tamValue > memtotal){
+            $(`#tam-input${idProcess}`).val('');
+            $(".textoAlertTable").text("El tamaño del proceso no debe ser mayor al tamaño de la Memoria definida.");
+            $('.alertTable').addClass('show');
+            $('.alertTable').removeClass('hide');
+          } else if(tamValue == 0){
+            $(`#tam-input${idProcess}`).val('');
+            $(".textoAlertTable").text("El tamaño del proceso debe ser mayor a cero.");
+            $('.alertTable').addClass('show');
+            $('.alertTable').removeClass('hide');
+          }
+        }else if (typeMemory=="Fija"){
+          let maxValue = Math.max(...arrayPartitions);console.log('maxPart',maxValue);
+          if(tamValue > maxValue){
+            $(`#tam-input${idProcess}`).val('');
+            $(".textoAlertTable").text("El tamaño del proceso no debe ser mayor al tamaño de la Partición definida.");
+            $('.alertTable').addClass('show');
+            $('.alertTable').removeClass('hide');
+          }
+        }
+      setTimeout(function(){ 
+        $('.alertTable').removeClass('show');
+        $('.alertTable').addClass('hide');
+      },4000);
+    });
+    //evento para confirmar los datos de un proceso
       $('#tableID').keyup(function(){
         $(".confirm-rafaga").on("click", function(){
+          //$(`#row${idProcess}`).addClass("disabled");
           $(".textoAlertTable").text("El proceso se ha cargado correctamente.");
           $('.alertTable').addClass('show');
           $('.alertTable').removeClass('hide');
@@ -710,12 +742,12 @@
           setTimeout(function(){ 
             $('.alertTable').removeClass('show');
             $('.alertTable').addClass('hide');
-          },2000);
+          },3000);
           setTimeout(function(){ 
             $('.alertTable').removeClass('alert-success');
             $('.alertTable').addClass('alert-danger');
-          },3000);
-
+          },4000);
+  //evento para agregar los datos del proceso al array parametros
           $('#tableID tbody tr').each(function(i,e) {
               let tr = [];
               $(this).find("td").each(function(index, element){
@@ -761,7 +793,6 @@
         })
          return count
    });
-
   // evento para eliminar las rafagas
   $("#tableID").on("click", ".del-raf", function(){ 
     $('.alertTable').removeClass('show');
@@ -772,7 +803,7 @@
       count-=1; console.log('count:', count)
       $('#tableID').find('tr').each(function(){       
         //let col = $(this).parents("tr").find("td:5")/* .eq(5) */;    
-        let col=$(this).find('td:eq(11)')/* .children().removeClass('disabled') */
+        let col=$(this).find('td:eq(11)')
             console.log('colw:', col)
       })
     } else if (count == 0){
@@ -785,83 +816,53 @@
     }
     return count
   });
-
   // Funcion para eliminar una nueva fila de la tabla
   $("#tableID").on("click", ".del", function(){
     if (idProcess > 0) {idProcess-=1;} 
     $(this).parents("tr").remove();
     return idProcess;
   });
-
-  $(".sizeInput").keyup(function(){
-    $('.alertProcess').removeClass('show');
-    $('.alertProcess').addClass('hide');
-    let tamProc = parseInt($('.sizeInput').val())
-    let maxTamPocess = getMaxProcessSize(typeMemory)
-
-    if (tamProc > maxTamPocess) {
-      $(".textoAlertProc").text("El tamaño del proceso no puede ser mayor al tamaño de la Memoria definido.");
-      $('.alertProcess').addClass('show');
-    }
-  });
-  //---------------------SECCION PRESENTACION------------------------------------------
-
+  //---------------------SECCION PRESENTACION-----------------------------------------
     $('#btnconfirmar2').on('click', function(){
       main();
-
+      for (p of parametros) {  
+        if(algorithm!="Prioridades"){
+          p.splice(1, 0, 0);//posicion, 0 agrega| 1 elimina, valor
+        } 
+         let proceso = `<div id="rafagas${p[0]}">
+          <button type="button" class="btn mdb-color text-white" disabled>Proceso ${p[0]}</button>
+          <button id="btn-1" type="button" class="btn mdb-color text-white" disabled>Prioridad: ${p[1]}</button>
+          <button type="button" class="btn mdb-color text-white" disabled>Tamaño: ${p[2]} MB</button>
+          <button type="button" class="btn mdb-color text-white" disabled>T. Arribo: ${p[3]} Seg.</button>
+          <button type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[4]}</button>
+          <button type="button" class="btn btn-outline-secondary" disabled>E/S: ${p[5]}</button>
+          <button id="btn-6" type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[6]}</button>
+          <button id="btn-7" type="button" class="btn btn-outline-secondary" disabled>E/S: ${p[7]}</button>
+          <button id="btn-8" type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[8]}</button>
+          <button id="btn-9" type="button" class="btn btn-outline-secondary" disabled>E/S: ${p[9]}</button>
+          <button id="btn-10" type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[10]}</button>
+          <button id="btn-11" type="button" class="btn btn-outline-secondary" disabled>E/S: ${p[11]}</button>
+          <button id="btn-12" type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[12]}</button>
+          </div>`;
+          $('#config_process').append(proceso)
+          if(algorithm!="Prioridades"){
+            $('#rafagas'+p[0]+' #btn-1').addClass('d-none')
+          } 
+          for (i=6;i<=15;i++){
+            if(isNaN(p[i]) || p[i]==undefined){
+              $('#rafagas'+p[0]+' #btn-'+i).addClass('d-none')
+            }
+          } 
+        }
     });
     
     $("#presentation-btna").on("click", function() {
       $('.alertSimu').addClass('show')
-      $(".textoAlertSimu").text('Por favor presione el botón Confirmar para avanzar a la siguinte sección.'); 
+      $(".textoAlertSimu").text('Por favor presione Confirmar para avanzar a la siguinte sección.'); 
       setTimeout(function(){ 
         $('.alertSimu').removeClass('show');
         $('.alertSimu').addClass('hide');
       },3500);
     });
+    ////--------------------------FIN DE PROGRAMA-------------------------------------------
 
-    ////--------------------------MAPA DE MEMORIA-------------------------------------------
-    /* am4core.ready(function() {
-    
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
-    
-    // Create chart instance
-    var chart = am4core.create("chartdiv", am4charts.PieChart);
-    
-    for(var i=0; i<partition; i++){
-    }
-    // Add data
-    chart.data = [ {
-      "number-partition": "Proc_"+i,
-      "size-partition": 25
-    }, {
-      "number-partition": "Proc_1",
-      "size-partition": 25
-    }, {
-      "number-partition": "Proc_2",
-      "size-partition": 25
-    }, {
-      "number-partition": "Proc_3",
-      "size-partition": 25
-    }];     
-
-    // Add a legend
-    chart.legend = new am4charts.Legend();
-    chart.legend.position = "button";
-    
-    // Add and configure Series
-    var pieSeries = chart.series.push(new am4charts.PieSeries());
-    pieSeries.dataFields.value = "size-partition";
-    pieSeries.dataFields.category = "number-partition";
-    pieSeries.slices.template.stroke = am4core.color("#fff");
-    pieSeries.slices.template.strokeWidth = 2;
-    pieSeries.slices.template.strokeOpacity = 1;
-    
-    // This creates initial animation
-    pieSeries.hiddenState.properties.opacity = 1;
-    pieSeries.hiddenState.properties.endAngle = -90;
-    pieSeries.hiddenState.properties.startAngle = -90;
-    
-    }); // end am4core.ready() */
