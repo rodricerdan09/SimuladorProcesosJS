@@ -63,6 +63,9 @@ function instSimulador() {
       SimuladorApropiativo.prototype.cicloCpu = function() {
         let clock = this.clock;
         let clocki = this.clock;
+        this.rescola.push(addColaDiag(this.clock,this.colaListos,"Cola de Listos","#23FF00"));
+        this.rescola.push(addColaDiag(this.clock,this.colaBloqueados,"Cola de Bloqueados","#00D4FF"));
+        this.rescola.push(addColaDiag(this.clock,this.memoria.colaMemoria,"Cola de Memoria", "8000FF"));
         //debugger;
         if (this.colaListos.length > 0 && !this.procesoCpu) {
           this.procesoCpu = this.colaListos[0];
@@ -106,6 +109,27 @@ function instSimulador() {
           this.tiempoOcioso++;
         }
 
+        let lista = [];
+        for(let i=0;i<this.memoria.particiones.length;i++){
+          
+          let random = Math.round ((Math.random () * 999)+1000);
+          let sub = [];
+          let p = this.memoria.particiones[i].proceso;
+          if(p){
+          
+          let fragint= this.memoria.particiones[i].fragInterna(p);
+          sub = [{
+            partition:"P"+p.pid.toString(),
+            size:p.tam.toString()
+          },{
+            partition:"Fragmentacion Interna",
+            size:fragint.toString()
+          }];}
+          let r = new ResMem("Particion "+i.toString(),this.memoria.particiones[i].tam.toString(),"#"+random.toString()+"FF",sub);
+          lista.push(r);
+        }
+        this.resmem.push(lista);
+
         if (this.procesoEs) {
           clocki++;
           if (this.procesoEs.inicio){
@@ -131,7 +155,10 @@ function instSimulador() {
         //debugger;
         let clock = this.clock;// estos clocks son mas que nada para incrementar en 1 en cada ciclo el clock por el
         let clocki = this.clock;// hecho que a veces no incrementa al estar al final
-
+        this.rescola.push(addColaDiag(this.clock,this.colaListos,"Cola de Listos","#23FF00"));
+        this.rescola.push(addColaDiag(this.clock,this.colaBloqueados,"Cola de Bloqueados","#00D4FF"));
+        this.rescola.push(addColaDiag(this.clock,this.memoria.colaMemoria,"Cola de Memoria", "8000FF"));
+        
         if (this.colaListos.length > 0 && !this.procesoCpu) {
           this.procesoCpu = this.colaListos[0];
           this.colaListos.splice(0, 1);
@@ -178,6 +205,27 @@ function instSimulador() {
           this.tiempoOcioso++;
         }
 
+        let lista = [];
+        for(let i=0;i<this.memoria.particiones.length;i++){
+          
+          let random = Math.round ((Math.random () * 999)+1000);
+          let sub = [];
+          let p = this.memoria.particiones[i].proceso;
+          if(p){
+          
+          let fragint= this.memoria.particiones[i].fragInterna(p);
+          sub = [{
+            partition:"P"+p.pid.toString(),
+            size:p.tam.toString()
+          },{
+            partition:"Fragmentacion Interna",
+            size:fragint.toString()
+          }];}
+          let r = new ResMem("Particion "+i.toString(),this.memoria.particiones[i].tam.toString(),"#"+random.toString()+"FF",sub);
+          lista.push(r);
+        }
+        this.resmem.push(lista);
+
         if (this.procesoEs) {
           clocki++;
           if (this.procesoEs.inicio){
@@ -208,6 +256,9 @@ function instSimulador() {
         //debugger;
         let clock = this.clock;
         let clocki = this.clock;
+        this.rescola.push(addColaDiag(this.clock,this.colaListos,"Cola de Listos","#23FF00"));
+        this.rescola.push(addColaDiag(this.clock,this.colaBloqueados,"Cola de Bloqueados","#00D4FF"));
+        this.rescola.push(addColaDiag(this.clock,this.memoria.colaMemoria,"Cola de Memoria", "8000FF"));
 
         if (this.colaListos.length > 0 && !this.procesoCpu) {
           this.procesoCpu = this.colaListos[0];
@@ -251,6 +302,27 @@ function instSimulador() {
         } else {
           this.tiempoOcioso++;
         }
+
+        let lista = [];
+        for(let i=0;i<this.memoria.particiones.length;i++){
+          
+          let random = Math.round ((Math.random () * 999)+1000);
+          let sub = [];
+          let p = this.memoria.particiones[i].proceso;
+          if(p){
+          
+          let fragint= this.memoria.particiones[i].fragInterna(p);
+          sub = [{
+            partition:"P"+p.pid.toString(),
+            size:p.tam.toString()
+          },{
+            partition:"Fragmentacion Interna",
+            size:fragint.toString()
+          }];}
+          let r = new ResMem("Particion "+i.toString(),this.memoria.particiones[i].tam.toString(),"#"+random.toString()+"FF",sub);
+          lista.push(r);
+        }
+        this.resmem.push(lista);
 
         if (this.procesoEs) {
           clocki++;
