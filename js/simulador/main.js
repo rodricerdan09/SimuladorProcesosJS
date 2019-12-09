@@ -75,7 +75,6 @@ function instSimulador() {
           this.procesoCpu = this.colaListos[0];
           this.colaListos.splice(0, 1);
         }
-
         if (this.colaBloqueados.length > 0 && !this.procesoEs) {
           this.procesoEs = this.colaBloqueados[0];
           this.colaBloqueados.splice(0, 1);
