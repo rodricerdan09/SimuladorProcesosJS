@@ -10,11 +10,13 @@ function SimuladorBase(clock, colaListos, colaNuevos, colaBloqueados, memoria) {
 	this.tiempoOcioso = 0;
 	this.resultados = [];
 	this.res = [];//cola re resultados para el gantt
+	this.rescola = [];
+	this.resmem =[];
 	this.colaControl = [];
 }
 
 SimuladorBase.prototype.cicloMemoria = function() {
-	//debugger;
+	
 	let c = 0;
 	this.colaNuevos.sort((a, b) => (a.tarrivo > b.tarrivo) ? 1 : -1);
 	for (let p of this.colaNuevos) {
@@ -25,7 +27,7 @@ SimuladorBase.prototype.cicloMemoria = function() {
 	}
 	this.colaNuevos.splice(0, c);
 	c = 0;
-	this.memoria.colaMemoria.sort((a, b) => (a.tam < b.tam) ? 1 : -1);
+	this.memoria.colaMemoria.sort((a, b) => (a.tam > b.tam) ? 1 : -1);
 	for (let p of this.memoria.colaMemoria) {
 		let proc = this.memoria.insertarProceso(p);
 		if (proc) {
@@ -53,7 +55,12 @@ SimuladorBase.prototype.calcularPromedios = function() {
 SimuladorBase.prototype.ordenarColaListos = function() {
 	
 }
-
+function ResCola(clock, name, cola,color){
+	this.clock=clock;
+	this.name=name;
+	this.cola=cola;
+	this.color=color;
+}
 function Res(name, rafaga, fromDur, toDur, color) {//constructor de la lista
 	this.name = name;
 	this.rafaga = rafaga;
@@ -61,7 +68,12 @@ function Res(name, rafaga, fromDur, toDur, color) {//constructor de la lista
 	this.toDur = toDur;
 	this.color = color;
 }
-
+function ResMem(partition,size,color,subs){
+	this.partition=partition;
+	this.size=size;
+	this.color=color;
+	this.subs=subs;
+}
 function Resultado(pid, tSalida, tArrivo, tRetorno, tEspera) {
 	this.pid = pid;
 	this.tSalida = tSalida;
@@ -69,7 +81,20 @@ function Resultado(pid, tSalida, tArrivo, tRetorno, tEspera) {
 	this.tRetorno = tRetorno;
 	this.tEspera = tEspera;
 }
-
+function addColaDiag(clock,cola,ncola){
+	if (cola.length>0){
+		let n= [];
+	for (let p of cola) {
+		if (p){
+		n.push("P"+p.pid.toString())
+		}
+		
+	}
+	let r = new ResCola(clock, n , ncola);	
+	return r;
+	}
+	return 0;
+}
 function SimuladorApropiativo(...args) {
 	SimuladorBase.apply(this, args);
 }
@@ -84,9 +109,13 @@ SimuladorNoApropiativo.prototype = Object.create(SimuladorBase.prototype);
 
 SimuladorNoApropiativo.prototype.cicloCpu = function() {
 	//mismos cambios que para el rr
+	 
 	let clock = this.clock;
 	let clocki = this.clock;
-
+	this.rescola.push(addColaDiag(this.clock,this.colaListos,"Cola de Listos","#23FF00"));
+	this.rescola.push(addColaDiag(this.clock,this.colaBloqueados,"Cola de Bloqueados","#00D4FF"));
+	this.rescola.push(addColaDiag(this.clock,this.memoria.colaMemoria,"Cola de Memoria", "8000FF"));
+	
 	if (this.colaListos.length > 0 && !this.procesoCpu) {
 		this.procesoCpu = this.colaListos[0];
 		this.colaListos.splice(0, 1);
@@ -123,6 +152,27 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 	} else {
 		this.tiempoOcioso++;
 	}
+
+	let lista = [];
+	for(let i=0;i<this.memoria.particiones.length;i++){
+		
+		let random = Math.round ((Math.random () * 999)+1000);
+		let sub = [];
+		let p = this.memoria.particiones[i].proceso;
+		if(p){
+		
+		let fragint= this.memoria.particiones[i].fragInterna(p);
+		sub = [{
+			partition:"P"+p.pid.toString(),
+			size:p.tam.toString()
+		},{
+			partition:"Fragmentacion Interna",
+			size:fragint.toString()
+		}];}
+		let r = new ResMem("Particion "+i.toString(),this.memoria.particiones[i].tam.toString(),"#"+random.toString()+"FF",sub);
+		lista.push(r);
+	}
+	this.resmem.push(lista);
 
 	if (this.procesoEs) {
 		clocki++;
