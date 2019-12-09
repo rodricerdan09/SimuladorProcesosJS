@@ -350,7 +350,7 @@ function cargaResultados() {
     xAxis.baseUnit = "second"; //unidad de tiempo
     xAxis.title.text = "Tiempo" //TITULO AXI-X
     xAxis.renderer.minGridDistance = 70;
-    xAxis.baseInterval = { count: 30, timeUnit: "minute" };
+    xAxis.baseInterval = {count: 30, timeUnit: "minute"};
     xAxis.min = 0;
     xAxis.strictMinMax = true;
     xAxis.renderer.tooltipLocation = 0;
@@ -428,7 +428,7 @@ function cargaResultados() {
     $('#t-result').append(result);
   }
   let results = sim.calcularPromedios();
-  let result2 = ` <tr class="grey lighten-2">
+  let result2 = ` <tr>
                   <td colspan="3"><b>${'PROMEDIOS'}</td>
                   <td><b> ${results[1].toFixed(1)} </td>
                   <td><b> ${results[0].toFixed(1)} </td>
@@ -438,13 +438,12 @@ function cargaResultados() {
   $('#t-result').append(result2);
   $('#cpu').append(sim.porcActivo().toFixed(1) + '%');
 }
-valueArray=[]
 function myFunction(){
   let x = document.getElementById("rangeid");
   x.max=sim.resmem.length-1;
   x.min=0;
-  valueArray = sim.resmem[x.value];
-  return valueArray;
+  let i = sim.resmem[x.value];
+  return i;
   
 }
 function torta(){ 
@@ -459,7 +458,7 @@ function torta(){
         var chart = am4core.create("chartdiv3", am4charts.PieChart);
         
         var selected;
-        var memory = valueArray;
+        var memory = myFunction();
         
         // Add data
         chart.data = generateChartData();
@@ -524,4 +523,3 @@ function main(){
   cargaResultados();
   torta();
 }
-
