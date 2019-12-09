@@ -830,19 +830,19 @@
           p.splice(1, 0, 0);//posicion, 0 agrega| 1 elimina, valor
         } 
          let proceso = `<div id="rafagas${p[0]}">
-          <button type="button" class="btn mdb-color text-white" disabled>Proceso ${p[0]}</button>
-          <button id="btn-1" type="button" class="btn mdb-color text-white" disabled>Prioridad: ${p[1]}</button>
-          <button type="button" class="btn mdb-color text-white" disabled>Tamaño: ${p[2]} MB</button>
-          <button type="button" class="btn mdb-color text-white" disabled>T. Arribo: ${p[3]} Seg.</button>
-          <button type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[4]}</button>
-          <button type="button" class="btn btn-outline-secondary" disabled>E/S: ${p[5]}</button>
-          <button id="btn-6" type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[6]}</button>
-          <button id="btn-7" type="button" class="btn btn-outline-secondary" disabled>E/S: ${p[7]}</button>
-          <button id="btn-8" type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[8]}</button>
-          <button id="btn-9" type="button" class="btn btn-outline-secondary" disabled>E/S: ${p[9]}</button>
-          <button id="btn-10" type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[10]}</button>
-          <button id="btn-11" type="button" class="btn btn-outline-secondary" disabled>E/S: ${p[11]}</button>
-          <button id="btn-12" type="button" class="btn btn-outline-secondary" disabled>CPU: ${p[12]}</button>
+          <button type="button" class="btn btn-primary text-white" disabled>Proceso ${p[0]}</button>
+          <button id="btn-1" type="button" class="btn btn-primary text-white" disabled>Prioridad: ${p[1]}</button>
+          <button type="button" class="btn btn-primary text-white" disabled>Tamaño: ${p[2]} MB</button>
+          <button type="button" class="btn btn-primary text-white" disabled>T. Arribo: ${p[3]} Seg.</button>
+          <button type="button" class="btn btn-outline-primary" disabled>CPU: ${p[4]}</button>
+          <button type="button" class="btn btn-outline-primary" disabled>E/S: ${p[5]}</button>
+          <button id="btn-6" type="button" class="btn btn-outline-primary" disabled>CPU: ${p[6]}</button>
+          <button id="btn-7" type="button" class="btn btn-outline-primary" disabled>E/S: ${p[7]}</button>
+          <button id="btn-8" type="button" class="btn btn-outline-primary" disabled>CPU: ${p[8]}</button>
+          <button id="btn-9" type="button" class="btn btn-outline-primary" disabled>E/S: ${p[9]}</button>
+          <button id="btn-10" type="button" class="btn btn-outline-primary" disabled>CPU: ${p[10]}</button>
+          <button id="btn-11" type="button" class="btn btn-outline-primary" disabled>E/S: ${p[11]}</button>
+          <button id="btn-12" type="button" class="btn btn-outline-primary" disabled>CPU: ${p[12]}</button>
           </div>`;
           $('#config_process').append(proceso)
           if(algorithm!="Prioridades"){
