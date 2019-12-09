@@ -58,14 +58,22 @@ function instSimulador() {
     case 'SRTF':
       sim = new SimuladorApropiativo(0, [], [], [], mem);
       SimuladorApropiativo.prototype.ordenarColaListos = function() {
-
+        this.colaListos.sort((a, b) => ((a.getRafCpu() > b.getRafCpu()) ? 1 : -1));
       }
-      SimuladorApropiativo.prototype.cicliCpu = function() {
+      SimuladorApropiativo.prototype.cicloCpu = function() {
+        let clock = this.clock;
+        let clocki = this.clock;
+        //debugger;
         if (this.colaListos.length > 0 && !this.procesoCpu) {
           this.procesoCpu = this.colaListos[0];
           this.colaListos.splice(0, 1);
-        } else if (this.procesoCpu && this.colaListos.length > 0) {
-          // logica de SRTF
+        } else if (this.colaListos.length > 0 && this.procesoCpu && this.colaListos[0].getRafCpu() < this.procesoCpu.getRafCpu()) {
+          this.colaListos.push(this.procesoCpu);
+          this.procesoCpu.inicio = true;
+          let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); // objeto resultado para el gantt del cpu
+          this.res.push(r);
+          this.procesoCpu = this.colaListos[0];
+          this.colaListos.splice(0, 1);
         }
 
         if (this.colaBloqueados.length > 0 && !this.procesoEs) {
@@ -73,17 +81,25 @@ function instSimulador() {
           this.colaBloqueados.splice(0, 1);
         }
         if (this.procesoCpu) {
+          clock++;
+          if (this.procesoCpu.inicio){
+            this.procesoCpu.iniclock = this.clock;
+          } 
           let rafCpuFinalizada = this.procesoCpu.tratarProceso();
           this.procesoCpu.irrupcion++;
           if (rafCpuFinalizada) {
             if (this.procesoCpu.isFinished()) {
               this.memoria.removerProceso(this.procesoCpu);
+              let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
+              this.res.push(r);
               let p = new Resultado(this.procesoCpu.pid, this.clock, this.procesoCpu.tarrivo, this.procesoCpu.calcTiempoRetorno(this.clock), this.procesoCpu.calcTiempoEspera(this.procesoCpu.calcTiempoRetorno(this.clock)));
               this.resultados.push(p);
               this.colaControl.splice(this.colaControl.indexOf(this.procesoCpu), 1);
               this.procesoCpu = null;
             } else {
               this.colaBloqueados.push(this.procesoCpu);
+              let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00"); 
+              this.res.push(r); 
               this.procesoCpu = null;
             }
           }
@@ -92,9 +108,15 @@ function instSimulador() {
         }
 
         if (this.procesoEs) {
+          clocki++;
+          if (this.procesoEs.inicio){
+            this.procesoEs.iniclock = this.clock;
+          }
           let rafEsFinalizada = this.procesoEs.tratarProceso();
           if (rafEsFinalizada) {
             this.colaListos.push(this.procesoEs);
+            let r = new Res(this.procesoEs.pid, "E/S" , this.procesoEs.iniclock , clocki, "#00D4FF"); //objeto para el gantt de la E/S
+            this.res.push(r);
             this.procesoEs = null;
           }
         }
@@ -105,7 +127,7 @@ function instSimulador() {
     case 'RR':
       sim = new SimuladorApropiativo(0, [], [], [], mem);
       sim.quantum = generalQuantum;
-      let quantumReset = false;
+      //let quantumReset = false;
       SimuladorApropiativo.prototype.cicloCpu = function() {
         //debugger;
         let clock = this.clock;// estos clocks son mas que nada para incrementar en 1 en cada ciclo el clock por el
@@ -340,6 +362,7 @@ function cargaResultados() {
     series1.columns.template.propertyFields.stroke = "color";
     series1.columns.template.strokeOpacity = 1;
     series1.columns.template.tooltipText = "P{name}: {rafaga} ({fromDur} - {toDur}) "; //esto es lo que muestra cuando pasas el mouse por el grafico
+
 
     chart.scrollbarX = new am4core.Scrollbar();
   });
