@@ -323,7 +323,7 @@ function cargaResultados() {
   
     var xAxis = chart.xAxes.push(new am4charts.DurationAxis()); //DurationAxis usa datos tipo numerico en forma de tiempo
     xAxis.baseUnit = "second"; //unidad de tiempo
-    xAxis.title.text = "tiempo" //TITULO AXI-X
+    xAxis.title.text = "Tiempo" //TITULO AXI-X
     xAxis.renderer.minGridDistance = 70;
     xAxis.baseInterval = { count: 30, timeUnit: "minute" };
     xAxis.max = 60; //maximo se puede cambiar pero se me hace que un minuto esta bien
@@ -357,7 +357,7 @@ function cargaResultados() {
     $('#t-result').append(result);
   }
   let results = sim.calcularPromedios();
-  let result2 = ` <tr>
+  let result2 = ` <tr class="grey lighten-2">
                   <td colspan="3"><b>${'PROMEDIOS'}</td>
                   <td><b> ${results[0].toFixed(1)} </td>
                   <td><b> ${results[1].toFixed(1)} </td>
