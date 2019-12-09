@@ -430,8 +430,8 @@ function cargaResultados() {
   let results = sim.calcularPromedios();
   let result2 = ` <tr>
                   <td colspan="3"><b>${'PROMEDIOS'}</td>
-                  <td><b> ${results[0].toFixed(1)} </td>
                   <td><b> ${results[1].toFixed(1)} </td>
+                  <td><b> ${results[0].toFixed(1)} </td>
                 </tr>
                 `;
 
