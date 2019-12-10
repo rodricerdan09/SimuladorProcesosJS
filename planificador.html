@@ -14,6 +14,7 @@
     <!-- Your custom styles (optional) -->
     <link href="./css/simulador/config.css" rel="stylesheet">
     <link href="./css/simulador/presentacion.css" rel="stylesheet">
+    <link href="./css/roundslider.min.css" rel="stylesheet" />
     <!-- Resources Amcharts-->
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -357,11 +358,16 @@
                         </div>
                             <h1 class="col-sm-12 d-flex justify-content-center blue-grey-text display-4 mt-5">Mapa de Colas</h1>
                             <div id="chartdiv2">
-                        </div>
+                            </div>
                         
                         <h1 class="col-sm-12 d-flex justify-content-center blue-grey-text display-4 mt-5">Mapa de Memoria</h1>
+                        <div class="container">
                         <div id="chartdiv3"></div>
-                        <div><input type="range" id="rangeid" onclick="torta()" value="0" steps="1"></div>
+                        <div class="control container">
+                            <p style="text-align: center">Tiempo del clock</p>
+                            <div id="shape" onclick="torta()"></div>
+                        </div>
+                        </div>
                     </div>
                     
                     <div class="col-lg-12 mt-5">
@@ -480,6 +486,7 @@
     <script src="./js/simulador/inicio.js"></script>
     <script src="./js/simulador/config.js"></script>
     <script src="./js/simulador/main.js"></script>
+    <script src="./js/roundslider.min.js"></script>
     <!-- SCRIPTS -->
 </body>
 </html>

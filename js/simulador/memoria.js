@@ -2,6 +2,7 @@ function MemoriaBase(tam, particiones, colaMemoria) {
 	this.tam = tam;
 	this.particiones = particiones;
 	this.colaMemoria = colaMemoria;
+	this.fija=false;
 }
 
 MemoriaBase.prototype.particionLibre = function(proceso) {
@@ -69,7 +70,6 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 	let alFinal = this.particiones.indexOf(this.getParticion(proceso)) + 1;
 	let flagFinal = (alFinal > this.particiones.length) ? false : true;
 	let flagInicio = (alInicio >= 0) ? true : false;
-	let eliminarProceso = false;
 	while (flagInicio || flagFinal) {
 		alInicio = this.particiones.indexOf(this.getParticion(proceso)) - 1;
 		alFinal = this.particiones.indexOf(this.getParticion(proceso)) + 1;
@@ -82,7 +82,7 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 				flagFinal = false;
 			}
 		} else {
-			eliminarProceso = true;
+			
 			flagFinal = false;
 		}
 		if (flagInicio && this.particiones[alInicio].isEmpty()) {
@@ -94,14 +94,12 @@ MemoriaVariable.prototype.removerProceso = function(proceso) {
 				flagInicio = false;
 			}
 		} else {
-			eliminarProceso = true;
+			
 			flagInicio = false;
 		}
-		if (eliminarProceso) {
-			this.particiones[this.particiones.indexOf(this.getParticion(proceso))].proceso = null;
-			break;
-		}
+		
 	}
+	this.particiones[this.particiones.indexOf(this.getParticion(proceso))].proceso = null;
 }
 
 function Particion(tam, proceso) {
