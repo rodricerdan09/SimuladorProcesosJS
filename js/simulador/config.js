@@ -826,7 +826,7 @@
     $('#btnconfirmar2').on('click', function(){
       main();
       for (p of parametros) {  
-        if(algorithm!="Prioridades"){
+        if(algorithm!=("Prioridades" || "MLQ")){
           p.splice(1, 0, 0);//posicion, 0 agrega| 1 elimina, valor
         } 
          let proceso = `<div id="rafagas${p[0]}">
@@ -845,7 +845,8 @@
           <button id="btn-12" type="button" class="btn btn-outline-primary" disabled>CPU: ${p[12]}</button>
           </div>`;
           $('#config_process').append(proceso)
-          if(algorithm!="Prioridades"){
+          
+          if(algorithm!=("Prioridades" || "MLQ")){
             $('#rafagas'+p[0]+' #btn-1').addClass('d-none')
           } 
           for (i=6;i<=15;i++){
