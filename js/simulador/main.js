@@ -2,6 +2,7 @@ function instMemoria() {
   if (typeMemory == "Variable"){
     let p = new Particion(memtotal, null);     
     mem = new MemoriaVariable(memtotal, [p], []);
+    mem.fija = false;
     if (fitMemory == "Worst Fit") {
       MemoriaVariable.prototype.particionLibre = function(proceso) {
         let fragInternaGlobal = 0;
@@ -25,6 +26,7 @@ function instMemoria() {
       particiones.push(part);
     }
     mem = new MemoriaFija(memtotal, particiones, []);
+    mem.fija = true;
     if (fitMemory == "Best Fit") {
       MemoriaFija.prototype.particionLibre = function(proceso) {
         let fragInternaGlobal = 999999999999999;
@@ -77,6 +79,7 @@ function instSimulador() {
           this.res.push(r);
           this.procesoCpu = this.colaListos[0];
           this.colaListos.splice(0, 1);
+          this.ordenarColaListos();
         }
         if (this.colaBloqueados.length > 0 && !this.procesoEs) {
           this.procesoEs = this.colaBloqueados[0];
@@ -110,24 +113,34 @@ function instSimulador() {
         }
 
         let lista = [];
-        for(let i=0;i<this.memoria.particiones.length;i++){
-          
-          let random = Math.round ((Math.random () * 999)+1000);
-          let sub = [];
-          let p = this.memoria.particiones[i].proceso;
-          if(p){
-          
-          let fragint= this.memoria.particiones[i].fragInterna(p);
-          sub = [{
-            partition:"P"+p.pid.toString(),
-            size:p.tam.toString()
-          },{
-            partition:"Fragmentacion Interna",
-            size:fragint.toString()
-          }];}
-          let r = new ResMem("Particion "+i.toString(),this.memoria.particiones[i].tam.toString(),"#"+random.toString()+"FF",sub);
-          lista.push(r);
-        }
+        if(this.memoria.fija){
+          for(let i=0;i<this.memoria.particiones.length;i++){	
+            let sub = [];
+            let p = this.memoria.particiones[i].proceso;
+            let name = "Particion "+i.toString()+" Libre";
+            if(p){		
+              name="Particion "+i.toString()+": Proceso "+p.pid.toString();
+            let fragint= this.memoria.particiones[i].fragInterna(p);
+            sub = [{
+              partition:"Proceso "+p.pid.toString(),
+              size:p.tam.toString()
+            },{
+              partition:"Fragmentacion Interna",
+              size:fragint.toString()
+            }];}		
+            let r = new ResMem(name,this.memoria.particiones[i].tam.toString(),sub);
+            lista.push(r);
+          }
+          }else{
+            for(let p of this.memoria.particiones){	
+              let name = "Memoria Libre";			
+              if(p.proceso){	
+                name = "Proceso "+p.proceso.pid.toString();
+              }
+              let r = new ResMem(name,p.tam.toString(),[]);
+              lista.push(r);
+            }
+          }
         this.resmem.push(lista);
 
         if (this.procesoEs) {
@@ -206,24 +219,34 @@ function instSimulador() {
         }
 
         let lista = [];
-        for(let i=0;i<this.memoria.particiones.length;i++){
-          
-          let random = Math.round ((Math.random () * 999)+1000);
-          let sub = [];
-          let p = this.memoria.particiones[i].proceso;
-          if(p){
-          
-          let fragint= this.memoria.particiones[i].fragInterna(p);
-          sub = [{
-            partition:"P"+p.pid.toString(),
-            size:p.tam.toString()
-          },{
-            partition:"Fragmentacion Interna",
-            size:fragint.toString()
-          }];}
-          let r = new ResMem("Particion "+i.toString(),this.memoria.particiones[i].tam.toString(),"#"+random.toString()+"FF",sub);
-          lista.push(r);
-        }
+        if(this.memoria.fija){
+          for(let i=0;i<this.memoria.particiones.length;i++){	
+            let sub = [];
+            let p = this.memoria.particiones[i].proceso;
+            let name = "Particion "+i.toString()+" Libre";
+            if(p){		
+              name="Particion "+i.toString()+": Proceso "+p.pid.toString();
+            let fragint= this.memoria.particiones[i].fragInterna(p);
+            sub = [{
+              partition:"Proceso "+p.pid.toString(),
+              size:p.tam.toString()
+            },{
+              partition:"Fragmentacion Interna",
+              size:fragint.toString()
+            }];}		
+            let r = new ResMem(name,this.memoria.particiones[i].tam.toString(),sub);
+            lista.push(r);
+          }
+          }else{
+            for(let p of this.memoria.particiones){	
+              let name = "Memoria Libre";			
+              if(p.proceso){	
+                name = "Proceso "+p.proceso.pid.toString();
+              }
+              let r = new ResMem(name,p.tam.toString(),[]);
+              lista.push(r);
+            }
+          }
         this.resmem.push(lista);
 
         if (this.procesoEs) {
@@ -243,6 +266,7 @@ function instSimulador() {
       }
       break;
     case 'MLQ':
+      
       sim = new SimuladorApropiativo(0, [[], [], []], [], [], mem);
       SimuladorApropiativo.prototype.cicloCpu = function() {
       }
@@ -304,24 +328,34 @@ function instSimulador() {
         }
 
         let lista = [];
-        for(let i=0;i<this.memoria.particiones.length;i++){
-          
-          let random = Math.round ((Math.random () * 999)+1000);
-          let sub = [];
-          let p = this.memoria.particiones[i].proceso;
-          if(p){
-          
-          let fragint= this.memoria.particiones[i].fragInterna(p);
-          sub = [{
-            partition:"P"+p.pid.toString(),
-            size:p.tam.toString()
-          },{
-            partition:"Fragmentacion Interna",
-            size:fragint.toString()
-          }];}
-          let r = new ResMem("Particion "+i.toString(),this.memoria.particiones[i].tam.toString(),"#"+random.toString()+"FF",sub);
-          lista.push(r);
-        }
+        if(this.memoria.fija){
+          for(let i=0;i<this.memoria.particiones.length;i++){	
+            let sub = [];
+            let p = this.memoria.particiones[i].proceso;
+            let name = "Particion "+i.toString()+" Libre";
+            if(p){		
+              name="Particion "+i.toString()+": Proceso "+p.pid.toString();
+            let fragint= this.memoria.particiones[i].fragInterna(p);
+            sub = [{
+              partition:"Proceso "+p.pid.toString(),
+              size:p.tam.toString()
+            },{
+              partition:"Fragmentacion Interna",
+              size:fragint.toString()
+            }];}		
+            let r = new ResMem(name,this.memoria.particiones[i].tam.toString(),sub);
+            lista.push(r);
+          }
+          }else{
+            for(let p of this.memoria.particiones){	
+              let name = "Memoria Libre";			
+              if(p.proceso){	
+                name = "Proceso "+p.proceso.pid.toString();
+              }
+              let r = new ResMem(name,p.tam.toString(),[]);
+              lista.push(r);
+            }
+          }
         this.resmem.push(lista);
 
         if (this.procesoEs) {
@@ -442,7 +476,7 @@ function cargaResultados() {
   });
     //AMCHART------------------------------------------------------------------
   
-
+  
   am4core.ready(function() {
    
       // Themes begin
@@ -450,6 +484,7 @@ function cargaResultados() {
   let chart = am4core.create("chartdiv2", am4charts.XYChart);
   
   // Add data
+ // debugger;
   chart.data = listaResCola;
   
   // Create axes
@@ -468,14 +503,8 @@ function cargaResultados() {
   series1.strokeWidth = 0;
   
   let bullet1 = series1.bullets.push(new am4charts.CircleBullet());
-  series1.heatRules.push({
-    target: bullet1.circle,
-    min: 5,
-    max: 20,
-    property: "radius",
-    color:"color"
-  });
-  
+  bullet1.circle.radius=7;
+  bullet1.propertyFields.fill="color";
   bullet1.tooltipText = "{name}";
   
   
@@ -510,12 +539,35 @@ function cargaResultados() {
   $('#t-result').append(result2);
   $('#cpu').append(sim.porcActivo().toFixed(1) + '%');
 }
+$("#shape").roundSlider({
+  value: 0,
+  min:0,
+  step:1,
+  sliderType: "min-range",
+  circleShape:"custom-quarter",
+  radius:300,
+  width: 22,
+  handleSize: "+0",
+  startAngle:45
+});
 function myFunction(){
-  let x = document.getElementById("rangeid");
-  x.max=sim.resmem.length-1;
-  x.min=0;
-  let i = sim.resmem[x.value];
-  return i;
+  $("#shape").roundSlider({
+    min:0,
+    max:sim.resmem.length-1,
+    step:1,
+    sliderType: "min-range",
+    circleShape:"custom-quarter",
+    radius:300,
+    width: 22,
+    handleSize: "+0",
+    startAngle:45
+  });
+  let x = $("#shape input").attr("value");
+  if(x){
+    return sim.resmem[x];
+  }
+  return sim.resmem[0];
+  
   
 }
 function torta(){ 
@@ -539,7 +591,6 @@ function torta(){
         var pieSeries = chart.series.push(new am4charts.PieSeries());
         pieSeries.dataFields.value = "size";
         pieSeries.dataFields.category = "partition";
-        pieSeries.slices.template.propertyFields.fill = "color";
         pieSeries.slices.template.propertyFields.isActive = "pulled";
         pieSeries.slices.template.strokeWidth = 0;
         

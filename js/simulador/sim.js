@@ -68,10 +68,9 @@ function Res(name, rafaga, fromDur, toDur, color) {//constructor de la lista
 	this.toDur = toDur;
 	this.color = color;
 }
-function ResMem(partition,size,color,subs){
+function ResMem(partition,size,subs){
 	this.partition=partition;
 	this.size=size;
-	this.color=color;
 	this.subs=subs;
 }
 function Resultado(pid, tSalida, tArrivo, tRetorno, tEspera) {
@@ -81,7 +80,7 @@ function Resultado(pid, tSalida, tArrivo, tRetorno, tEspera) {
 	this.tRetorno = tRetorno;
 	this.tEspera = tEspera;
 }
-function addColaDiag(clock,cola,ncola){
+function addColaDiag(clock,cola,ncola,color){
 	if (cola.length>0){
 		let n= [];
 	for (let p of cola) {
@@ -90,7 +89,7 @@ function addColaDiag(clock,cola,ncola){
 		}
 		
 	}
-	let r = new ResCola(clock, n , ncola);	
+	let r = new ResCola(clock, n , ncola, color);	
 	return r;
 	}
 	return 0;
@@ -135,6 +134,7 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 		this.procesoCpu.irrupcion++;
 		if (rafCpuFinalizada) {
 			if (this.procesoCpu.isFinished()) {
+			
 				this.memoria.removerProceso(this.procesoCpu);		
 				let r = new Res(this.procesoCpu.pid, "CPU" , this.procesoCpu.iniclock ,clock, "#23FF00");	
 				this.res.push(r);	
@@ -154,24 +154,37 @@ SimuladorNoApropiativo.prototype.cicloCpu = function() {
 	}
 
 	let lista = [];
-	for(let i=0;i<this.memoria.particiones.length;i++){
-		
-		let random = Math.round ((Math.random () * 999)+1000);
+
+	if(this.memoria.fija){
+	for(let i=0;i<this.memoria.particiones.length;i++){	
 		let sub = [];
 		let p = this.memoria.particiones[i].proceso;
-		if(p){
-		
+		let name = "Particion "+i.toString()+" Libre";
+		if(p){		
+			name="Particion "+i.toString()+": Proceso "+p.pid.toString();
 		let fragint= this.memoria.particiones[i].fragInterna(p);
 		sub = [{
-			partition:"P"+p.pid.toString(),
+			partition:"Proceso "+p.pid.toString(),
 			size:p.tam.toString()
 		},{
 			partition:"Fragmentacion Interna",
 			size:fragint.toString()
-		}];}
-		let r = new ResMem("Particion "+i.toString(),this.memoria.particiones[i].tam.toString(),"#"+random.toString()+"FF",sub);
+		}];}		
+		let r = new ResMem(name,this.memoria.particiones[i].tam.toString(),sub);
 		lista.push(r);
 	}
+	}else{
+		for(let p of this.memoria.particiones){	
+			let name = "Memoria Libre";			
+			if(p.proceso){	
+				name = "Proceso "+p.proceso.pid.toString();
+			}
+			let r = new ResMem(name,p.tam.toString(),[]);
+			lista.push(r);
+		}
+	}
+
+
 	this.resmem.push(lista);
 
 	if (this.procesoEs) {
