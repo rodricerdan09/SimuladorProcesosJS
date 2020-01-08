@@ -118,6 +118,7 @@
 
   $("#btn-parts").on("click", function() {
     $('#partfijas').removeClass('d-none');
+    $("#btn-parts").attr('href', '#form-fijas');
     setTimeout(function(){ 
       $('#form-fijas').show();
     },100); 
@@ -414,6 +415,9 @@
         $("#collapseExample").removeClass("show");
         $(".optionFitTwo").show();
         $(".optionFitOne").hide();
+        setTimeout(function(){ 
+          $('#form-fijas').hide();
+        },100);
     }
     return typeMemory;
   });
@@ -616,6 +620,7 @@
     }
     setTimeout(function() {
       alert('Por favor presione el botón Confirmar para avanzar a la siguinte sección.');            
+      $(".btn-asignar").attr('href', '#card-memory');
     },1000);
     console.log('arrayPartitions: ',arrayPartitions);
     return arrayPartitions
@@ -675,15 +680,21 @@
         <td class="md-form"><input id="tam-input${idProcess}" type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
         <td class="md-form"><input type="number" class="form-control mt-3 rafagas-p w-20 p-raf${idProcess}"></td>
         <td id="raf" class="pt-3-half" type="number" contenteditable="false"></td>
-        <td>
-            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm mt-4 waves-effect waves-light">Agregar</button>
+        <td class="p-2">
+          <div class="mt-4">  
+            <button id="btn${idProcess}" type="button" class="add-raf btn btn-outline-success btn-rounded btn-sm waves-effect waves-light">Agregar</button>
+          </div>
         </td>
-        <td>
-            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button>    
+        <td class="p-2">
+          <div class="mt-4">
+            <button type="button" class="del-raf btn btn-outline-danger btn-rounded btn-sm waves-effect waves-light">Eliminar</button>  
+          </div>  
         </td>
-        <td>
-            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm mt-4 waves-effect waves-light">Confirmar</button>
-            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm mt-4 waves-effect waves-light">Eliminar</button></span>
+        <td class="p-2">
+          <div class="row mt-4 d-flex justify-content-center">
+            <button type="button" class="confirm-rafaga btn btn-outline-primary btn-rounded btn-sm  waves-effect waves-light">Confirmar</button>
+            <span class="table-remove"><button type="button" class="del btn btn-outline-danger btn-rounded btn-sm  waves-effect waves-light">Eliminar</button></span>
+          </div>
         </td>
       </tr>` 
     }

@@ -470,52 +470,80 @@ function cargaResultados() {
     series1.columns.template.propertyFields.stroke = "color";
     series1.columns.template.strokeOpacity = 1;
     series1.columns.template.tooltipText = "P{name}: {rafaga} ({fromDur} - {toDur}) "; //esto es lo que muestra cuando pasas el mouse por el grafico
-
+    
+    chart.responsive = {
+      "enabled": true,
+      "minWidth": 200,
+      "maxWidth": 400,
+      "maxHeight": 400,
+      "minHeight": 200,
+      "overrides": {
+        "precision": 2,
+        "legend": {
+          "enabled": false
+        },
+        "valueAxes": {
+          "inside": true
+        }
+      }
+    };
 
     chart.scrollbarX = new am4core.Scrollbar();
   });
     //AMCHART------------------------------------------------------------------
   
   
-  am4core.ready(function() {
-   
+  am4core.ready(function() { 
       // Themes begin
-  am4core.useTheme(am4themes_animated);
-  let chart = am4core.create("chartdiv2", am4charts.XYChart);
-  
-  // Add data
- // debugger;
-  chart.data = listaResCola;
-  
-  // Create axes
-  let xAxis = chart.xAxes.push(new am4charts.ValueAxis());
-  
-  xAxis.renderer.minGridDistance = 40;
-  
-  
-  // Create value axis
-  let yAxis = chart.yAxes.push(new am4charts.CategoryAxis());
-  yAxis.dataFields.category = "cola";
-  // Create series
-  let series1 = chart.series.push(new am4charts.LineSeries());
-  series1.dataFields.valueX = "clock";
-  series1.dataFields.categoryY = "cola";
-  series1.strokeWidth = 0;
-  
-  let bullet1 = series1.bullets.push(new am4charts.CircleBullet());
-  bullet1.circle.radius=7;
-  bullet1.propertyFields.fill="color";
-  bullet1.tooltipText = "{name}";
-  
-  
-  //scrollbars
-  chart.scrollbarX = new am4core.Scrollbar();
-  
-  
+      am4core.useTheme(am4themes_animated);
+      let chart = am4core.create("chartdiv2", am4charts.XYChart);
+      
+      // Add data
+    // debugger;
+      chart.data = listaResCola;
+      
+      // Create axes
+      let xAxis = chart.xAxes.push(new am4charts.ValueAxis());
+      
+      xAxis.renderer.minGridDistance = 40;
+      
+      
+      // Create value axis
+      let yAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+      yAxis.dataFields.category = "cola";
+      // Create series
+      let series1 = chart.series.push(new am4charts.LineSeries());
+      series1.dataFields.valueX = "clock";
+      series1.dataFields.categoryY = "cola";
+      series1.strokeWidth = 0;
+      
+      let bullet1 = series1.bullets.push(new am4charts.CircleBullet());
+      bullet1.circle.radius=7;
+      bullet1.propertyFields.fill="color";
+      bullet1.tooltipText = "{name}";
+      
+      chart.responsive = {
+        "enabled": true,
+        "minWidth": 200,
+        "maxWidth": 400,
+        "maxHeight": 400,
+        "minHeight": 200,
+        "overrides": {
+          "precision": 2,
+          "legend": {
+            "enabled": false
+          },
+          "valueAxes": {
+            "inside": true
+          }
+        }
+      };
+      
+      //scrollbars
+      chart.scrollbarX = new am4core.Scrollbar();
+      
+      
   }); // end am4core.ready()
-
-
-
 
   for (let r of sim.resultados) {
     let result = ` <tr>
@@ -593,7 +621,7 @@ function torta(){
         pieSeries.dataFields.category = "partition";
         pieSeries.slices.template.propertyFields.isActive = "pulled";
         pieSeries.slices.template.strokeWidth = 0;
-        
+
         function generateChartData() {
         var chartData = [];
         for (var i = 0; i < memory.length; i++) {
@@ -626,9 +654,23 @@ function torta(){
         }
         chart.data = generateChartData();
         });
-
-        
-        
+              
+        chart.responsive = {
+          "enabled": true,
+          "minWidth": 200,
+          "maxWidth": 400,
+          "maxHeight": 400,
+          "minHeight": 200,
+          "overrides": {
+            "precision": 2,
+            "legend": {
+              "enabled": false
+            },
+            "valueAxes": {
+              "inside": true
+            }
+          }
+        };
     }); // end am4core.ready()
 }
 

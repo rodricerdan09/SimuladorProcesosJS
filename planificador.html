@@ -19,6 +19,7 @@
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+    <script src="./js/responsive.min.js" type="text/javascript"></script>
 
     <title>Simulador C1G6</title>
 </head>
@@ -105,7 +106,7 @@
                                             <option class="optionPlaningThree" value="Prioridades">Prioridades</option>
                                             <option class="optionPlaningFour" value="SJF">SJF</option>
                                             <option class="optionPlaningFive" value="SRTF">SRTF</option>
-                                            <option class="optionPlaningSix" value="MLQ">MLQ</option>         
+                                            <!-- <option class="optionPlaningSix" value="MLQ">MLQ</option>  -->        
                                         </select> 
                                         <div class="col-md-4 text-center fade alertRR mt-3 mb-2 px-0 disabled" id="quantumid">
                                             <input type="text" class="form-control w-75 quantumIn" placeholder="Quantum">
@@ -176,7 +177,7 @@
                 <!--Form de Particiones Fijas-->
                 <div class="col-sm-12 col-md-6 px-0">
                     <form class="md-form input-group mt-2" id="form-fijas" role="form" autocomplete="off">     
-                        <div class="col-sm-12 col-md-12 px-4">
+                        <div class="col-sm-12 col-md-12 px-3">
                             <!--Generación de Particiones-->
                             <div class="card d-none" id="partfijas">
                                 <h5 class="card-header blue-grey lighten-1 white-text text-center py-4 mb-4">
@@ -219,7 +220,7 @@
                                     </div>       
                                 <!--Confirmar formulario--> 
                                 <div class="d-flex justify-content-center" id="btn-asignar">
-                                    <button class="btn btn-outline-light-blue z-depth-0 waves-effect w-75" type="button">Asignar</button>  
+                                    <button class="btn btn-outline-light-blue z-depth-0 waves-effect w-75 btn-asignar" type="button">Asignar</button>  
                                 </div>
                                 <!--Confirmar formulario--> 
                                 </div> 
@@ -267,7 +268,7 @@
                         <div class="card mb-4 p-0 mt-3 mx-2">
                             <h2 class="card-header blue-grey lighten-1 text-center text-white py-4">Tabla de Procesos</h2>
                             <div class="card-body px-2">
-                                <div  class="table-editable">
+                                <div class="table-editable app-table-responsive">
                                     <span class="table-add float-right my-2 mr-2">
                                     <a href="#!" class="text-success d-flex justify-content-start" id="btn-añadir">
                                         <p class="lead mr-2">Agregar Proceso</p>
@@ -362,12 +363,12 @@
                         
                         <h1 class="col-sm-12 d-flex justify-content-center blue-grey-text display-4 mt-5">Mapa de Memoria</h1>
                         <div class="container">
-                        <div id="chartdiv3"></div>
-                        <div class="control container">
-                            <p style="text-align: center">Tiempo del clock</p>
-                            <div id="shape" onclick="torta()"></div>
-                        </div>
-                        </div>
+                            <div id="chartdiv3"></div>
+                            <div class="control container">
+                                <p style="text-align: center">Tiempo del clock</p>
+                                <div id="shape" onclick="torta()"></div>
+                            </div>
+                        </div>  
                     </div>
                     
                     <div class="col-lg-12 mt-5">
@@ -439,10 +440,10 @@
        
                <ul class="list-unstyled">
                <li>
-                   <a class="text-black-50" href="https://www.linkedin.com/in/rodrigo-d-cerdan-/"> <strong>Cerdan Rodrigo</strong></a>
+                   <a class="text-black-50" href="https://www.linkedin.com/in/rodrigo-daniel-cerdan/?locale=es_ES"> <strong>Cerdan Rodrigo</strong></a>
                </li>
                <li>
-                   <a class="text-black-50" href="#!"><strong>Duarte Elias</strong></a>
+                   <a class="text-black-50" href="https://www.linkedin.com/in/david-duarte-39521519a"><strong>Duarte Elias</strong></a>
                </li>
                <li> 
                    <a class="text-black-50" href="#!"><strong>Perez Carla</strong></a>
@@ -451,7 +452,7 @@
                    <a class="text-black-50" href="https://ar.linkedin.com/in/sandinosanchez?trk=people-guest_profile-result-card_result-card_full-click"><strong>Sanchez Sandino</strong></a>
                </li>
                <li>
-                   <a class="text-black-50" href="#!"><strong>Silva Otto</strong></a>
+                   <a class="text-black-50" href="https://github.com/ottosilva"><strong>Silva Otto</strong></a>
                </li>
                </ul>   
            </div>
