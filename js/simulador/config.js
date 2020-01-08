@@ -406,6 +406,7 @@
         $(".optionFitTwo").hide();
         $(".optionFitOne").show();
     } else {
+        $('#form-fijas').hide();
         $(".fixedPart").hide();
         $(".memInfo").text("Variable");
         typeMemory = valueCurrent; console.log(valueCurrent);
